@@ -47,7 +47,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.rng.MRG1999a;
@@ -180,14 +179,16 @@ public class JaamSimModel implements EventTimeListener {
 		for (Entity ent : entityList) {
 			if (ent.isGenerated())
 				continue;
-			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in == null || in.isDef())
-				continue;
-			Entity newEnt = getNamedEntity(ent.getName());
-			if (newEnt == null)
-				throw new ErrorException("New entity not found: %s", ent.getName());
-			KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
-			InputAgent.apply(newEnt, kw);
+			for (Input<?> in : ent.getEditableInputs()) {
+				String stub = in.getStubDefinition();
+				if (stub == null || in.isDef())
+					continue;
+				Entity newEnt = getNamedEntity(ent.getName());
+				if (newEnt == null)
+					throw new ErrorException("New entity not found: %s", ent.getName());
+				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), stub);
+				InputAgent.apply(newEnt, kw);
+			}
 		}
 
 		ParseContext context = null;
@@ -202,6 +203,7 @@ public class JaamSimModel implements EventTimeListener {
 				Entity newEnt = getNamedEntity(ent.getName());
 				if (newEnt == null)
 					throw new ErrorException("New entity not found: %s", ent.getName());
+				//System.out.format("Early Keyword - ent=%s, key=%s%n", ent, key);
 				newEnt.copyInput(ent, key, context);
 			}
 		}
@@ -215,6 +217,7 @@ public class JaamSimModel implements EventTimeListener {
 				if (in.isSynonym() || InputAgent.isEarlyInput(in))
 					continue;
 				String key = in.getKeyword();
+				//System.out.format("Normal Keyword - ent=%s, key=%s%n", ent, key);
 				newEnt.copyInput(ent, key, context);
 			}
 		}
@@ -1589,6 +1592,9 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public final void trace(int indent, Entity ent, String fmt, Object... args) {
+		if (!EventManager.hasCurrent())
+			return;
+
 		// Print a TIME header every time time has advanced
 		EventManager evt = EventManager.current();
 		long traceTick = evt.getTicks();

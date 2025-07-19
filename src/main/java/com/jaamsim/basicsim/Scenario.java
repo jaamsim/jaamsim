@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021-2022 JaamSim Software Inc.
+ * Copyright (C) 2021-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,8 @@ public class Scenario {
 			SimRun run = runsToStart.remove(0);
 			runsInProgress.add(run);
 			run.start(simModel);
+			//System.out.format("Replication %s of Scenario %s started%n",
+			//		run.getReplicationNumber(), run.getScenarioNumber());
 		}
 	}
 

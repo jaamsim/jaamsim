@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021-2024 JaamSim Software Inc.
+ * Copyright (C) 2021-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.Unit;
 
 public class AttributeHandle extends ValueHandle {
 	private final String attributeName;
-	private final ExpResult initialValue;
+	private final Expression expression;
 	private ExpResult value;
-	private final Class<? extends Unit> unitType;
+	private Class<? extends Unit> unitType;
 
-	public AttributeHandle(Entity e, String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
+	public AttributeHandle(Entity e, String name, Expression exp, ExpResult val, Class<? extends Unit> ut) {
 		super(e);
 		attributeName = name;
-		initialValue = initVal;
+		expression = exp;
 		value = val;
 		unitType = ut;
 	}
@@ -39,24 +41,31 @@ public class AttributeHandle extends ValueHandle {
 		return unitType;
 	}
 
-	public ExpResult getInitialValue() {
-		return initialValue.getCopy();
+	public Expression getExpression() {
+		return expression;
 	}
 
 	public void setValue(ExpResult val) {
 		value = val;
+		unitType = val.unitType;
 	}
 
 	@Override
 	public <T> T getValue(double simTime, Class<T> klass) {
-		return getValue(klass);
+		if (value == null) {
+			try {
+				ExpResult res = ExpEvaluator.evaluateExpression(expression, ent, simTime);
+				return res.getValue(klass);
+			}
+			catch (ExpError e) {
+				throw new ErrorException(ent, e);
+			}
+		}
+		return value.getValue(klass);
 	}
 
 	public <T> T getValue(Class<T> klass) {
-		if (value == null) {
-			return null;
-		}
-		return value.getValue(klass);
+		return getValue(0.0d, klass);
 	}
 
 	public ExpResult copyValue() {

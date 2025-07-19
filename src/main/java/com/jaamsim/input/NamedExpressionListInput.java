@@ -131,6 +131,7 @@ public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 		return true;
 	}
 
+	@Override
 	public String getStubDefinition() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
