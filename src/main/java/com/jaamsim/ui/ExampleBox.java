@@ -364,14 +364,12 @@ public class ExampleBox extends JDialog {
 		// Create the new simulation model
 		JaamSimModel simModel = new JaamSimModel(name);
 		simModel.autoLoad();
-		Simulation simulation = simModel.getSimulation();
 		GUIFrame gui = GUIFrame.getInstance();
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
 		simModel.setConfiguring(true);
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
-		gui.setWindowDefaults(simulation);
 		GUIFrame.setRunManager(runMgr);
 
 		// Load the specified model file
@@ -384,6 +382,7 @@ public class ExampleBox extends JDialog {
 		simModel.setRecordEditsFound(false);
 
 		// Add labels and sub-models
+		Simulation simulation = simModel.getSimulation();
 		if (simulation.isShowLabels())
 			simModel.showTemporaryLabels();
 

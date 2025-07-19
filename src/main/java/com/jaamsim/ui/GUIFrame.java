@@ -472,6 +472,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		GUIFrame gui = getInstance();
 		if (gui == null)
 			return;
+		gui.setWindowDefaults(sm.getSimulation());
 		RenderManager.clear();
 		EntityPallet.update();
 		ObjectSelector.allowUpdate();
@@ -518,6 +519,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static synchronized GUIFrame createInstance() {
 		instance = new GUIFrame();
+		instance.calcWindowDefaults();
 		UIUpdater updater = new UIUpdater(instance);
 		GUIFrame.registerCallback(new Runnable() {
 			@Override
@@ -4229,7 +4231,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public void setWindowDefaults(Simulation simulation) {
+	private void setWindowDefaults(Simulation simulation) {
 
 		// Set the default size and position for view windows before reading the configuration file
 		View.setDefaultPosition(COL2_START, TOP_START);
@@ -4479,7 +4481,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!headless) {
 			LogBox.logLine("Loading Simulation Environment ... ");
 			gui = GUIFrame.createInstance();
-			gui.calcWindowDefaults();
 			if (minimize) {
 				gui.setExtendedState(JFrame.ICONIFIED);
 			}
@@ -4754,7 +4755,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		RunManager runMgr = new RunManager(simModel);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
-		setWindowDefaults(simModel.getSimulation());
 		setRunManager(runMgr);
 
 		simModel.setConfiguring(true);
@@ -4800,7 +4800,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		RunManager runMgr = new RunManager(simModel);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
-		setWindowDefaults(simModel.getSimulation());
 		setRunManager(runMgr);
 
 		// Load the selected input file
