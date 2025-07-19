@@ -366,12 +366,12 @@ public class ExampleBox extends JDialog {
 		simModel.autoLoad();
 		Simulation simulation = simModel.getSimulation();
 		GUIFrame gui = GUIFrame.getInstance();
-		gui.setWindowDefaults(simulation);
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
 		simModel.setConfiguring(true);
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
+		gui.setWindowDefaults(simulation);
 		GUIFrame.setRunManager(runMgr);
 
 		// Load the specified model file

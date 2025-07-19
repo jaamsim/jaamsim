@@ -4749,12 +4749,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Create the new JaamSimModel and load the default objects and inputs
 		JaamSimModel simModel = getNextJaamSimModel();
 		simModel.autoLoad();
-		setWindowDefaults(simModel.getSimulation());
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
+		setWindowDefaults(simModel.getSimulation());
 		setRunManager(runMgr);
 
 		simModel.setConfiguring(true);
@@ -4800,6 +4800,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		RunManager runMgr = new RunManager(simModel);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
+		setWindowDefaults(simModel.getSimulation());
 		setRunManager(runMgr);
 
 		// Load the selected input file
@@ -4808,8 +4809,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void run() {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				simModel.setRecordEdits(false);
-
-				setWindowDefaults(simModel.getSimulation());
 
 				Throwable ret = GUIFrame.configure(file);
 				if (ret != null) {
