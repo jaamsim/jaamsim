@@ -4479,9 +4479,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!headless) {
 			LogBox.logLine("Loading Simulation Environment ... ");
 			gui = GUIFrame.createInstance();
+			gui.calcWindowDefaults();
 			if (minimize) {
 				gui.setExtendedState(JFrame.ICONIFIED);
 			}
+			gui.setWindowDefaults(simModel.getSimulation());
+			gui.setVisible(true);
 			if (!batch) {
 				RenderManager.initialize(SAFE_GRAPHICS);
 			}
@@ -4496,19 +4499,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simModel.setGUIListener(gui);
 		simModel.setBatchRun(batch);
 		simModel.setScriptMode(scriptMode);
-
-		// Show the Control Panel
-		if (gui != null) {
-			gui.setVisible(true);
-			gui.calcWindowDefaults();
-			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					getInstance().setWindowDefaults(simModel.getSimulation());
-				}
-			});
-		}
 
 		// Resolve all input arguments against the current working directory
 		File user = new File(System.getProperty("user.dir"));
