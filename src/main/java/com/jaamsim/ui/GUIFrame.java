@@ -477,7 +477,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		EntityPallet.update();
 		ObjectSelector.allowUpdate();
 		gui.resetViews();
-		gui.setTitle(sm);
+		gui.setTitle(sm, 0);
 		gui.clearButtons();
 		gui.clearUndoRedo();
 
@@ -488,10 +488,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		gui.initSpeedUp(sm.getSimTime());
 		gui.tickUpdate(sm.getSimTicks());
 		gui.updateForSimulationState();
-	}
-
-	public void setTitle(JaamSimModel sm) {
-		setTitle(sm, 0);
 	}
 
 	public void setTitle(JaamSimModel sm, int val) {
@@ -4485,6 +4481,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				gui.setExtendedState(JFrame.ICONIFIED);
 			}
 			gui.setWindowDefaults(simModel.getSimulation());
+			gui.setTitle(simModel, 0);
 			gui.setVisible(true);
 			if (!batch) {
 				RenderManager.initialize(SAFE_GRAPHICS);
@@ -4848,7 +4845,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// show the present state in the user interface
 		if (gui != null) {
 			gui.setProgress(0);
-			gui.setTitle(sim);
+			gui.setTitle(sim, 0);
 			gui.updateForSimulationState();
 			gui.enableSave(sim.isRecordEditsFound());
 		}
@@ -4886,7 +4883,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			sim.save(file);
 
 			// Set the title bar to match the new run name
-			setTitle(sim);
+			setTitle(sim, 0);
 		}
 		catch (Exception e) {
 			GUIFrame.showErrorDialog("File Error", e.getMessage());
