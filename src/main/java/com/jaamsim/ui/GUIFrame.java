@@ -273,7 +273,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	//JButton toolButtonIsometric;
 	private JToggleButton lockViewXYPlane;
 
-	private int lastValue = -1;
 	private JProgressBar progressBar;
 	private static ArrayList<Image> iconImages = new ArrayList<>();
 
@@ -487,14 +486,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		gui.initSpeedUp(sm.getSimTime());
 		gui.tickUpdate(sm.getSimTicks());
 		gui.updateForSimulationState();
-	}
-
-	public void setTitle(JaamSimModel sm, int val) {
-		StringBuilder sb = new StringBuilder();
-		if (val > 0)
-			sb.append(val).append("% ");
-		sb.append(sm.getName()).append(" - ").append(AboutBox.softwareName);
-		setTitle(sb.toString());
 	}
 
 	private static JaamSimModel getNextJaamSimModel() {
@@ -3112,6 +3103,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private long resumeSystemTime;
 	private long lastSystemTime;
 	private double lastSimTime;
+	private int lastProgress = -1;
 	private double speedUp;
 
 	public void initSpeedUp(double simTime) {
@@ -3133,29 +3125,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
-		// Set the run progress bar display
+		int simProgress = 0;
+		int overallProgress = 0;
 		Simulation simulation = sim.getSimulation();
-		if (simulation == null) {
-			setTitle(sim, 0);
-			return;
+		if (simulation != null) {
+			simProgress = (int) Math.round(simulation.getProgress(simTime) * 100.0d);
+			overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
 		}
-		int progress = (int) Math.round(simulation.getProgress(simTime) * 100.0d);
-		this.setProgress(progress);
 
-		// Show the overall progress in JaamSim's title bar
-		if (sim.isStarted()) {
-			int overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
-			setTitle(sim, overallProgress);
+		// Set window title
+		StringBuilder sb = new StringBuilder();
+		if (overallProgress > 0)
+			sb.append(overallProgress).append("% ");
+		sb.append(sim.getName()).append(" - ").append(AboutBox.softwareName);
+		setTitle(sb.toString());
+
+		// Set process bar
+		if (lastProgress != simProgress) {
+			progressBar.setValue(simProgress);
+			lastProgress = simProgress;
 		}
-		else {
-			setTitle(sim, 0);
-		}
+
+		if (simulation == null)
+			return;
 
 		// Do nothing further if the simulation is not executing events
 		if (!sim.isRunning()) {
 			setSpeedUp(0);
 			setRemaining(-1);
-			setProgress(0);
 			return;
 		}
 
@@ -3178,20 +3175,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Set the remaining time display
 		setRemaining( (duration - timeElapsed)/speedUp );
-	}
-
-	/**
-	 * Displays the given value on the Control Panel's progress bar.
-	 * @param val - the percent of the run that has completed.
-	 */
-	public void setProgress( int val ) {
-		if (lastValue == val)
-			return;
-
-		// Set the progress bar value
-		progressBar.setValue( val );
-		progressBar.repaint(25);
-		lastValue = val;
 	}
 
 	/**
