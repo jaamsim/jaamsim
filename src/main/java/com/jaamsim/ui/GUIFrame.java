@@ -2949,8 +2949,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 
 				GUIFrame.this.stopSimulation();
-				initSpeedUp(0.0d);
-				tickUpdate(0L);
 			}
 		} );
 		mainToolBar.add( controlStop );
@@ -3121,8 +3119,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JaamSimModel sim = getJaamSimModel();
 
 		// Set the simulation time display
-		String unit = getJaamSimModel().getDisplayedUnit(TimeUnit.class);
-		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
+		String unit = sim.getDisplayedUnit(TimeUnit.class);
+		double factor = sim.getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
 		int simProgress = 0;
@@ -3264,7 +3262,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (RunProgressBox.hasInstance())
 				RunProgressBox.getInstance().dispose();
 			FrameBox.stop();
-			this.updateForSimulationState();
+			updateForSimulationState();
+			initSpeedUp(0.0d);
+			tickUpdate(0L);
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
