@@ -537,38 +537,6 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	/**
-	 * Performs the first stage of initialization for each entity.
-	 */
-	public void earlyInit() {
-		thresholdChangedTarget.users.clear();
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			each.earlyInit();
-		}
-	}
-
-	/**
-	 * Performs the second stage of initialization for each entity.
-	 */
-	public void lateInit() {
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			each.lateInit();
-		}
-	}
-
-	/**
-	 * Performs the start-up procedure for each entity.
-	 */
-	public void startUp() {
-		double startTime = getSimulation().getStartTime();
-		long startTicks = eventManager.secondsToNearestTick(startTime);
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			if (!each.isActive())
-				continue;
-			EventManager.scheduleTicks(startTicks, 0, true, new StartUpTarget(each), null);
-		}
-	}
-
-	/**
 	 * Performs the shut down procedure for each entity.
 	 */
 	public void close() {
@@ -670,14 +638,26 @@ public class JaamSimModel implements EventTimeListener {
 		//System.out.format("%ninit%n");
 		Simulation simulation = this.getSimulation();
 
-		// Initialise each entity
-		this.earlyInit();
-		this.lateInit();
+		// Early Initialization
+		this.thresholdChangedTarget.users.clear();
+		for (Entity each : this.getClonesOfIterator(Entity.class)) {
+			each.earlyInit();
+		}
 
-		// Start each entity
-		this.startUp();
+		// Late Initialization
+		for (Entity each : this.getClonesOfIterator(Entity.class)) {
+			each.lateInit();
+		}
 
-		// Schedule the initialisation period
+		// Schedule a starting event for each active Entity at the startup time
+		long startTicks = eventManager.secondsToNearestTick(simulation.getStartTime());
+		for (Entity each : this.getClonesOfIterator(Entity.class)) {
+			if (!each.isActive())
+				continue;
+			EventManager.scheduleTicks(startTicks, 0, true, new StartUpTarget(each), null);
+		}
+
+		// Schedule the statistics initialization period
 		if (simulation.getInitializationTime() > 0.0) {
 			double clearTime = simulation.getStartTime() + simulation.getInitializationTime();
 			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(this), null);
