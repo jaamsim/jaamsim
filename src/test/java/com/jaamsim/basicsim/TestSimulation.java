@@ -135,7 +135,7 @@ public class TestSimulation {
 		URL url = TestSimulation.class.getResource("Test0001.cfg");
 		InputAgent.readResource(simModel, url.toString());
 
-		simModel.initRun();
+		simModel.getEventManager().scheduleProcessExternal(0, 0, false, new InitModelTarget(simModel), null);
 		TestFrameworkHelpers.runEventsToTick(simModel.getEventManager(), Long.MAX_VALUE, 1000);
 	}
 

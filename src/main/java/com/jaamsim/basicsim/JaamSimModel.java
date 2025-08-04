@@ -527,12 +527,8 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		eventManager.setTickLength(getSimulation().getTickLength());
-		initRun();
-		resume();
-	}
-
-	void initRun() {
 		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
+		resume();
 	}
 
 	/**
