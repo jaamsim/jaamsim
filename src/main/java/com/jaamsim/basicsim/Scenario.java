@@ -69,7 +69,10 @@ public class Scenario {
 		}
 	}
 
-	public void recordRun(SimRun run) {
+	private void recordRun(SimRun run) {
+		if (run.isError())
+			return;
+
 		if (run.getRunOutputValues().size() != runStatistics.size())
 			throw new ErrorException("List sizes do not match");
 
@@ -141,9 +144,8 @@ public class Scenario {
 	}
 
 	public void runEnded(SimRun run) {
-		if (!run.isError())
-			recordRun(run);
 		synchronized (this) {
+			recordRun(run);
 			runsInProgress.remove(run);
 			runsCompleted.add(run);
 		}
