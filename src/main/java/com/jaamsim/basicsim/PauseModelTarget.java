@@ -17,13 +17,17 @@
  */
 package com.jaamsim.basicsim;
 
+import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
 class PauseModelTarget extends ProcessTarget {
 	final JaamSimModel simModel;
+	final Conditional condition;
 
 	PauseModelTarget(JaamSimModel model) {
 		simModel = model;
+		condition = new PauseModelCondition(model);
 	}
 
 	@Override
@@ -34,5 +38,19 @@ class PauseModelTarget extends ProcessTarget {
 	@Override
 	public void process() {
 		simModel.event_pause();
+	}
+
+	private class PauseModelCondition extends Conditional {
+		final JaamSimModel simModel;
+
+		PauseModelCondition(JaamSimModel model) {
+			simModel = model;
+		}
+
+		@Override
+		public boolean evaluate() {
+			double simTime = EventManager.simSeconds();
+			return simModel.getSimulation().isPauseConditionSatisfied(simTime);
+		}
 	}
 }

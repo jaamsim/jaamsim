@@ -37,7 +37,6 @@ import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
@@ -547,14 +546,6 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);
 
-	private final Conditional pauseCondition = new Conditional() {
-		@Override
-		public boolean evaluate() {
-			double simTime = EventManager.simSeconds();
-			return getSimulation().isPauseConditionSatisfied(simTime);
-		}
-	};
-
 	/**
 	 * Reset the statistics for each entity.
 	 */
@@ -664,7 +655,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Start checking the pause condition
 		if (simulation.isPauseConditionSet())
-			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
+			EventManager.scheduleUntil(pauseModelTarget, pauseModelTarget.condition, null);
 	}
 
 	void event_pause() {
@@ -681,7 +672,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		// When the run is resumed, continue to check the pause condition
 		if (simulation.isPauseConditionSet())
-			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
+			EventManager.scheduleUntil(pauseModelTarget, pauseModelTarget.condition, null);
 	}
 
 	/**
