@@ -19,10 +19,10 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.events.ProcessTarget;
 
-public class PauseModelTarget extends ProcessTarget {
+class PauseModelTarget extends ProcessTarget {
 	final JaamSimModel simModel;
 
-	public PauseModelTarget(JaamSimModel model) {
+	PauseModelTarget(JaamSimModel model) {
 		simModel = model;
 	}
 

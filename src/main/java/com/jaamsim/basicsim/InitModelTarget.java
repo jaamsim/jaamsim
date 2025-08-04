@@ -19,10 +19,10 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.events.ProcessTarget;
 
-public class InitModelTarget extends ProcessTarget {
+class InitModelTarget extends ProcessTarget {
 	final JaamSimModel simModel;
 
-	public InitModelTarget(JaamSimModel model) {
+	InitModelTarget(JaamSimModel model) {
 		simModel = model;
 	}
 
