@@ -664,6 +664,23 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
+
+	void event_pause() {
+		Simulation simulation = this.getSimulation();
+
+		// If specified, terminate the simulation run
+		if (simulation.getExitAtPauseCondition()) {
+			this.event_end();
+			return;
+		}
+
+		// Pause the simulation run
+		pause();
+
+		// When the run is resumed, continue to check the pause condition
+		doPauseCondition();
+	}
+
 	/**
 	 * Prepares the model for the next simulation run number.
 	 */

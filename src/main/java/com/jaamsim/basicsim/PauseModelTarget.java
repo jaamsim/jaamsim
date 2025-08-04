@@ -20,7 +20,6 @@ package com.jaamsim.basicsim;
 import com.jaamsim.events.ProcessTarget;
 
 public class PauseModelTarget extends ProcessTarget {
-
 	final JaamSimModel simModel;
 
 	public PauseModelTarget(JaamSimModel model) {
@@ -29,24 +28,11 @@ public class PauseModelTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return "SimulationPaused";
+		return "Simulation.pause";
 	}
 
 	@Override
 	public void process() {
-		Simulation simulation = simModel.getSimulation();
-
-		// If specified, terminate the simulation run
-		if (simulation.getExitAtPauseCondition()) {
-			simModel.event_end();
-			return;
-		}
-
-		// Pause the simulation run
-		simModel.pause();
-
-		// When the run is resumed, continue to check the pause condition
-		simModel.doPauseCondition();
+		simModel.event_pause();
 	}
-
 }
