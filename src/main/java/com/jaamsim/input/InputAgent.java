@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.AbstractDirectedEntity;
 import com.jaamsim.Graphics.EntityLabel;
+import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
@@ -1399,21 +1400,22 @@ public class InputAgent {
 		}
 
 		// Mean value and confidence interval for each output
-		double[] values = scene.getMeanValues();
-		double[] intervals = scene.getConfidenceIntervals();
-		for (int i = 0; i < values.length; i++) {
+		ArrayList<SampleStatistics> stats = scene.getRunStatistics();
+		for (int i = 0; i < stats.size(); i++) {
 			if (i > 0)
 				sb.append("\t");
 
+			double mean = stats.get(i).getMean();
 			// Mean value
-			if (!Double.isNaN(values[i]))
-				sb.append(values[i]);
+			if (!Double.isNaN(mean))
+				sb.append(mean);
 
 			// Confidence interval
+			double interval95 = stats.get(i).getConfidenceInterval95();
 			if (bool) {
 				sb.append("\t");
-				if (!Double.isNaN(intervals[i]))
-					sb.append(intervals[i]);
+				if (!Double.isNaN(interval95))
+					sb.append(interval95);
 			}
 		}
 

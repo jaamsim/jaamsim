@@ -103,20 +103,8 @@ public class Scenario {
 		return ret;
 	}
 
-	public double[] getMeanValues() {
-		double[] ret = new double[runStatistics.size()];
-		for (int i = 0; i < runStatistics.size(); i++) {
-			ret[i] = runStatistics.get(i).getMean();
-		}
-		return ret;
-	}
-
-	public double[] getConfidenceIntervals() {
-		double[] ret = new double[runStatistics.size()];
-		for (int i = 0; i < runStatistics.size(); i++) {
-			ret[i] = runStatistics.get(i).getConfidenceInterval95();
-		}
-		return ret;
+	public ArrayList<SampleStatistics> getRunStatistics() {
+		return runStatistics;
 	}
 
 	public boolean hasRunsToStart() {
