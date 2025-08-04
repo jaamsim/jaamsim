@@ -630,17 +630,6 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	/**
-	 * Executes the end of run method for each entity.
-	 */
-	public void doEnd() {
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			if (!each.isActive())
-				continue;
-			each.doEnd();
-		}
-	}
-
-	/**
 	 * Sets the simulation time to zero and re-initializes the model.
 	 * The start() method can be used to begin a new simulation run.
 	 */
@@ -678,10 +667,14 @@ public class JaamSimModel implements EventTimeListener {
 	/**
 	 * Prepares the model for the next simulation run number.
 	 */
-	public void endRun() {
-
+	void event_end() {
+		hasEnded.set(true);
 		// Execute the end of run method for each entity
-		doEnd();
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (!each.isActive())
+				continue;
+			each.doEnd();
+		}
 
 		// Stop the model
 		pause();
