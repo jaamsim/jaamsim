@@ -20,7 +20,6 @@ package com.jaamsim.basicsim;
 import com.jaamsim.events.ProcessTarget;
 
 class EndModelTarget extends ProcessTarget {
-
 	final JaamSimModel simModel;
 
 	EndModelTarget(JaamSimModel model) {

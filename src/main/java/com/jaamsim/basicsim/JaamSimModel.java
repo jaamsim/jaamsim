@@ -665,6 +665,32 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 
+	void event_init() {
+		hasStarted.set(true);
+		//System.out.format("%ninit%n");
+		Simulation simulation = this.getSimulation();
+
+		// Initialise each entity
+		this.earlyInit();
+		this.lateInit();
+
+		// Start each entity
+		this.startUp();
+
+		// Schedule the initialisation period
+		if (simulation.getInitializationTime() > 0.0) {
+			double clearTime = simulation.getStartTime() + simulation.getInitializationTime();
+			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(this), null);
+		}
+
+		// Schedule the end of the simulation run
+		double endTime = simulation.getEndTime();
+		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(this), null);
+
+		// Start checking the pause condition
+		this.doPauseCondition();
+	}
+
 	void event_pause() {
 		Simulation simulation = this.getSimulation();
 

@@ -17,11 +17,9 @@
  */
 package com.jaamsim.basicsim;
 
-import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
 public class InitModelTarget extends ProcessTarget {
-
 	final JaamSimModel simModel;
 
 	public InitModelTarget(JaamSimModel model) {
@@ -35,28 +33,6 @@ public class InitModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		//System.out.format("%ninit%n");
-		Simulation simulation = simModel.getSimulation();
-
-		simModel.hasStarted.set(true);
-		// Initialise each entity
-		simModel.earlyInit();
-		simModel.lateInit();
-
-		// Start each entity
-		simModel.startUp();
-
-		// Schedule the initialisation period
-		if (simulation.getInitializationTime() > 0.0) {
-			double clearTime = simulation.getStartTime() + simulation.getInitializationTime();
-			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(simModel), null);
-		}
-
-		// Schedule the end of the simulation run
-		double endTime = simulation.getEndTime();
-		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(simModel), null);
-
-		// Start checking the pause condition
-		simModel.doPauseCondition();
+		simModel.event_init();
 	}
 }
