@@ -906,14 +906,6 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Returns the end time of the run.
-	 * @return - simulation time in seconds when the current run will stop.
-	 */
-	public double getEndTime() {
-		return getStartTime() + getInitializationTime() + getRunDuration();
-	}
-
-	/**
 	 * Returns the duration of the run (not including intialization)
 	 */
 	public double getRunDuration() {

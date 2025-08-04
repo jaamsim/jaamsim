@@ -19,11 +19,10 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.events.ProcessTarget;
 
-public class ClearStatisticsTarget extends ProcessTarget {
-
+class ClearStatisticsTarget extends ProcessTarget {
 	final JaamSimModel simModel;
 
-	public ClearStatisticsTarget(JaamSimModel model) {
+	ClearStatisticsTarget(JaamSimModel model) {
 		simModel = model;
 	}
 
@@ -34,7 +33,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		simModel.clearStatistics();
+		simModel.event_clearStatistics();
 	}
 
 }

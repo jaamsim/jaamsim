@@ -545,11 +545,6 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
-	public void doPauseCondition() {
-		if (getSimulation().isPauseConditionSet())
-			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
-	}
-
 	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);
 
 	private final Conditional pauseCondition = new Conditional() {
@@ -563,7 +558,7 @@ public class JaamSimModel implements EventTimeListener {
 	/**
 	 * Reset the statistics for each entity.
 	 */
-	public void clearStatistics() {
+	public void event_clearStatistics() {
 		for (Entity ent : getClonesOfIterator(Entity.class)) {
 			if (!ent.isActive())
 				continue;
@@ -651,24 +646,25 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Schedule a starting event for each active Entity at the startup time
 		long startTicks = eventManager.secondsToNearestTick(simulation.getStartTime());
+		long initTicks = eventManager.secondsToNearestTick(simulation.getInitializationTime());
+		long durationTicks = eventManager.secondsToNearestTick(simulation.getRunDuration());
+
 		for (Entity each : this.getClonesOfIterator(Entity.class)) {
 			if (!each.isActive())
 				continue;
 			EventManager.scheduleTicks(startTicks, 0, true, new StartUpTarget(each), null);
 		}
 
-		// Schedule the statistics initialization period
-		if (simulation.getInitializationTime() > 0.0) {
-			double clearTime = simulation.getStartTime() + simulation.getInitializationTime();
-			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(this), null);
-		}
+		// Schedule the statistics initialization if one has been set
+		if (initTicks > 0)
+			EventManager.scheduleTicks(startTicks + initTicks, 5, false, new ClearStatisticsTarget(this), null);
 
 		// Schedule the end of the simulation run
-		double endTime = simulation.getEndTime();
-		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(this), null);
+		EventManager.scheduleTicks(startTicks + initTicks + durationTicks, 5, false, new EndModelTarget(this), null);
 
 		// Start checking the pause condition
-		this.doPauseCondition();
+		if (simulation.isPauseConditionSet())
+			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
 	}
 
 	void event_pause() {
@@ -684,7 +680,8 @@ public class JaamSimModel implements EventTimeListener {
 		pause();
 
 		// When the run is resumed, continue to check the pause condition
-		doPauseCondition();
+		if (simulation.isPauseConditionSet())
+			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
 	}
 
 	/**
