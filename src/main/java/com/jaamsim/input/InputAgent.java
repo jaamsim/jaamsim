@@ -1379,9 +1379,7 @@ public class InputAgent {
 			for (SimRun run : runList) {
 				if (!run.isError())
 					continue;
-				String msg = "";
-				if (!run.getRunOutputStrings().isEmpty())
-					msg = run.getRunOutputStrings().get(0);
+				String msg = run.getErrorMessage();
 				outStream.format("%s\tError in replication %s - %s%n",
 						run.getScenario().getScenarioNumber(), run.getReplicationNumber(), msg);
 			}

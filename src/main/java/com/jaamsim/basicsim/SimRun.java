@@ -24,13 +24,13 @@ import java.util.ArrayList;
  *
  */
 public class SimRun implements RunListener {
-	private final int replicationNumber;  // replication number
+	private final Scenario scen;
+	private final int replicationNumber;
 	private JaamSimModel simModel;        // simulation model to be executed
-	private final Scenario scen;   // notifies the Scenario that the run has ended
 	private ArrayList<Double> runOutputValues;
 	private ArrayList<String> runOutputStrings;
 	private ArrayList<String> runParameterStrings;
-	private boolean errorFlag;
+	private String errorMessage;
 
 	/**
 	 * Constructs a SimRun object for the given scenario and replications numbers.
@@ -59,7 +59,11 @@ public class SimRun implements RunListener {
 	}
 
 	public boolean isError() {
-		return errorFlag;
+		return errorMessage != null;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
 	}
 
 	/**
@@ -85,24 +89,20 @@ public class SimRun implements RunListener {
 
 	@Override
 	public void runEnded() {
-
-		// Save the RunOutputList values for the run
 		double simTime = simModel.getSimTime();
 		runOutputValues = simModel.getSimulation().getRunOutputValues(simTime);
 		runOutputStrings = simModel.getSimulation().getRunOutputStrings(simTime);
 		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
-
-		// Notify the listener
 		scen.runEnded(this);
 	}
 
 	@Override
 	public void handleError(Throwable t) {
 		double simTime = simModel.getSimTime();
-		runOutputStrings = new ArrayList<>(1);
-		runOutputStrings.add(t.getMessage());
 		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
-		errorFlag = true;
+		errorMessage = t.getMessage();
+		if (errorMessage == null)
+			errorMessage = "";
 		scen.runEnded(this);
 	}
 
