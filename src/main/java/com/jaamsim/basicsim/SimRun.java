@@ -41,9 +41,6 @@ public class SimRun implements RunListener {
 	public SimRun(int rep, Scenario s) {
 		replicationNumber = rep;
 		scen = s;
-		runOutputValues = new ArrayList<>();
-		runOutputStrings = new ArrayList<>();
-		runParameterStrings = new ArrayList<>();
 	}
 
 	public JaamSimModel getJaamSimModel() {
