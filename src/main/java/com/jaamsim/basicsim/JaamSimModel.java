@@ -265,14 +265,6 @@ public class JaamSimModel implements EventTimeListener {
 		name = str;
 	}
 
-	public final void setRunListener(RunListener l) {
-		runListener = l;
-	}
-
-	public final RunListener getRunListener() {
-		return runListener;
-	}
-
 	public void setGUIListener(GUIListener l) {
 		gui = l;
 	}
@@ -493,7 +485,8 @@ public class JaamSimModel implements EventTimeListener {
 		return true;
 	}
 
-	public void start() {
+	public void start(RunListener l) {
+		runListener = l;
 		boolean bool = validate();
 		if (!bool)
 			return;

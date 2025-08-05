@@ -174,8 +174,7 @@ public class TestDistributionFunctions implements RunListener {
 		);
 
 		// Start the simulation run on a new thread
-		simModel.setRunListener(this);
-		simModel.start();
+		simModel.start(this);
 
 		// Wait for the run to finish
 		long timeoutMS = 5000L;

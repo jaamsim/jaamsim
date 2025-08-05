@@ -157,8 +157,7 @@ public class TestSimulation {
 
 		// Perform the simulation run
 		WaitForPauseListener listener = new WaitForPauseListener(simModel);
-		simModel.setRunListener(listener);
-		simModel.start();
+		simModel.start(listener);
 		listener.waitForPause(1000L);
 
 		// Test the results
@@ -197,14 +196,12 @@ public class TestSimulation {
 		simModel2.setInput("Simulation", "RunDuration", "1000 s");
 
 		WaitForPauseListener listener = new WaitForPauseListener(simModel);
-		simModel.setRunListener(listener);
 
 		WaitForPauseListener listener2 = new WaitForPauseListener(simModel2);
-		simModel2.setRunListener(listener2);
 
 		// Start both runs
-		simModel.start();
-		simModel2.start();
+		simModel.start(listener);
+		simModel2.start(listener2);
 
 		// Wait for both runs to finish
 		listener.waitForPause(1000L);
@@ -251,8 +248,7 @@ public class TestSimulation {
 			// Run the model for one hour
 			long nanos = System.nanoTime();
 			WaitForPauseListener listener = new WaitForPauseListener(simModel);
-			simModel.setRunListener(listener);
-			simModel.start();
+			simModel.start(listener);
 			listener.waitForPause(5000L);
 			nanos = System.nanoTime() - nanos;
 			System.out.format("completed at simTime=%s, millis=%s%n", simModel.getSimTime(), nanos/1000000L);

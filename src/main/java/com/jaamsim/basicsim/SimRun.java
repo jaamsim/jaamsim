@@ -80,8 +80,7 @@ public class SimRun implements RunListener {
 		simModel.killGeneratedEntities();
 
 		// Start the run
-		simModel.setRunListener(this);
-		simModel.start();
+		simModel.start(this);
 	}
 
 	@Override
