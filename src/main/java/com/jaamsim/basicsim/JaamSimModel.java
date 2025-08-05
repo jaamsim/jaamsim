@@ -543,24 +543,6 @@ public class JaamSimModel implements EventTimeListener {
 	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);
 
 	/**
-	 * Reset the statistics for each entity.
-	 */
-	public void event_clearStatistics() {
-		for (Entity ent : getClonesOfIterator(Entity.class)) {
-			if (!ent.isActive())
-				continue;
-			ent.clearStatistics();
-		}
-
-		// Reset state statistics
-		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {
-			if (!each.isActive())
-				continue;
-			each.collectInitializationStats();
-		}
-	}
-
-	/**
 	 * Suspends model execution at the present simulation time.
 	 */
 	public void pause() {
@@ -669,6 +651,24 @@ public class JaamSimModel implements EventTimeListener {
 		// When the run is resumed, continue to check the pause condition
 		if (simulation.isPauseConditionSet())
 			EventManager.scheduleUntil(pauseModelTarget, pauseModelTarget.condition, null);
+	}
+
+	/**
+	 * Reset the statistics for each entity.
+	 */
+	void event_clearStatistics() {
+		for (Entity ent : getClonesOfIterator(Entity.class)) {
+			if (!ent.isActive())
+				continue;
+			ent.clearStatistics();
+		}
+
+		// Reset state statistics
+		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {
+			if (!each.isActive())
+				continue;
+			each.collectInitializationStats();
+		}
 	}
 
 	/**
