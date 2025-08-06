@@ -29,15 +29,16 @@ import com.jaamsim.input.InputErrorException;
  * Class encapsulating file input/output methods and file access.
  */
 public class FileEntity {
-
+	private final JaamSimModel sm;
 	private File backingFileObject;
 	private BufferedWriter outputStream;
 
-	public FileEntity(File file) {
-		this(file, false);
+	public FileEntity(JaamSimModel model, File file) {
+		this(model, file, false);
 	}
 
-	public FileEntity(File file, boolean append) {
+	public FileEntity(JaamSimModel model, File file, boolean append) {
+		sm = model;
 		backingFileObject = file;
 
 		try {
@@ -69,7 +70,7 @@ public class FileEntity {
 		}
 		catch( IOException e ) {
 			outputStream = null;
-			InputAgent.logMessage( "Unable to close FileEntity: " + backingFileObject.getName() );
+			InputAgent.logMessage(sm, "Unable to close FileEntity: " + backingFileObject.getName());
 		}
 	}
 

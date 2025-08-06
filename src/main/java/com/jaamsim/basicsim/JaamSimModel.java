@@ -1538,7 +1538,7 @@ public class JaamSimModel implements EventTimeListener {
 			File f = new File(logURI.getPath());
 			if (f.exists() && !f.delete())
 				throw new Exception("Cannot delete an existing log file.");
-			logFile = new FileEntity(f);
+			logFile = new FileEntity(this, f);
 		}
 		catch( Exception e ) {
 			InputAgent.logWarning(this, "Could not create log file.%n%s", e.getMessage());

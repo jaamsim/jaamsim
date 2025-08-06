@@ -677,7 +677,7 @@ public class InputAgent {
 		File f = new File(fileName);
 		if (f.exists() && !f.delete())
 			throw new ErrorException("Cannot delete the existing input report file %s", f);
-		FileEntity inputReportFile = new FileEntity(f);
+		FileEntity inputReportFile = new FileEntity(simModel, f);
 
 		ArrayList<ObjectType> objectTypes = new ArrayList<>();
 		for (ObjectType type : simModel.getObjectTypes())
@@ -1004,7 +1004,7 @@ public class InputAgent {
 		}
 
 		// Create the new configuration file and copy the saved lines
-		FileEntity file = new FileEntity(f);
+		FileEntity file = new FileEntity(simModel, f);
 		for( int i=0; i < preAddedRecordLines.size(); i++ ) {
 			file.format("%s%n", preAddedRecordLines.get( i ));
 		}
@@ -1242,7 +1242,7 @@ public class InputAgent {
 		Collections.sort(entityList, uiEntitySortOrder);
 
 		// Save the definitions and inputs
-		FileEntity file = new FileEntity(f);
+		FileEntity file = new FileEntity(entity.getJaamSimModel(), f);
 		saveDefinitions(entityList, file);
 		saveInputs(entityList, file);
 

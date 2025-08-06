@@ -288,7 +288,7 @@ public class RunManager {
 			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				throw new ErrorException("Cannot delete the existing report file %s", f);
-			reportFile = new FileEntity(f);
+			reportFile = new FileEntity(simModel, f);
 		}
 		return reportFile;
 	}

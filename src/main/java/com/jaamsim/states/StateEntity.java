@@ -110,7 +110,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				error("Cannot delete the existing trace file %s", f);
-			stateReportFile = new FileEntity(f);
+			stateReportFile = new FileEntity(simModel, f);
 		}
 	}
 
