@@ -163,7 +163,7 @@ public class InputAgent {
 	 */
 	public static final boolean readStream(JaamSimModel simModel, String jailPrefix, URI context,
 			String filePath) throws URISyntaxException {
-		URI resolved = getFileURI(context, filePath, jailPrefix);
+		URI resolved = getFileURI(simModel, context, filePath, jailPrefix);
 
 		URL url = null;
 		try {
@@ -2007,7 +2007,7 @@ public class InputAgent {
 	 * @param jailPrefix - file path to a base folder from which a relative cannot escape.
 	 * @return the URI corresponding to the context and filePath.
 	 */
-	public static URI getFileURI(URI context, String filePath, String jailPrefix) throws URISyntaxException {
+	public static URI getFileURI(JaamSimModel sm, URI context, String filePath, String jailPrefix) throws URISyntaxException {
 
 		// Replace all backslashes with slashes
 		String path = filePath.replaceAll("\\\\", "/");
@@ -2060,7 +2060,7 @@ public class InputAgent {
 
 		// Check that the file path includes the jail folder
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
-			InputAgent.logMessage("Failed jail test: %s\n"
+			InputAgent.logMessage(sm, "Failed jail test: %s\n"
 					+ "jail: %s\n"
 					+ "context: %s\n",
 					ret.toString(), jailPrefix, context.toString());

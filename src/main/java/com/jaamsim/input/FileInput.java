@@ -52,7 +52,7 @@ public class FileInput extends Input<URI> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		URI temp = Input.parseURI(kw);
+		URI temp = Input.parseURI(thisEnt.getJaamSimModel(), kw);
 
 		// Confirm that the file exists
 		if (!InputAgent.fileExists(temp))

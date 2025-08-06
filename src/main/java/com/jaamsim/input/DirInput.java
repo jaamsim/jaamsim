@@ -35,7 +35,7 @@ public class DirInput extends StringInput {
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 
-		URI temp = Input.parseURI(kw);
+		URI temp = Input.parseURI(thisEnt.getJaamSimModel(), kw);
 
 		// If there is no context (e.g. reading from Input Editor),
 		// and a config file exists, then resolve the config file uri against this one

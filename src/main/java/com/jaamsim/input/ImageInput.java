@@ -32,7 +32,7 @@ public class ImageInput extends Input<BufferedImage> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		BufferedImage temp;
-		URI uri = Input.parseURI(kw);
+		URI uri = Input.parseURI(thisEnt.getJaamSimModel(), kw);
 
 		// Confirm that the file exists
 		if (!InputAgent.fileExists(uri))

@@ -30,11 +30,11 @@ import com.jaamsim.BooleanProviders.BooleanProvider;
 import com.jaamsim.ColourProviders.ColourProvConstant;
 import com.jaamsim.ColourProviders.ColourProvExpression;
 import com.jaamsim.ColourProviders.ColourProvider;
+import com.jaamsim.EntityProviders.EntityListProvider;
 import com.jaamsim.EntityProviders.EntityProvConstant;
 import com.jaamsim.EntityProviders.EntityProvExpression;
 import com.jaamsim.EntityProviders.EntityProvGroup;
 import com.jaamsim.EntityProviders.EntityProvider;
-import com.jaamsim.EntityProviders.EntityListProvider;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleProvider;
@@ -1020,7 +1020,7 @@ public abstract class Input<T> {
 	 * @return the URI corresponding to the file path data.
 	 * @throws InputErrorException
 	 */
-	public static URI parseURI(KeywordIndex kw)
+	public static URI parseURI(JaamSimModel sm, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 
@@ -1030,9 +1030,9 @@ public abstract class Input<T> {
 		URI uri = null;
 		try {
 			if (kw.context != null)
-				uri = InputAgent.getFileURI(kw.context.context, arg, kw.context.jail);
+				uri = InputAgent.getFileURI(sm, kw.context.context, arg, kw.context.jail);
 			else
-				uri = InputAgent.getFileURI(null, arg, null);
+				uri = InputAgent.getFileURI(sm, null, arg, null);
 		}
 		catch (URISyntaxException ex) {
 			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
