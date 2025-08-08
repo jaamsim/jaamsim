@@ -1271,8 +1271,10 @@ public class InputAgent {
 
 	static void writeStubOutputDefs(FileEntity file, Entity ent) {
 		for (Input<?> in : ent.getEditableInputs()) {
+			if (!in.isEdited())
+				continue;
 			String stub = in.getStubDefinition();
-			if (stub == null || in.isDef())
+			if (stub == null)
 				continue;
 			file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), stub);
 		}
