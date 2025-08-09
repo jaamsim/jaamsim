@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021-2024 JaamSim Software Inc.
+ * Copyright (C) 2021-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,4 +87,10 @@ public abstract class ValueHandle {
 
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
 }
