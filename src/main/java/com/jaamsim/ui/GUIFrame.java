@@ -2998,13 +2998,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		spinner = new JSpinner(numberModel);
 
 		// show up to 6 decimal places
-		JSpinner.NumberEditor numberEditor = new JSpinner.NumberEditor(spinner,"0.######");
+		JSpinner.NumberEditor numberEditor = new JSpinner.NumberEditor(spinner,"#,##0.######");
 		spinner.setEditor(numberEditor);
 
-		// make sure spinner TextField is no wider than 9 digits
+		// Set the width of the spinner TextField
 		int diff =
 			((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().getPreferredSize().width -
-			getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
+			getPixelWidthOfString_ForFont("100,000,000", spinner.getFont());
 		Dimension dim = spinner.getPreferredSize();
 		dim.width -= diff;
 		spinner.setPreferredSize(dim);
