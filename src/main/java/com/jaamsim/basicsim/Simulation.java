@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -268,7 +268,7 @@ public class Simulation extends Entity {
 
 	public static final double DEFAULT_REAL_TIME_FACTOR = 1;
 	public static final double MIN_REAL_TIME_FACTOR = 1e-6;
-	public static final double MAX_REAL_TIME_FACTOR = 1e6;
+	public static final double MAX_REAL_TIME_FACTOR = 1e8;
 
 	@Keyword(description = "The time at which the simulation will be paused.",
 	         exampleList = {"200 h"})
