@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -423,8 +423,12 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		return (simTime == lastUpdateTime);
 	}
 
-	protected final double getRemainingDuration() {
-		return duration;
+	protected final double getRemainingDuration(double simTime) {
+		double ret = duration;
+		if (isBusy()) {
+			ret -= simTime - lastUpdateTime;
+		}
+		return ret;
 	}
 
 	// ********************************************************************************************

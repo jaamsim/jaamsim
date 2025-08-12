@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,14 +132,7 @@ public class Server extends LinkedService {
 	    unitType = TimeUnit.class,
 	    sequence = 2)
 	public double getServicePerformed(double simTime) {
-		if (servedEntity == null) {
-			return 0.0d;
-		}
-		double ret = serviceDuration - getRemainingDuration();
-		if (isBusy()) {
-			ret += simTime - getLastUpdateTime();
-		}
-		return ret;
+		return serviceDuration - getRemainingDuration(simTime);
 	}
 
 	@Output(name = "FractionCompleted",
