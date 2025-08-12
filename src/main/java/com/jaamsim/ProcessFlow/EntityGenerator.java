@@ -265,15 +265,4 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		return presentIAT - getRemainingDuration(simTime);
 	}
 
-	@Output(name = "FractionCompleted",
-	 description = "The portion of the total working time towards the creation of the next entity "
-	             + "that has been completed.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 4)
-	public double getFractionCompleted(double simTime) {
-		if (presentIAT == 0.0d)
-			return 0.0d;
-		return getElapsedTime(simTime)/presentIAT;
-	}
-
 }

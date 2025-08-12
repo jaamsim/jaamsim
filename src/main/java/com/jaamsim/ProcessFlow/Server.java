@@ -20,8 +20,6 @@ package com.jaamsim.ProcessFlow;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -117,34 +115,6 @@ public class Server extends LinkedService {
 		if (servedEntity == null)
 			return;
 		moveToProcessPosition(servedEntity);
-	}
-
-	@Output(name = "ServiceDuration",
-	 description = "The total working time required for the present service activity.",
-	    unitType = TimeUnit.class,
-	    sequence = 1)
-	public double getServiceDuration(double simTime) {
-		return serviceDuration;
-	}
-
-	@Output(name = "ServicePerformed",
-	 description = "The working time that has been completed for the present service activity.",
-	    unitType = TimeUnit.class,
-	    sequence = 2)
-	public double getServicePerformed(double simTime) {
-		return serviceDuration - getRemainingDuration(simTime);
-	}
-
-	@Output(name = "FractionCompleted",
-	 description = "The portion of the total service time for the present service activity that "
-	             + "has been completed.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 3)
-	public double getFractionCompleted(double simTime) {
-		if (servedEntity == null) {
-			return 0.0d;
-		}
-		return getServicePerformed(simTime)/serviceDuration;
 	}
 
 }

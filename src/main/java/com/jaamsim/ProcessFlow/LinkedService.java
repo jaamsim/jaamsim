@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.TimeUnit;
 
 public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
@@ -404,6 +405,33 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	    sequence = 0)
 	public String getMatchValue(double simTime) {
 		return matchValue;
+	}
+
+	@Output(name = "ServiceDuration",
+	 description = "The total working time required for the present service activity.",
+	    unitType = TimeUnit.class,
+	    sequence = 1)
+	public double getServiceDuration(double simTime) {
+		return getDuration();
+	}
+
+	@Output(name = "ServicePerformed",
+	 description = "The working time that has been completed for the present service activity.",
+	    unitType = TimeUnit.class,
+	    sequence = 2)
+	public double getServicePerformed(double simTime) {
+		return getDuration() - getRemainingDuration(simTime);
+	}
+
+	@Output(name = "FractionCompleted",
+	 description = "The portion of the total service time for the present service activity that "
+	             + "has been completed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public double getFractionCompleted(double simTime) {
+		if (getDuration() <= 0.0d)
+			return 0.0d;
+		return getServicePerformed(simTime)/getDuration();
 	}
 
 }
