@@ -553,4 +553,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		return readyForNext;
 	}
 
+	@Override
+	// Delete 'MatchValue' output
+	public String getMatchValue(double simTime) {
+		return null;
+	}
+
 }

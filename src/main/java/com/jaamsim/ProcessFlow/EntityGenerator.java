@@ -240,6 +240,12 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		return ret;
 	}
 
+	@Override
+	// Delete 'MatchValue' output
+	public String getMatchValue(double simTime) {
+		return null;
+	}
+
 	@Output(name = "NumberGenerated",
 	 description = "The total number of entities generated, including the initialization period.",
 	    unitType = DimensionlessUnit.class,
