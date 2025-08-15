@@ -886,10 +886,6 @@ public class InputAgent {
 	private static final String inpErrPrefix = "*** INPUT ERROR *** %s%n";
 	private static final String wrnPrefix = "***WARNING*** %s%n";
 
-	public static void logMessage(String fmt, Object... args) {  //FIXME delete when possible
-		logMessage(null, fmt, args);
-	}
-
 	/**
 	 * Writes an error or warning message to standard error, the Log Viewer, and the Log File.
 	 * @param fmt - format for the message
@@ -899,13 +895,7 @@ public class InputAgent {
 		String msg = String.format(fmt, args);
 		LogBox.logLine(msg);
 		System.err.println(msg);
-		if (simModel == null)  //FIXME delete when possible
-			return;
 		simModel.logMessage(msg);
-	}
-
-	public static void logStackTrace(Throwable t) {  //FIXME delete when possible
-		logStackTrace(null, t);
 	}
 
 	/**
@@ -1266,8 +1256,12 @@ public class InputAgent {
 	}
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
-		file.format("%s %s { %s }%n",
-		            ent.getName(), in.getKeyword(), in.getInputString());
+		try {
+			file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getInputString());
+		}
+		catch (Exception e) {
+			InputAgent.logMessage(ent.getJaamSimModel(), "Error writing Entity:%s Keyword:%s", ent.getName(), in.getKeyword());
+		}
 	}
 
 	static void writeStubOutputDefs(FileEntity file, Entity ent) {

@@ -745,14 +745,7 @@ public abstract class Input<T> {
 	public final String getInputString() {
 		if (isDef) return "";
 		ArrayList<String> tmp = new ArrayList<>();
-		try {
-			getValueTokens(tmp);
-		} catch (Exception e) {
-			InputAgent.logMessage("Error in input, value has been cleared. Keyword: %s",
-					this.getKeyword());
-			InputAgent.logStackTrace(e);
-			this.reset();
-		}
+		getValueTokens(tmp);
 		return getValueString(tmp, false);
 	}
 
