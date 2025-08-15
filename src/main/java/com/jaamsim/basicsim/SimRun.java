@@ -75,10 +75,6 @@ public class SimRun implements RunListener {
 		simModel.setScenarioNumber(scen.getScenarioNumber());
 		simModel.setReplicationNumber(replicationNumber);
 
-		// Clear the model prior to the next run
-		simModel.getEventManager().clear();
-		simModel.killGeneratedEntities();
-
 		// Start the run
 		simModel.start(this);
 	}

@@ -490,6 +490,7 @@ public class JaamSimModel implements EventTimeListener {
 		if (!bool)
 			return;
 		prepareReportDirectory();
+		killGeneratedEntities();
 		eventManager.clear();
 		hasStarted.set(false);
 		hasEnded.set(false);
@@ -668,15 +669,14 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	void event_end() {
 		hasEnded.set(true);
+		pause();
+
 		// Execute the end of run method for each entity
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			if (!each.isActive())
 				continue;
 			each.doEnd();
 		}
-
-		// Stop the model
-		pause();
 
 		// Notify the run manager
 		if (runListener != null)
@@ -686,7 +686,7 @@ public class JaamSimModel implements EventTimeListener {
 	/**
 	 * Destroys the entities that were generated during the present simulation run.
 	 */
-	public void killGeneratedEntities() {
+	private void killGeneratedEntities() {
 		EntityListNode listNode = entityList.next;
 		while(listNode != entityList) {
 			Entity curEnt = listNode.ent;
