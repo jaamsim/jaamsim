@@ -524,7 +524,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 				entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
 			}
 			else {
-				entry.entity.setGlobalPosition(localPos);
+				entry.entity.setGlobalPosition(getGlobalPosition(localPos));
 			}
 
 			if (isRotateEntities(simTime)) {
