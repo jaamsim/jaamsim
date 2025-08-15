@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -31,6 +32,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
@@ -69,6 +71,7 @@ public class EditBox extends FrameBox {
 
 	private String lastCategory = null;
 	private String lastKeyword = null;
+	private Point lastViewPosition = null;
 
 	private EditBox() {
 		super( "Input Editor" );
@@ -101,10 +104,14 @@ public class EditBox extends FrameBox {
 			return;
 		}
 
+		// Save the previous category name and scroll position
 		if (currentEntity != null) {
 			int idx = jTabbedFrame.getSelectedIndex();
-			if (idx > -1)
+			if (idx > -1) {
 				lastCategory = jTabbedFrame.getTitleAt(idx);
+				JScrollPane jScrollPane = (JScrollPane) jTabbedFrame.getComponentAt(idx);
+				lastViewPosition = jScrollPane.getViewport().getViewPosition();
+			}
 		}
 
 		if (jTabbedFrame == null)
@@ -136,10 +143,24 @@ public class EditBox extends FrameBox {
 			curTab++;
 		}
 
-		// Set the keyword
+		// Set the selected category tab
 		if (jTabbedFrame.getTabCount() > 0)
 			jTabbedFrame.setSelectedIndex(initialTab);
-		editTableList.get(initialTab).selectKeyword(lastKeyword);
+
+		// Set the selected keyword
+		EditTable table = editTableList.get(initialTab);
+		int row = table.getRowForKeyword(lastKeyword);
+		table.getSelectionModel().setSelectionInterval(row, row);
+
+		// Scroll the table to the same position
+		if (row == 0 || lastViewPosition == null) {
+			Rectangle cellRectangle = table.getCellRect(row, 0, true);
+			table.scrollRectToVisible(cellRectangle);
+		}
+		else {
+			JViewport viewport = (JViewport) table.getParent();
+			viewport.setViewPosition(lastViewPosition);
+		}
 	}
 
 	public void setLastKeyword(String keyword) {
@@ -554,7 +575,7 @@ public static class EditTable extends JTable {
 		changeSelection(row, VALUE_COLUMN, false, false);
 	}
 
-	public void selectKeyword(String keyword) {
+	public int getRowForKeyword(String keyword) {
 		int selectedRow = 0;
 		for (int row = 0; row < getModel().getRowCount(); row++) {
 			Input<?> in = (Input<?>) getModel().getValueAt(row, 0);
@@ -563,7 +584,7 @@ public static class EditTable extends JTable {
 				break;
 			}
 		}
-		changeSelection(selectedRow, VALUE_COLUMN, false, false);
+		return selectedRow;
 	}
 
 }
