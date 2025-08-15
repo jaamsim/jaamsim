@@ -4623,11 +4623,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		System.exit(errorCode);
 	}
 
-	@Override
-	public void exit(int errorCode) {
-		shutdown(errorCode);
-	}
-
 	volatile long simTicks;
 
 	private static class UIUpdater implements Runnable {

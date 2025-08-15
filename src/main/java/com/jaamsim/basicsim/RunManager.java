@@ -199,7 +199,14 @@ public class RunManager {
 						reportFile.close();
 						reportFile = null;
 					}
-					simModel.end();
+					// Close warning/error trace file
+					LogBox.logLine("Made it to do end at");
+					simModel.closeLogFile();
+
+					// Always terminate the run when in batch mode
+					if (simModel.isBatchRun() || simulation.getExitAtStop()) {
+						GUIFrame.shutdown(0);
+					}
 
 					// Are there any runs with errors
 					ArrayList<SimRun> errorRuns = getErrorRuns();

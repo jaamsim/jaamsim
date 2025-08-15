@@ -52,7 +52,6 @@ import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.EventViewer;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
@@ -696,25 +695,6 @@ public class JaamSimModel implements EventTimeListener {
 			}
 			listNode = listNode.next;
 		}
-	}
-
-	/**
-	 * Ends a set of simulation runs.
-	 */
-	public void end() {
-
-		// Close warning/error trace file
-		LogBox.logLine("Made it to do end at");
-		closeLogFile();
-
-		// Always terminate the run when in batch mode
-		if (isBatchRun() || getSimulation().getExitAtStop()) {
-			if (gui != null)
-				gui.exit(0);
-			System.exit(0);
-		}
-
-		pause();
 	}
 
 	/**

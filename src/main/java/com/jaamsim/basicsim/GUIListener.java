@@ -26,7 +26,6 @@ import com.jaamsim.math.Vec3d;
 public interface GUIListener extends EventTimeListener {
 
 	public void handleInputError(Throwable t, Entity ent);
-	public void exit(int errorCode);
 	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector();
 	public void updateModelBuilder();
