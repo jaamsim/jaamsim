@@ -3149,8 +3149,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Do nothing further if the simulation is not executing events
 		if (!sim.isRunning()) {
-			setSpeedUp(0);
-			setRemaining(-1);
+			if (!sim.isStarted()) {
+				setSpeedUp(0);
+				setRemaining(-1);
+			}
 			return;
 		}
 
