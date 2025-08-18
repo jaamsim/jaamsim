@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2024 JaamSim Software Inc.
+ * Copyright (C) 2017-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3072,6 +3072,51 @@ public class ExpOperators {
 					}
 				}
 				return ExpValResult.makeValidRes(ExpResType.COLLECTION, DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("simTimeForDate", 3, 7, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				for (ExpResult arg : args) {
+					if (arg.unitType != DimensionlessUnit.class) {
+						throw new ExpError(source, pos, "All inputs must be dimensionless numbers");
+					}
+				}
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int year = (int) args[0].value;
+				int month = (int) args[1].value;
+				int dayOfMonth = (int) args[2].value;
+				int hourOfDay = (args.length > 3) ? (int) args[3].value : 0;
+				int minute = (args.length > 4) ? (int) args[4].value : 0;
+				int second = (args.length > 5) ? (int) args[5].value : 0;
+				int ms = (args.length > 6) ? (int) args[6].value : 0;
+				long millis = simModel.getCalendarMillis(year, month - 1, dayOfMonth, hourOfDay, minute, second, ms);
+				double simTime = simModel.calendarMillisToSimTime(millis);
+				return ExpResult.makeNumResult(simTime, TimeUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				for (ExpValResult arg : args) {
+					if (  arg.state == ExpValResult.State.ERROR ||
+					      arg.state == ExpValResult.State.UNDECIDABLE) {
+						return arg;
+					}
+				}
+				// Check that arguments are numbers
+				for (ExpValResult arg : args) {
+					if (arg.type != ExpResType.NUMBER) {
+						ExpError error = new ExpError(source, pos, "All inputs must be dimensionless numbers");
+						return ExpValResult.makeErrorRes(error);
+					}
+				}
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, TimeUnit.class);
 			}
 		});
 

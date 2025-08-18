@@ -2225,6 +2225,19 @@ public class ExpressionBox extends JDialog {
 				"'date(10.5[s])' returns the array {1970, 1, 1, 0, 0, 10, 500}",
 				"'date(31[d])' returns the array {1970, 2, 1, 0, 0, 0, 0}"));
 
+		functions.add(new ButtonDesc("simTimeForDate", "Calendar date to simulation time function ('simTimeForDate')",
+				"Returns the simulation time for the specified calendar date.",
+				"Accepts inputs of year, month, dayOfMonth, hour, minute, second, and millisecond and "
+						+ "returns the corresponding simulation time. "
+						+ "The inputs for hour, minute, second, and millisecond are optional. "
+						+ "The returned simulation time reflects the inputs to 'GeorgianCalendar' "
+						+ "and 'StartDate' keyword for the Simulation object.",
+				"simTimeForDate(year, month, dayOfMonth, hour, minute, second, millisecond)",
+				-1,
+				"'simTimeForDate(1970, 1, 1)' returns 0[s]",
+				"'simTimeForDate(1970, 1, 1, 0, 0, 10, 500)' returns 10.5[s]",
+				"'simTimeForDate(1970, 2, 1)' returns 31[d]"));
+
 		functions.add(new ButtonDesc("typeName", "Variable type ('typeName')",
 				"Returns a string describing the type of the variable that is specified.",
 				"Accepts any valid input and returns one of the following strings: "
