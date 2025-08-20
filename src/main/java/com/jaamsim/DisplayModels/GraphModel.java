@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2023 JaamSim Software Inc.
+ * Copyright (C) 2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -399,7 +399,7 @@ public class GraphModel extends DisplayModel {
 
 		private void drawSeries(AbstractGraph.SeriesInfo series, double yMinimum, double yMaximum, double simTime, ArrayList<RenderProxy> out) {
 
-			if (series.numPoints < 2)
+			if (!series.isBar && series.numPoints < 2)
 				return; // Nothing to display yet
 
 			// Calculated the x and y coordinates in the graph coordinates (relative to the graph's centre)
@@ -423,8 +423,10 @@ public class GraphModel extends DisplayModel {
 					double startX = xVals[i];
 					if (i > 0)
 						startX -= 0.5d * (xVals[i] - xVals[i - 1]);
-					else
+					else if (i < xVals.length - 1)
 						startX -= 0.5d * (xVals[i + 1] - xVals[i]);
+					else
+						startX -= 0.01d;
 					startX = Math.max(startX, -0.5d);
 					if (startX > 0.5d)
 						continue;
@@ -432,8 +434,10 @@ public class GraphModel extends DisplayModel {
 					double endX = xVals[i];
 					if (i < xVals.length - 1)
 						endX += 0.5d * (xVals[i + 1] - xVals[i]);
-					else
+					else if (i > 0)
 						endX += 0.5d * (xVals[i] - xVals[i - 1]);
+					else
+						endX += 0.01d;
 					endX = Math.min(endX, 0.5d);
 					if (endX < -0.5d)
 						continue;
