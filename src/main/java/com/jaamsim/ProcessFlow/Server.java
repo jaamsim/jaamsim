@@ -33,7 +33,6 @@ public class Server extends LinkedService {
 	private final SampleInput serviceTime;
 
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
-	private double serviceDuration;  // total duration for the present service
 
 	{
 		releaseThresholdList.setHidden(false);
@@ -51,7 +50,6 @@ public class Server extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		servedEntity = null;
-		serviceDuration = 0.0d;
 	}
 
 	@Override
@@ -68,9 +66,6 @@ public class Server extends LinkedService {
 
 		receiveEntity(servedEntity);
 		setEntityState(servedEntity);
-
-		// Set the service duration
-		serviceDuration = serviceTime.getNextSample(this, simTime);
 
 		// Assign attributes
 		assignAttributesAtStart(simTime);
@@ -90,12 +85,11 @@ public class Server extends LinkedService {
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
-		serviceDuration = 0.0d;
 	}
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceDuration;
+		return serviceTime.getNextSample(this, simTime);
 	}
 
 	@Override
