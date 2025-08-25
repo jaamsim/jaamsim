@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.jaamsim.basicsim.JaamSimModel;
@@ -174,7 +175,8 @@ public class TestDistributionFunctions implements RunListener {
 		);
 
 		// Start the simulation run on a new thread
-		simModel.start(this);
+		if(!simModel.start(this))
+			Assert.fail("validation failed");
 
 		// Wait for the run to finish
 		long timeoutMS = 5000L;

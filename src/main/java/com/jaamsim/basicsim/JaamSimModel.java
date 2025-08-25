@@ -460,7 +460,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * Performs consistency checks on the model inputs.
 	 * @return true if no validation errors were found
 	 */
-	public boolean validate() {
+	private boolean validate() {
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			if (each.hasClone())
 				continue;
@@ -484,11 +484,11 @@ public class JaamSimModel implements EventTimeListener {
 		return true;
 	}
 
-	public void start(RunListener l) {
+	public boolean start(RunListener l) {
 		runListener = l;
-		boolean bool = validate();
-		if (!bool)
-			return;
+
+		if (!validate())
+			return false;
 		prepareReportDirectory();
 		killGeneratedEntities();
 		eventManager.clear();
@@ -516,12 +516,13 @@ public class JaamSimModel implements EventTimeListener {
 			if (gui != null) {
 				gui.handleInputError(e, getSimulation());
 			}
-			return;
+			return false;
 		}
 
 		eventManager.setTickLength(getSimulation().getTickLength());
 		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
 		resume();
+		return true;
 	}
 
 	/**

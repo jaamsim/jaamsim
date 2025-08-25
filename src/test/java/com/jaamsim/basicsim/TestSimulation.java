@@ -157,7 +157,8 @@ public class TestSimulation {
 
 		// Perform the simulation run
 		WaitForPauseListener listener = new WaitForPauseListener(simModel);
-		simModel.start(listener);
+		if (!simModel.start(listener))
+			Assert.fail("validation failed");
 		listener.waitForPause(1000L);
 
 		// Test the results
@@ -200,8 +201,10 @@ public class TestSimulation {
 		WaitForPauseListener listener2 = new WaitForPauseListener(simModel2);
 
 		// Start both runs
-		simModel.start(listener);
-		simModel2.start(listener2);
+		if (!simModel.start(listener))
+			Assert.fail("validation failed");
+		if (!simModel2.start(listener2))
+			Assert.fail("validation failed");
 
 		// Wait for both runs to finish
 		listener.waitForPause(1000L);
@@ -240,15 +243,11 @@ public class TestSimulation {
 			// Ensure that the PrintReport input is FALSE
 			assertTrue(!simModel.getSimulation().getPrintReport());
 
-			// Validate the inputs
-			boolean bool = simModel.validate();
-			if (!bool)
-				Assert.fail("validation failed");
-
 			// Run the model for one hour
 			long nanos = System.nanoTime();
 			WaitForPauseListener listener = new WaitForPauseListener(simModel);
-			simModel.start(listener);
+			if (!simModel.start(listener))
+				Assert.fail("validation failed");
 			listener.waitForPause(5000L);
 			nanos = System.nanoTime() - nanos;
 			System.out.format("completed at simTime=%s, millis=%s%n", simModel.getSimTime(), nanos/1000000L);

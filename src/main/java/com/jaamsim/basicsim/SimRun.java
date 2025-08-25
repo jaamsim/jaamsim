@@ -73,7 +73,7 @@ public class SimRun implements RunListener {
 		simModel = sm;
 		// Reset the scenario and replication numbers
 		simModel.setScenarioNumber(scen.getScenarioNumber());
-		simModel.setReplicationNumber(replicationNumber);
+		simModel.setReplicationNumber(getReplicationNumber());
 
 		// Start the run
 		simModel.start(this);
