@@ -67,7 +67,7 @@ limitations under the License.
 	<mkdir dir="${class25.dir}"/>
 
     <javac srcdir="${src25.dir}" destdir="${class25.dir}"
-           release="17"
+           release="25"
            debug="true"
            debuglevel="lines,source"
            deprecation="on"
@@ -88,7 +88,7 @@ limitations under the License.
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
       <fileset file="LICENSE"/>
-	  <zipfileset prefix="META-INF/versions/17/" dir="${class25.dir}"/>
+	  <zipfileset prefix="META-INF/versions/25/" dir="${class25.dir}"/>
     </jar>
     <jar jarfile="${jars.dir}/JaamSim${ver}.jar" compress="true">
       <manifest>
@@ -99,7 +99,7 @@ limitations under the License.
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
       <fileset file="LICENSE"/>
-	  <zipfileset prefix="META-INF/versions/17/" dir="${class25.dir}"/>
+	  <zipfileset prefix="META-INF/versions/25/" dir="${class25.dir}"/>
       <zipfileset src="jar/gluegen-rt.jar"     includes="jogamp/**/*,com/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="natives/**/*"/>

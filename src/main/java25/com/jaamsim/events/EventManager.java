@@ -227,7 +227,7 @@ public final class EventManager {
 
 		@Override
 		public void run() {
-			ScopedValue.runWhere(scopedEvt, evt, () -> { evt.execute(); });
+			ScopedValue.where(scopedEvt, evt).run( () -> { evt.execute(); });
 		}
 	}
 
@@ -967,7 +967,7 @@ public final class EventManager {
 	 * @return true if we are in a Process context, false otherwise
 	 */
 	public static final boolean hasCurrent() {
-		return scopedEvt.orElse(null) != null;
+		return scopedEvt.isBound();
 	}
 
 	/**
@@ -975,10 +975,9 @@ public final class EventManager {
 	 * @return true if a future event can be scheduled
 	 */
 	public static final boolean canSchedule() {
-		EventManager evt = scopedEvt.orElse(null);
-		if (evt == null)
+		if (!scopedEvt.isBound())
 			return false;
-		return evt.scheduleEnabled();
+		return scopedEvt.get().scheduleEnabled();
 	}
 
 	/**
@@ -986,11 +985,10 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
-		EventManager evt = scopedEvt.orElse(null);
-		if (evt == null)
+		if (!scopedEvt.isBound())
 			throw new ProcessError("Non-event thread called EventManager.current()");
 
-		return evt;
+		return scopedEvt.get();
 	}
 
 	/**
