@@ -19,13 +19,15 @@ limitations under the License.
   <property name="ver.major"           value="2025"/>
   <property name="ver.minor"           value="07"/>
   <property name="ver"                 value="${ver.major}-${ver.minor}"/>
-  <property name="src.dir"       location="src/main"/>
+  <property name="src.dir"       location="src/main/java"/>
+  <property name="src25.dir"     location="src/main/java25"/>
   <property name="res.dir"       location="src/main/resources"/>
   <property name="make.dir"      location="make"/>
   <property name="build.dir"     location="build"/>
   <property name="jogl.lib"      location="jar/jogl-all.jar"/>
   <property name="gluegen.lib"   location="jar/gluegen-rt.jar"/>
   <property name="class.dir"     location="${build.dir}/classes"/>
+  <property name="class25.dir"   location="${build.dir}/classes-25"/>
   <property name="jars.dir"      location="${build.dir}/jars"/>
 
   <target name="clean">
@@ -61,6 +63,18 @@ limitations under the License.
            classpath="${jogl.lib}:${gluegen.lib}">
       <compilerarg value="-Xlint:-serial"/>
     </javac>
+	
+	<mkdir dir="${class25.dir}"/>
+
+    <javac srcdir="${src25.dir}" destdir="${class25.dir}"
+           release="17"
+           debug="true"
+           debuglevel="lines,source"
+           deprecation="on"
+           includeantruntime="false"
+           classpath="${jogl.lib}:${gluegen.lib}:${class.dir}">
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
   </target>
 
   <target name="jar" depends="compile">
@@ -69,19 +83,23 @@ limitations under the License.
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
         <attribute name="Add-Opens" value="java.desktop/sun.awt"/>
         <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar"/>
+		<attribute name="Multi-Release" value="true"/>
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
       <fileset file="LICENSE"/>
+	  <zipfileset prefix="META-INF/versions/17/" dir="${class25.dir}"/>
     </jar>
     <jar jarfile="${jars.dir}/JaamSim${ver}.jar" compress="true">
       <manifest>
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
         <attribute name="Add-Opens" value="java.desktop/sun.awt"/>
+		<attribute name="Multi-Release" value="true"/>
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
       <fileset file="LICENSE"/>
+	  <zipfileset prefix="META-INF/versions/17/" dir="${class25.dir}"/>
       <zipfileset src="jar/gluegen-rt.jar"     includes="jogamp/**/*,com/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="natives/**/*"/>
