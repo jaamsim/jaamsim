@@ -88,12 +88,14 @@ limitations under the License.
       <zipfileset src="jar/gluegen-rt-natives-linux-aarch64.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-linux-armv6hf.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-macosx-universal.jar" includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-freebsd-amd64.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all.jar"       includes="jogamp/**/*,com/**/*,newt/**/**/*"/>
       <zipfileset src="jar/jogl-all-natives-windows-amd64.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-linux-aarch64.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-linux-armv6hf.jar"    includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-freebsd-amd64.jar"    includes="natives/**/*"/>
     </jar>
   </target>
   <target name="exe" depends="jar">
