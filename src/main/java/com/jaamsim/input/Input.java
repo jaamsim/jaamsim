@@ -277,22 +277,6 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Assigns the internal state for this input to the same values as the
-	 * specified input.
-	 * <p>
-	 * This method provides the same function as copyFrom by re-parsing the input data instead of
-	 * copying the internal variables. This operation is much slower, but is needed for inputs that
-	 * cannot be copied successfully using copyFrom, such as inputs that accept an expression.
-	 * @param thisEnt TODO
-	 * @param in - input object to be copied.
-	 */
-	public void parseFrom(Entity thisEnt, Input<?> in) {
-		ArrayList<String> toks = new ArrayList<>(Arrays.asList(in.valueTokens));
-		KeywordIndex kw = new KeywordIndex(in.getKeyword(), toks, null);
-		parse(thisEnt, kw);
-	}
-
-	/**
 	 * Deletes any use of the specified entity from this input.
 	 * @param ent - entity whose references are to be deleted
 	 * @return true if a reference was removed
