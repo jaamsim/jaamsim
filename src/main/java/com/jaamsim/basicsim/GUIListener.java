@@ -16,8 +16,6 @@
  */
 package com.jaamsim.basicsim;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.events.EventTimeListener;
@@ -42,9 +40,6 @@ public interface GUIListener extends EventTimeListener {
 	public Vec3d getPOI(View v);
 	public String getDefaultFolder();
 	public boolean isSelected(Entity ent);
-	public ArrayList<View> getViews();
-	public void setResizable(View v, boolean bool);
-	public boolean isResizable(View v);
 	public void allowResizing(boolean bool);
 
 }

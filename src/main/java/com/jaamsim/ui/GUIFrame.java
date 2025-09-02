@@ -4232,7 +4232,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		clearUndoRedo();
 	}
 
-	@Override
 	public ArrayList<View> getViews() {
 		synchronized (views) {
 			return views;
@@ -4283,7 +4282,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowPos(View v) {
-		Point fix = OSFix.getLocationAdjustment(v.isResizable());
+		Point fix = OSFix.getLocationAdjustment(isResizable(v));
 		IntegerVector ret = new IntegerVector(v.getWindowPos());
 
 		// Presentation mode
@@ -4302,7 +4301,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowSize(View v) {
-		Point fix = OSFix.getSizeAdjustment(v.isResizable());
+		Point fix = OSFix.getSizeAdjustment(isResizable(v));
 		IntegerVector ret = new IntegerVector(v.getWindowSize());
 
 		// Presentation mode
@@ -4324,8 +4323,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (presentMode.isSelected() || simModel.getSimulation().isLockWindows()
 				|| simModel.isConfiguring())
 			return;
-		Point posFix = OSFix.getLocationAdjustment(v.isResizable());
-		Point sizeFix = OSFix.getSizeAdjustment(v.isResizable());
+		Point posFix = OSFix.getLocationAdjustment(isResizable(v));
+		Point sizeFix = OSFix.getSizeAdjustment(isResizable(v));
 		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
 		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
 	}
@@ -4337,14 +4336,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return RenderManager.inst().getPOI(v);
 	}
 
-	@Override
 	public void setResizable(View v, boolean bool) {
 		if (!RenderManager.isGood())
 			return;
 		RenderManager.inst().setResizable(v, bool);
 	}
 
-	@Override
 	public boolean isResizable(View v) {
 		if (!RenderManager.isGood())
 			return false;

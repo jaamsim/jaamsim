@@ -422,18 +422,6 @@ public class View extends Entity {
 		return lock2D.getNextBoolean(this, 0.0d);
 	}
 
-	public void setResizable(boolean bool) {
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui == null)
-			return;
-		gui.setResizable(this, bool);
-	}
-
-	public boolean isResizable() {
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		return gui != null && gui.isResizable(this);
-	}
-
 	public URI getSkyboxTexture() {
 		URI file = skyboxImage.getValue();
 		if (file == null || file.toString().equals("")) {
