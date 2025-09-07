@@ -291,26 +291,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	}
 
 	/**
-	 * Runs after each report interval
-	 */
-	public void clearReportStats() {
-		updateStateStats();
-		for (StateRecord each : states.values()) {
-			each.clearStats();
-		}
-	}
-
-	/**
-	 * Clear the current cycle hours, also reset the start of cycle time
-	 */
-	public void clearCurrentCycleStats() {
-		updateStateStats();
-		for (StateRecord each : states.values()) {
-			each.clearCurrentCycleStats();
-		}
-	}
-
-	/**
 	 * Runs when cycle is finished
 	 */
 	public void collectCycleStats() {

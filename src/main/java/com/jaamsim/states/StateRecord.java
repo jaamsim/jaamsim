@@ -47,15 +47,6 @@ public class StateRecord {
 		currentCycleTicks = 0L;
 	}
 
-	public void clearStats() {
-		totalTicks = 0L;
-		completedCycleTicks = 0L;
-	}
-
-	public void clearCurrentCycleStats() {
-		currentCycleTicks = 0L;
-	}
-
 	public String getName() {
 		return name;
 	}
