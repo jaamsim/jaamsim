@@ -49,7 +49,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.rng.MRG1999a;
-import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.units.DimensionlessUnit;
@@ -655,13 +654,6 @@ public class JaamSimModel implements EventTimeListener {
 			if (!ent.isActive())
 				continue;
 			ent.clearStatistics();
-		}
-
-		// Reset state statistics
-		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {
-			if (!each.isActive())
-				continue;
-			each.collectInitializationStats();
 		}
 	}
 

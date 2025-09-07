@@ -283,7 +283,9 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	/**
 	 * Runs after initialization period
 	 */
-	public void collectInitializationStats() {
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
 		updateStateStats();
 		for (StateRecord each : states.values()) {
 			each.finishWarmUp();

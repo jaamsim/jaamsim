@@ -66,10 +66,10 @@ public class SimEntity extends StateEntity {
 	}
 
 	@Override
-	public void collectInitializationStats() {
+	public void clearStatistics() {
 		if (isGenerated())
 			return;
-		super.collectInitializationStats();
+		super.clearStatistics();
 	}
 
 	@Override
