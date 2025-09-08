@@ -287,13 +287,12 @@ public class JaamSimModel implements EventTimeListener {
 	@Override
 	public void handleError(Throwable t) {
 		InputAgent.logRuntimeError(this, t);
-		if (isMultipleRuns() && runListener != null) {
+		if (isMultipleRuns()) {
 			runListener.handleError(t);
 			return;
 		}
-		if (gui == null)
-			return;
-		gui.handleError(t);
+		if (gui != null)
+			gui.handleError(t);
 	}
 
 	public boolean isStarted() {
@@ -483,7 +482,10 @@ public class JaamSimModel implements EventTimeListener {
 		return true;
 	}
 
-	public boolean start(RunListener l) {
+	public final boolean start(RunListener l) {
+		if (l == null)
+			throw new NullPointerException("A runlistener must be provided to start a run");
+
 		runListener = l;
 
 		if (!validate())
@@ -671,9 +673,7 @@ public class JaamSimModel implements EventTimeListener {
 			each.doEnd();
 		}
 
-		// Notify the run manager
-		if (runListener != null)
-			runListener.runEnded();
+		runListener.runEnded();
 	}
 
 	/**
