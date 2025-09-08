@@ -218,7 +218,7 @@ public class TestDistributionFunctions implements RunListener {
 	}
 
 	@Override
-	public void handleError(Throwable t) {
+	public void handleRuntimeError(JaamSimModel sm, Throwable t) {
 		System.out.println("Error in run:");
 		System.out.println(t.getMessage());
 		t.printStackTrace();

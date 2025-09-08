@@ -25,9 +25,11 @@ public interface RunListener {
 	public void runEnded();
 
 	/**
-	 * Called when a runtime error is encountered.
+	 * Called when a runtime error is encountered during the model run. An EventManager context is available
+	 * as this will always be called from a model process.
+	 * @param sm - the model where the error was encountered
 	 * @param t - error condition
 	 */
-	public void handleError(Throwable t);
+	public void handleRuntimeError(JaamSimModel sm, Throwable t);
 
 }

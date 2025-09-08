@@ -89,9 +89,9 @@ public class SimRun implements RunListener {
 	}
 
 	@Override
-	public void handleError(Throwable t) {
-		double simTime = simModel.getSimTime();
-		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
+	public void handleRuntimeError(JaamSimModel sm, Throwable t) {
+		double simTime = sm.getSimTime();
+		runParameterStrings = sm.getSimulation().getRunParameterStrings(simTime);
 		errorMessage = t.getMessage();
 		if (errorMessage == null)
 			errorMessage = "";

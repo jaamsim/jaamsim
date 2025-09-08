@@ -288,7 +288,7 @@ public class JaamSimModel implements EventTimeListener {
 	public void handleError(Throwable t) {
 		InputAgent.logRuntimeError(this, t);
 		if (isMultipleRuns()) {
-			runListener.handleError(t);
+			runListener.handleRuntimeError(this, t);
 			return;
 		}
 		if (gui != null)
