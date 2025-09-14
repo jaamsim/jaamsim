@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -36,8 +35,6 @@ import com.jaamsim.input.ValueHandle;
 import com.jaamsim.ui.ExampleBox;
 
 public class TestSimulation {
-
-	JaamSimModel simModel;
 
 	@Test
 	public void testAllDefineableTypes() {
@@ -132,11 +129,12 @@ public class TestSimulation {
 		JaamSimModel simModel = new JaamSimModel();
 		simModel.autoLoad();
 
+		System.out.println();
+		System.out.println("Test Simple Input File");
 		URL url = TestSimulation.class.getResource("Test0001.cfg");
 		InputAgent.readResource(simModel, url.toString());
 
-		simModel.getEventManager().scheduleProcessExternal(0, 0, false, new InitModelTarget(simModel), null);
-		TestFrameworkHelpers.runEventsToTick(simModel.getEventManager(), Long.MAX_VALUE, 1000);
+		runTestCase(simModel, 1000l);
 	}
 
 	@Test
@@ -156,10 +154,7 @@ public class TestSimulation {
 		simModel.setInput("Simulation", "RunDuration", "9 s");
 
 		// Perform the simulation run
-		WaitForPauseListener listener = new WaitForPauseListener(simModel);
-		if (!simModel.start(listener))
-			Assert.fail("validation failed");
-		listener.waitForPause(1000L);
+		runTestCase(simModel, 1000l);
 
 		// Test the results
 		assertTrue(simModel.getSimTime() == 9.0d);
@@ -243,16 +238,19 @@ public class TestSimulation {
 			// Ensure that the PrintReport input is FALSE
 			assertTrue(!simModel.getSimulation().getPrintReport());
 
-			// Run the model for one hour
-			long nanos = System.nanoTime();
-			WaitForPauseListener listener = new WaitForPauseListener(simModel);
-			if (!simModel.start(listener))
-				Assert.fail("validation failed");
-			listener.waitForPause(5000L);
-			nanos = System.nanoTime() - nanos;
-			System.out.format("completed at simTime=%s, millis=%s%n", simModel.getSimTime(), nanos/1000000L);
+			runTestCase(simModel, 5000l);
 		}
 		System.out.println();
+	}
+
+	static void runTestCase(JaamSimModel sm, long timeoutMS) {
+		long nanos = System.nanoTime();
+		WaitForPauseListener listener = new WaitForPauseListener(sm);
+		if (!sm.start(listener))
+			Assert.fail("validation failed");
+		listener.waitForPause(5000L);
+		nanos = System.nanoTime() - nanos;
+		System.out.format("completed at simTime=%s, millis=%s%n", sm.getSimTime(), nanos/1000000L);
 	}
 
 	static class WaitForPauseListener implements RunListener {
