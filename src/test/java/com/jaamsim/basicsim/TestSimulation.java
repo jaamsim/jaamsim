@@ -291,6 +291,9 @@ public class TestSimulation {
 		}
 
 		@Override
-		public void handleError(Throwable t) {}
+		public void handleError(Throwable t) {
+			t.printStackTrace();
+			Assert.fail("Error during simulation run");
+		}
 	}
 }
