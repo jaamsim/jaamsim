@@ -1366,11 +1366,12 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return name of the simulation run
 	 */
 	public String getRunName() {
-		int index = name.lastIndexOf('.');
+		String simName = getName();
+		int index = simName.lastIndexOf('.');
 		if (index == -1)
-			return name;
-
-		return name.substring(0, index);
+			return simName;
+		else
+			return simName.substring(0, index);
 	}
 
 	private String getReportDirectory() {
