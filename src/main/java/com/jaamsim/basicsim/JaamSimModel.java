@@ -454,11 +454,12 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
-	/**
-	 * Performs consistency checks on the model inputs.
-	 * @return true if no validation errors were found
-	 */
-	private boolean validate() {
+	public final boolean start(RunListener l) {
+		if (l == null)
+			throw new NullPointerException("A runlistener must be provided to start a run");
+
+		runListener = l;
+
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			if (each.hasClone())
 				continue;
@@ -479,17 +480,7 @@ public class JaamSimModel implements EventTimeListener {
 				return false;
 			}
 		}
-		return true;
-	}
 
-	public final boolean start(RunListener l) {
-		if (l == null)
-			throw new NullPointerException("A runlistener must be provided to start a run");
-
-		runListener = l;
-
-		if (!validate())
-			return false;
 		prepareReportDirectory();
 		killGeneratedEntities();
 		eventManager.clear();
