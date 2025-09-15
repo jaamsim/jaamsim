@@ -127,7 +127,6 @@ public class JaamSimModel implements EventTimeListener {
 		this(sm.name);
 		//System.out.format("%nJaamSimModel constructor%n");
 		autoLoad();
-		simulation = getSimulation();
 		setRecordEdits(true);
 
 		configFile = sm.configFile;
