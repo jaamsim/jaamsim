@@ -75,8 +75,8 @@ public class RunManager {
 			JaamSimModel sm = simModel;
 			if (i > 0) {
 				try {
-					sm = new JaamSimModel(simModel);
-					sm.setName(String.format("%s(%s)", simModel.getName(), simModelList.size() + 1));
+					String nextName = String.format("%s(%s)", simModel.getName(), simModelList.size() + 1);
+					sm = new JaamSimModel(simModel, nextName);
 					//System.out.format("JaamSimModel %s created%n", sm);
 				}
 				catch (Exception e) {

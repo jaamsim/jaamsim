@@ -123,8 +123,8 @@ public class JaamSimModel implements EventTimeListener {
 		scenarioIndexList.add(1);
 	}
 
-	public JaamSimModel(JaamSimModel sm) {
-		this(sm.name);
+	public JaamSimModel(JaamSimModel sm, String name) {
+		this(name);
 		//System.out.format("%nJaamSimModel constructor%n");
 		autoLoad();
 		setRecordEdits(true);
@@ -256,10 +256,6 @@ public class JaamSimModel implements EventTimeListener {
 			}
 		}
 		return true;
-	}
-
-	public void setName(String str) {
-		name = str;
 	}
 
 	public void setGUIListener(GUIListener l) {
