@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -230,6 +230,12 @@ public abstract class AbstractCombine extends LinkedService {
 			ret.add(queue);
 		}
 		return ret;
+	}
+
+	@Override
+	// Delete 'MatchValue' output
+	public String getMatchValue(double simTime) {
+		return null;
 	}
 
 	@Output(name = "ConsumedEntityList",

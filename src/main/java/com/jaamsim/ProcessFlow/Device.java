@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
+	private double remainingDuration; // remaining duration of the process time step
 	private long endTicks;  // planned simulation time in ticks at the end of the next process step
 	private boolean readyToRelease;  // indicates that an entity was prevented from being released by a ReleaseThreshold
 	private boolean stepCompleted;  // indicates that the last process time step was completed
@@ -52,6 +53,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		super.earlyInit();
 
 		duration = 0.0;
+		remainingDuration = 0.0;
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
 		readyToRelease = false;
@@ -172,16 +174,17 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 				return;
 			}
 			duration = this.getStepDuration(simTime);
+			remainingDuration = duration;
 		}
 
 		// Trap errors
-		if (Double.isNaN(duration))
+		if (Double.isNaN(remainingDuration))
 			error("Cannot calculate duration");
-		if (duration == Double.POSITIVE_INFINITY)
+		if (remainingDuration == Double.POSITIVE_INFINITY)
 			error("Infinite duration");
 
 		// Set the state for the time step
-		long durTicks = EventManager.current().secondsToNearestTick(duration);
+		long durTicks = EventManager.current().secondsToNearestTick(remainingDuration);
 		if (durTicks > 0L) {
 			setPresentState();
 		}
@@ -189,7 +192,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		// Schedule the completion of the time step
 		stepCompleted = false;
 		endTicks = getSimTicks() + durTicks;
-		if (isTraceFlag()) traceLine(1, "duration=%.6f", duration);
+		if (isTraceFlag()) traceLine(1, "remainingDuration=%.6f", remainingDuration);
 		EventManager.scheduleTicks(durTicks, 5, true, endStepTarget, endStepHandle);  // FIFO order
 
 		// Notify other processes that are dependent on this one
@@ -231,6 +234,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		// closure, then determine whether to change state and/or to continue to the next step
 		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
 			stepCompleted = true;
+			duration = 0.0d;
 			this.processStep(simTime);
 		}
 
@@ -247,7 +251,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 		if (this.isBusy()) {
 			double dt = simTime - lastUpdateTime;
-			duration = Math.max(0.0d, duration - dt);
+			remainingDuration = Math.max(0.0d, remainingDuration - dt);
 			this.updateProgress(dt);
 		}
 		lastUpdateTime = simTime;
@@ -423,8 +427,16 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		return (simTime == lastUpdateTime);
 	}
 
-	protected final double getRemainingDuration() {
+	protected final double getDuration() {
 		return duration;
+	}
+
+	protected final double getRemainingDuration(double simTime) {
+		double ret = remainingDuration;
+		if (isBusy()) {
+			ret -= simTime - lastUpdateTime;
+		}
+		return ret;
 	}
 
 	// ********************************************************************************************

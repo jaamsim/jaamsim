@@ -553,4 +553,28 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		return readyForNext;
 	}
 
+	@Override
+	// Delete 'MatchValue' output
+	public String getMatchValue(double simTime) {
+		return null;
+	}
+
+	@Override
+	// Delete 'ServiceDuration' output
+	public double getServiceDuration(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	// Delete 'ServicePerformed' output
+	public double getServicePerformed(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	// Delete 'FractionCompleted' output
+	public double getFractionCompleted(double simTime) {
+		return 0.0d;
+	}
+
 }

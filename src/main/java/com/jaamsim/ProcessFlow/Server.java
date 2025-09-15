@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package com.jaamsim.ProcessFlow;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -35,7 +33,6 @@ public class Server extends LinkedService {
 	private final SampleInput serviceTime;
 
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
-	private double serviceDuration;  // total duration for the present service
 
 	{
 		releaseThresholdList.setHidden(false);
@@ -53,7 +50,6 @@ public class Server extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		servedEntity = null;
-		serviceDuration = 0.0d;
 	}
 
 	@Override
@@ -70,9 +66,6 @@ public class Server extends LinkedService {
 
 		receiveEntity(servedEntity);
 		setEntityState(servedEntity);
-
-		// Set the service duration
-		serviceDuration = serviceTime.getNextSample(this, simTime);
 
 		// Assign attributes
 		assignAttributesAtStart(simTime);
@@ -92,12 +85,11 @@ public class Server extends LinkedService {
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
-		serviceDuration = 0.0d;
 	}
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceDuration;
+		return serviceTime.getNextSample(this, simTime);
 	}
 
 	@Override
@@ -117,41 +109,6 @@ public class Server extends LinkedService {
 		if (servedEntity == null)
 			return;
 		moveToProcessPosition(servedEntity);
-	}
-
-	@Output(name = "ServiceDuration",
-	 description = "The total working time required for the present service activity.",
-	    unitType = TimeUnit.class,
-	    sequence = 1)
-	public double getServiceDuration(double simTime) {
-		return serviceDuration;
-	}
-
-	@Output(name = "ServicePerformed",
-	 description = "The working time that has been completed for the present service activity.",
-	    unitType = TimeUnit.class,
-	    sequence = 2)
-	public double getServicePerformed(double simTime) {
-		if (servedEntity == null) {
-			return 0.0d;
-		}
-		double ret = serviceDuration - getRemainingDuration();
-		if (isBusy()) {
-			ret += simTime - getLastUpdateTime();
-		}
-		return ret;
-	}
-
-	@Output(name = "FractionCompleted",
-	 description = "The portion of the total service time for the present service activity that "
-	             + "has been completed.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 3)
-	public double getFractionCompleted(double simTime) {
-		if (servedEntity == null) {
-			return 0.0d;
-		}
-		return getServicePerformed(simTime)/serviceDuration;
 	}
 
 }

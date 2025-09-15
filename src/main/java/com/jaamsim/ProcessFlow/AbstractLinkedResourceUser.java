@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2024 JaamSim Software Inc.
+ * Copyright (C) 2017-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,6 +176,24 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 	@Override
 	public boolean requiresResource(ResourceProvider res) {
 		return resUserDelegate.requiresResource(res);
+	}
+
+	@Override
+	// Delete 'ServiceDuration' output
+	public double getServiceDuration(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	// Delete 'ServicePerformed' output
+	public double getServicePerformed(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	// Delete 'FractionCompleted' output
+	public double getFractionCompleted(double simTime) {
+		return 0.0d;
 	}
 
 	@Output(name = "SeizedUnits",
