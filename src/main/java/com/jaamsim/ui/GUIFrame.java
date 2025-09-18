@@ -3239,7 +3239,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (!sim.isRealTime() && runManager.getNumberOfRuns() > 1) {
 					RunProgressBox.getInstance().setShow(true);
 				}
-				runManager.start();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						runManager.start();
+					}
+				}).start();
 			}
 			return confirmed;
 		}
