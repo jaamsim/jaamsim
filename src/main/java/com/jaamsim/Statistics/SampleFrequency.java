@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,6 +100,24 @@ public class SampleFrequency {
 	}
 
 	/**
+	 * Returns whether any values have been recorded.
+	 * @return true if one or more values have been recorded
+	 */
+	public boolean isEmpty() {
+		return maxVal == minVal && getCount() == 0;
+	}
+
+	/**
+	 * Returns the number of bins in the histogram of values.
+	 * @return number of bins in the histogram
+	 */
+	public int getNumberOfBins() {
+		if (isEmpty())
+			return 0;
+		return maxVal - minVal + 1;
+	}
+
+	/**
 	 * Returns the minimum integer value that was recorded.
 	 * @return minimum integer value
 	 */
@@ -141,7 +159,7 @@ public class SampleFrequency {
 	 * @return array of integer values
 	 */
 	public int[] getBinValues() {
-		int num = maxVal - minVal + 1;
+		int num = getNumberOfBins();
 		int[] ret = new int[num];
 		for (int i = 0; i < num; i++) {
 			ret[i] = minVal + i;
@@ -155,7 +173,7 @@ public class SampleFrequency {
 	 * @return array of bin counts
 	 */
 	public long[] getBinCounts() {
-		int num = maxVal - minVal + 1;
+		int num = getNumberOfBins();
 		int offset = minVal - firstVal;
 		long[] ret = new long[num];
 		System.arraycopy(binCounts, offset, ret, 0, num);
@@ -168,7 +186,7 @@ public class SampleFrequency {
 	 * @return array of values between 0 and 1
 	 */
 	public double[] getBinFractions() {
-		int num = maxVal - minVal + 1;
+		int num = getNumberOfBins();
 		int offset = minVal - firstVal;
 		double total = getCount();
 		double[] ret = new double[num];
@@ -184,11 +202,12 @@ public class SampleFrequency {
 	 * @return array of values between 0 and 1
 	 */
 	public double[] getBinCumulativeFractions() {
-		int num = maxVal - minVal + 1;
+		int num = getNumberOfBins();
 		int offset = minVal - firstVal;
 		double total = getCount();
 		double[] ret = new double[num];
-		ret[0] = binCounts[offset]/total;
+		if (ret.length > 0)
+			ret[0] = binCounts[offset]/total;
 		for (int i = 1; i < num; i++) {
 			ret[i] = ret[i - 1] + binCounts[i + offset]/total;
 		}
