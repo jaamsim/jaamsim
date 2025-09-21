@@ -69,10 +69,10 @@ public class TestEventListener {
 	public void testEventLogging() {
 		EventManager evt = new EventManager("testScheduleWaitEVT");
 		evt.clear();
-		evt.scheduleProcessExternal(0, 0, false, new InitTarget(), null);
 		EvtLogger log = new EvtLogger();
 		evt.setTraceListener(log);
 
+		evt.scheduleProcessExternal(0, 0, false, new InitTarget(), null);
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
 		//for (String s : log) {

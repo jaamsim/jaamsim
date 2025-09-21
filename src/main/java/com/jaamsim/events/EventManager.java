@@ -132,6 +132,7 @@ public final class EventManager {
 			if (state != null)
 				state.realTimeMillis = -1l;
 
+			trcListener = null;
 			eventTree.runOnAllNodes(new KillAllEvents());
 			eventTree.reset();
 			clearFreeList();

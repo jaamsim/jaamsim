@@ -320,7 +320,6 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void clear() {
 		eventManager.clear();
-		eventManager.setTraceListener(null);
 		hasStarted.set(false);
 		hasEnded.set(false);
 
@@ -483,7 +482,6 @@ public class JaamSimModel implements EventTimeListener {
 		hasEnded.set(false);
 
 		// Set up any tracing to be performed
-		eventManager.setTraceListener(null);
 		try {
 			if (getSimulation().traceEvents()) {
 				String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
