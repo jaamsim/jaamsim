@@ -4450,11 +4450,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Record info on the operating system, Java version, and JaamSim version
-		LogBox.format("Operating System: %s (version: %s) (arch: %s)",
+		Log.format("Operating System: %s (version: %s) (arch: %s)",
 				System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
-		LogBox.format("Java: %s (version: %s)",
+		Log.format("Java: %s (version: %s)",
 				System.getProperty("java.vendor"), System.getProperty("java.version"));
-		LogBox.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
+		Log.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
 
 		// Create a graphic simulation
 		JaamSimModel simModel = getNextJaamSimModel();

@@ -28,9 +28,9 @@ import com.jaamsim.MeshFiles.BlockReader;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
 import com.jaamsim.MeshFiles.ObjReader;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.LogBox;
 
 public class MeshDataCache {
 	private static final HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
@@ -113,7 +113,7 @@ public class MeshDataCache {
 			}
 			catch (Exception e) {}
 			GUIFrame.invokeErrorDialog("3D Loader Error", source, 0, pre, msg, post);
-			LogBox.formatRenderLog("%s\n%s\n%s\n%s", pre, msg, source, post);
+			Log.format("%s\n%s\n%s\n%s", pre, msg, source, post);
 			synchronized (badMeshSet) {
 				badMeshSet.add(key);
 				return getBadMesh();

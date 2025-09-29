@@ -27,13 +27,13 @@ import java.io.OutputStreamWriter;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.JSON.JSONConverter;
 import com.jaamsim.JSON.JSONParser;
-import com.jaamsim.JSON.JSONWriter;
 import com.jaamsim.JSON.JSONValue;
+import com.jaamsim.JSON.JSONWriter;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class ExternalProgramServer extends AbstractExternalProgram {
@@ -126,7 +126,7 @@ public class ExternalProgramServer extends AbstractExternalProgram {
 			try {
 				errorReader = new BufferedReader(new InputStreamReader(errorStream, "UTF-8"));
 			} catch(Exception e) {
-				LogBox.format("Could not start %s error monitor thread: %s", entityName, e.getMessage());
+				Log.format("Could not start %s error monitor thread: %s", entityName, e.getMessage());
 			}
 		}
 
@@ -138,10 +138,10 @@ public class ExternalProgramServer extends AbstractExternalProgram {
 				try {
 					String line = errorReader.readLine();
 					if (line == null) break;
-					LogBox.format("%s error: %s", entityName, line);
+					Log.format("%s error: %s", entityName, line);
 				} catch (Exception e) {
 					// Some kind of logic here
-					LogBox.format("Error in %s error monitor: %s", entityName, e.getMessage());
+					Log.format("Error in %s error monitor: %s", entityName, e.getMessage());
 				}
 			}
 		}

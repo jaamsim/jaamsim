@@ -289,7 +289,7 @@ public class RenderManager implements DragSourceListener {
 		windowControls.put(windowID, control);
 		windowToViewMap.put(windowID, view);
 
-		LogBox.format("View window requested: %s", view.getName());
+		Log.format("View window requested: %s", view.getName());
 
 		GUIFrame.updateUI();
 	}
@@ -348,7 +348,7 @@ public class RenderManager implements DragSourceListener {
 				if (renderer.hasFatalError()) {
 					// Well, something went horribly wrong
 					fatalError.set(true);
-					LogBox.formatRenderLog("Renderer failed with error: %s\n", renderer.getErrorString());
+					Log.format("Renderer failed with error: %s\n", renderer.getErrorString());
 
 					EventQueue.invokeAndWait(new Runnable() {
 						@Override

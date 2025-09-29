@@ -33,6 +33,7 @@ import java.util.TreeSet;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshData.Trans;
 import com.jaamsim.MeshFiles.VertexMap;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
@@ -256,7 +257,7 @@ public class ColParser {
 		double sceneDurMS = (sceneTime - geoTime)/1000000.0;
 
 		if (SHOW_COL_DEBUG) {
-			LogBox.formatRenderLog("%s Parse: %.1f Geo: %.1f, Scene: %.1f\n", _contextURL.toString(), parseDurMS, geoDurMS, sceneDurMS);
+			Log.format("%s Parse: %.1f Geo: %.1f, Scene: %.1f\n", _contextURL.toString(), parseDurMS, geoDurMS, sceneDurMS);
 		}
 	}
 

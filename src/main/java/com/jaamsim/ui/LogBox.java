@@ -80,19 +80,6 @@ public class LogBox extends FrameBox {
 		super.dispose();
 	}
 
-	/**
-	 * log a formated string, effectively wrapping String.format
-	 * @param format
-	 * @param args
-	 */
-	public static void format(String format, Object... args) {
-		Log.format(format, args);
-	}
-
-	public static void formatRenderLog(String format, Object... args) {
-		Log.format(format, args);
-	}
-
 	public static void renderLogException(Throwable ex) {
 		// Suppress renderer error messages when in batch mode
 		if (GUIFrame.getJaamSimModel().isBatchRun())

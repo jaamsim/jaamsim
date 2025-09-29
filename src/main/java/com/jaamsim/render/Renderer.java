@@ -237,9 +237,9 @@ public class Renderer implements GLAnimatorControl {
 				sharedContext.setGL(new DebugGL4bc((GL4bc)sharedContext.getGL().getGL2GL3()));
 			}
 
-			LogBox.formatRenderLog("Found OpenGL version: %s", sharedContext.getGLVersion());
-			LogBox.formatRenderLog("Found GLSL: %s", glVersionString);
-			LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", glVersion.getMajor(), glVersion.getMinor(), isCore);
+			Log.format("Found OpenGL version: %s", sharedContext.getGLVersion());
+			Log.format("Found GLSL: %s", glVersionString);
+			Log.format("OpenGL Major: %d Minor: %d IsCore:%s", glVersion.getMajor(), glVersion.getMinor(), isCore);
 			if (glVersion.getMajor() < 2) {
 				throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
 			}
@@ -616,13 +616,13 @@ public class Renderer implements GLAnimatorControl {
 		window.getAWTFrameRef().setType(Type.UTILITY);
 		window.getAWTFrameRef().setAutoRequestFocus(false);
 
-		LogBox.format("View window created: %s", message.name);
+		Log.format("View window created: %s", message.name);
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				window.getAWTFrameRef().setVisible(true);
-				LogBox.format("View window displayed: %s", message.name);
+				Log.format("View window displayed: %s", message.name);
 			}
 		});
 
@@ -932,7 +932,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				// This did not load cleanly, clear it out and use the default bad mesh asset
 				proto.freeResources(gl);
 
-				LogBox.formatRenderLog("Could not load GPU assset: %s\n", key.getURI().toString());
+				Log.format("Could not load GPU assset: %s\n", key.getURI().toString());
 
 				proto = badProto;
 			}

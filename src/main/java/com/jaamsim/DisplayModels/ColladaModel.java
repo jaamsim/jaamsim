@@ -387,9 +387,9 @@ public class ColladaModel extends DisplayModel {
 			FileOutputStream outStream = new FileOutputStream(outFile);
 			BlockWriter.writeBlock(outStream, block);
 
-			LogBox.formatRenderLog("Successfully exported: %s\n", outputName);
+			Log.format("Successfully exported: %s\n", outputName);
 		} catch (Exception ex) {
-			LogBox.formatRenderLog("Could not export model. Error: %s\n", ex.getMessage());
+			Log.format("Could not export model. Error: %s\n", ex.getMessage());
 			LogBox.renderLogException(ex);
 		}
 
