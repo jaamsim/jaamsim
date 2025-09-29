@@ -42,6 +42,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GL2GL3;
@@ -343,8 +344,8 @@ public class TexCache {
 				gl.glGenerateMipmap(GL2GL3.GL_TEXTURE_2D);
 		} catch (GLException ex) {
 			// We do not have enough texture memory
-			LogBox.renderLog(String.format("Error loading texture: %s", le.imageURI.toString()));
-			LogBox.renderLog(String.format("  %s", ex.toString()));
+			Log.logLine(String.format("Error loading texture: %s", le.imageURI.toString()));
+			Log.logLine(String.format("  %s", ex.toString()));
 			return badTextureID;
 		}
 

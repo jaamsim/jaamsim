@@ -116,7 +116,7 @@ class EventTracer implements EventTraceListener {
 
 					String msg = sb.toString();
 					System.out.println(msg);
-					LogBox.logLine(msg);
+					Log.logLine(msg);
 					EventManager.current().pause();
 
 					if (GUIFrame.getInstance() != null) {
@@ -150,7 +150,7 @@ class EventTracer implements EventTraceListener {
 
 		String msg = sb.toString();
 		System.out.println(msg);
-		LogBox.logLine(msg);
+		Log.logLine(msg);
 		EventManager.current().pause();
 
 		if (GUIFrame.getInstance() != null) {

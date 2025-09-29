@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.ui.LogBox;
 
 /**
@@ -92,7 +93,7 @@ public class ExceptionLogger {
 		for (ExceptionCount e : exceptions) {
 			StackTraceElement st = e.elem;
 			int count = e.count;
-			LogBox.renderLog(st.getFileName() + ":" + st.getLineNumber() + " In: " + st.getClassName() + "." + st.getMethodName() + " " + count + " exceptions");
+			Log.logLine(st.getFileName() + ":" + st.getLineNumber() + " In: " + st.getClassName() + "." + st.getMethodName() + " " + count + " exceptions");
 		}
 	}
 

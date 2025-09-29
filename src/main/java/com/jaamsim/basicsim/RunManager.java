@@ -86,7 +86,7 @@ public class RunManager {
 							+ "on multiple threads:",
 							e.getMessage(),
 							"More information about the error can be found in the Log Viewer.");
-					LogBox.logException(e);
+					Log.logException(e);
 					return;
 				}
 			}
@@ -200,7 +200,7 @@ public class RunManager {
 						reportFile = null;
 					}
 					// Close warning/error trace file
-					LogBox.logLine("Made it to do end at");
+					Log.logLine("Made it to do end at");
 					simModel.closeLogFile();
 
 					// Always terminate the run when in batch mode

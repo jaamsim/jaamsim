@@ -50,6 +50,7 @@ import java.util.regex.Pattern;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.font.OverlayString;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.ColourInput;
@@ -265,14 +266,14 @@ public class Renderer implements GLAnimatorControl {
 
 			// Notify the main thread we're done
 			initialized.set(true);
-			LogBox.logLine("Renderer initialized");
+			Log.logLine("Renderer initialized");
 
 		} catch (Throwable e) {
 
 			fatalError.set(true);
 			errorString = e.getLocalizedMessage();
 			fatalStackTrace = e.getStackTrace();
-			LogBox.renderLog("Renderer encountered a fatal error:");
+			Log.logLine("Renderer encountered a fatal error:");
 			LogBox.renderLogException(e);
 		} finally {
 			if (sharedContext != null && sharedContext.isCurrent())
@@ -303,7 +304,7 @@ public class Renderer implements GLAnimatorControl {
 			}
 		});
 
-		LogBox.logLine("Renderer loop started");
+		Log.logLine("Renderer loop started");
 		while (!shutdown.get()) {
 			try {
 
@@ -1524,11 +1525,11 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	private void printExceptionLog() {
-		LogBox.renderLog("Exceptions from Renderer: ");
+		Log.logLine("Exceptions from Renderer: ");
 
 		exceptionLogger.printExceptionLog();
 
-		LogBox.renderLog("");
+		Log.logLine("");
 
 	}
 

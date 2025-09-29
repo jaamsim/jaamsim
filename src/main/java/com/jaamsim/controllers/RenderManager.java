@@ -61,6 +61,7 @@ import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
@@ -383,7 +384,7 @@ public class RenderManager implements DragSourceListener {
 
 				// Renderer has been initialized successfully
 				if (!loopStarted) {
-					LogBox.logLine("RenderManager loop started");
+					Log.logLine("RenderManager loop started");
 					loopStarted = true;
 				}
 
@@ -1016,9 +1017,9 @@ public class RenderManager implements DragSourceListener {
 
 		// Only print the exception log periodically (this can get a bit spammy)
 		if (numberOfExceptions % EXCEPTION_PRINT_RATE == 0) {
-			LogBox.renderLog("Recoverable Exceptions from RenderManager: ");
+			Log.logLine("Recoverable Exceptions from RenderManager: ");
 			exceptionLogger.printExceptionLog();
-			LogBox.renderLog("");
+			Log.logLine("");
 		}
 	}
 

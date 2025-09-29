@@ -55,7 +55,6 @@ import com.jaamsim.input.ParseContext;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
 import com.jaamsim.input.ValueHandle;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -580,7 +579,7 @@ public class Entity {
 				copyInput(ent, key, context);
 			}
 			catch (Throwable t) {
-				LogBox.logException(t);
+				Log.logException(t);
 			}
 		}
 	}

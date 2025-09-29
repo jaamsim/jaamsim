@@ -89,24 +89,8 @@ public class LogBox extends FrameBox {
 		Log.format(format, args);
 	}
 
-	public static void logLine(final String logLine) {
-		Log.logLine(logLine);
-	}
-
 	public static void formatRenderLog(String format, Object... args) {
 		Log.format(format, args);
-	}
-
-	public static void renderLog(String line) {
-		Log.logLine(line);
-	}
-
-	/**
-	 * Effectively prints the stack trace of 'ex' to the log
-	 * @param ex
-	 */
-	public static void logException(Throwable ex) {
-		Log.logException(ex);
 	}
 
 	public static void renderLogException(Throwable ex) {

@@ -52,6 +52,7 @@ import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Scenario;
 import com.jaamsim.basicsim.SimRun;
@@ -893,7 +894,7 @@ public class InputAgent {
 	 */
 	public static void logMessage(JaamSimModel simModel, String fmt, Object... args) {
 		String msg = String.format(fmt, args);
-		LogBox.logLine(msg);
+		Log.logLine(msg);
 		System.err.println(msg);
 		simModel.logMessage(msg);
 	}

@@ -42,6 +42,7 @@ import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
@@ -519,7 +520,7 @@ public class ContextMenu {
 				if (!refList.isEmpty()) {
 					String msg = String.format("The saved SubModel file contains the following "
 							+ "external references: %s", refList);
-					LogBox.logLine(msg);
+					Log.logLine(msg);
 					GUIFrame.getInstance().invokeErrorDialogBox("Warning", msg);
 				}
 			}

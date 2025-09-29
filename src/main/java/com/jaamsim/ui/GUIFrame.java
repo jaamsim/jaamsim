@@ -134,6 +134,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
@@ -329,7 +330,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			UIManager.getDefaults().put("TextArea.font", font.deriveFont(size));
 		}
 		catch (Exception e) {
-			LogBox.logLine("Unable to change look and feel.");
+			Log.logLine("Unable to change look and feel.");
 		}
 
 		try {
@@ -341,7 +342,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-128.png")));
 		}
 		catch (Exception e) {
-			LogBox.logLine("Unable to load icon file.");
+			Log.logLine("Unable to load icon file.");
 		}
 
 		shuttingDown = new AtomicBoolean(false);
@@ -1027,7 +1028,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				LogBox.logLine("Importing SubModel...");
+				Log.logLine("Importing SubModel...");
 
 				// Create a file chooser
 				final JFileChooser chooser = new JFileChooser(getConfigFolder());
@@ -4464,7 +4465,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Create the user interface
 		GUIFrame gui = null;
 		if (!headless) {
-			LogBox.logLine("Loading Simulation Environment ... ");
+			Log.logLine("Loading Simulation Environment ... ");
 			gui = GUIFrame.createInstance();
 			if (minimize) {
 				gui.setExtendedState(JFrame.ICONIFIED);
@@ -4474,7 +4475,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (!batch) {
 				RenderManager.initialize(SAFE_GRAPHICS);
 			}
-			LogBox.logLine("Simulation Environment Loaded");
+			Log.logLine("Simulation Environment Loaded");
 
 			// This is only here to initialize the static cache in the MRG1999a class to avoid future latency
 			// when initializing other objects in drag+drop
@@ -4749,7 +4750,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	void load() {
 
-		LogBox.logLine("Loading...");
+		Log.logLine("Loading...");
 
 		// Create a file chooser
 		final JFileChooser chooser = new JFileChooser(getConfigFolder());
@@ -4821,9 +4822,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		sim.setConfiguring(false);
 		if (ret == null)
-			LogBox.logLine("Configuration File Loaded");
+			Log.logLine("Configuration File Loaded");
 		else
-			LogBox.logLine("Configuration File Loaded - errors found");
+			Log.logLine("Configuration File Loaded - errors found");
 
 		// show the present state in the user interface
 		if (gui != null) {
@@ -4865,12 +4866,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		catch (Exception e) {
 			GUIFrame.showErrorDialog("File Error", e.getMessage());
-			LogBox.logException(e);
+			Log.logException(e);
 		}
 	}
 
 	boolean save() {
-		LogBox.logLine("Saving...");
+		Log.logLine("Saving...");
 		JaamSimModel sim = getJaamSimModel();
 		if( sim.getConfigFile() != null ) {
 			setSaveFile(sim.getConfigFile());
@@ -4883,7 +4884,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	boolean saveAs() {
-		LogBox.logLine("Save As...");
+		Log.logLine("Save As...");
 
 		// Create a file chooser
 		final JFileChooser chooser = new JFileChooser(getConfigFolder());
@@ -4982,7 +4983,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public boolean saveEntity(Entity entity) {
-		LogBox.logLine("Save Entity: " + entity);
+		Log.logLine("Save Entity: " + entity);
 
 		// Create a file chooser
 		final JFileChooser chooser = new JFileChooser(getConfigFolder());

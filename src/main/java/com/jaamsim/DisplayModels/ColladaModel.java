@@ -28,6 +28,7 @@ import com.jaamsim.MeshFiles.BlockWriter;
 import com.jaamsim.MeshFiles.DataBlock;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
@@ -179,7 +180,7 @@ public class ColladaModel extends DisplayModel {
 						aq.time = handle.getValueAsDouble(simTime, 0);
 					}
 					catch (Throwable e) {
-						LogBox.logException(e);
+						Log.logException(e);
 					}
 				}
 
