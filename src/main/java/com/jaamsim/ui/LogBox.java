@@ -17,31 +17,35 @@
  */
 package com.jaamsim.ui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-public class LogBox extends FrameBox {
+import com.jaamsim.basicsim.Log;
+import com.jaamsim.basicsim.LogListener;
 
+public class LogBox extends FrameBox {
 	private static LogBox myInstance;
 
-	private static Object logLock = new Object();
-	private static StringBuilder logBuilder = new StringBuilder();
+	private static final Listener logger = new Listener();
 
 	private JTextArea logArea;
+
+	static {
+		Log.addListener(logger);
+	}
 
 	private LogBox() {
 		super( "Log Viewer" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowLogViewer"));
 
-		synchronized(logLock) {
-			logArea = new JTextArea(logBuilder.toString());
-			logArea.setEditable(false);
-		}
+
+		logArea = new JTextArea();
+		logArea.setEditable(false);
 
 		JScrollPane scrollPane = new JScrollPane(logArea);
 
@@ -54,14 +58,20 @@ public class LogBox extends FrameBox {
 	 * Returns the only instance of the property box
 	 */
 	public synchronized static LogBox getInstance() {
-		if (myInstance == null)
+		if (myInstance == null) {
 			myInstance = new LogBox();
+			logger.init();
+		}
 
 		return myInstance;
 	}
 
 	private synchronized static void killInstance() {
 		myInstance = null;
+	}
+
+	private synchronized static boolean hasInstance() {
+		return (myInstance != null);
 	}
 
 	@Override
@@ -76,31 +86,19 @@ public class LogBox extends FrameBox {
 	 * @param args
 	 */
 	public static void format(String format, Object... args) {
-		logLine(String.format(format, args));
+		Log.format(format, args);
 	}
 
 	public static void logLine(final String logLine) {
-		synchronized(logLock) {
-			logBuilder.append(logLine + "\n");
-		}
-
-		// Append to the existing log area if it exists
-		if (myInstance != null) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					myInstance.logArea.append(logLine + "\n");
-				}
-			});
-		}
+		Log.logLine(logLine);
 	}
 
 	public static void formatRenderLog(String format, Object... args) {
-		logLine(String.format(format, args));
+		Log.format(format, args);
 	}
 
 	public static void renderLog(String line) {
-		logLine(line);
+		Log.logLine(line);
 	}
 
 	/**
@@ -108,16 +106,7 @@ public class LogBox extends FrameBox {
 	 * @param ex
 	 */
 	public static void logException(Throwable ex) {
-		// Below is some ugly java goofiness, but it works
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter( sw );
-		ex.printStackTrace( pw );
-		pw.flush();
-
-		String stackTrace = sw.toString();
-		logLine(stackTrace);
-
-		System.err.println(stackTrace);
+		Log.logException(ex);
 	}
 
 	public static void renderLogException(Throwable ex) {
@@ -125,7 +114,36 @@ public class LogBox extends FrameBox {
 		if (GUIFrame.getJaamSimModel().isBatchRun())
 			return;
 
-		logException(ex);
+		Log.logException(ex);
 	}
 
+	private static class Listener implements Runnable, LogListener {
+		private AtomicBoolean isScheduled = new AtomicBoolean();
+		private int lastIdx = 0;
+
+		public void init() {
+			lastIdx = 0;
+			update();
+		}
+
+		@Override
+		public void update() {
+			if (!isScheduled.getAndSet(true))
+				SwingUtilities.invokeLater(this);
+		}
+
+		@Override
+		public void run() {
+			isScheduled.set(false);
+
+			if (!hasInstance())
+				return;
+
+			ArrayList<String> lines = Log.getLog(lastIdx);
+			lastIdx += lines.size();
+
+			for (String line : lines)
+				myInstance.logArea.append(line + "\n");
+		}
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) Harvey Harrison
+ * Copyright (C) 2025 Harvey Harrison
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,13 @@ import java.util.ArrayList;
  */
 public class Log {
 	private static final ArrayList<String> log = new ArrayList<>();
+	private static final ArrayList<LogListener> listeners = new ArrayList<>();
+
+	public static void addListener(LogListener listen) {
+		synchronized (log) {
+			listeners.add(listen);
+		}
+	}
 
 	public static void format(String format, Object... args) {
 		logLine(String.format(format, args));
@@ -33,6 +40,8 @@ public class Log {
 	public static void logLine(String line) {
 		synchronized (log) {
 			log.add(line);
+			for (LogListener each : listeners)
+				each.update();
 		}
 	}
 
@@ -48,14 +57,13 @@ public class Log {
 		System.err.println(stackTrace);
 	}
 
-	public static String getLog(int fromIdx) {
-		StringBuilder sb = new StringBuilder();
+	public static ArrayList<String> getLog(int fromIdx) {
+		ArrayList<String> ret = new ArrayList<>();
 		synchronized (log) {
 			for (int i = fromIdx; i < log.size(); i++) {
-				sb.append(log.get(i));
-				sb.append("\n");
+				ret.add(log.get(i));
 			}
 		}
-		return sb.toString();
+		return ret;
 	}
 }
