@@ -80,7 +80,7 @@ public class ExceptionLogger {
 
 		counter.count++;
 		if (counter.count == stackDumpThreshold) {
-			LogBox.renderLogException(t);
+			Log.logException(t);
 		}
 	}
 

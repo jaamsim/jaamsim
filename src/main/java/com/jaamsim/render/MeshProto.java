@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
@@ -1154,7 +1155,7 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 			loadGPUMeshBatches(gl, renderer);
 		}
 	} catch (GLException ex) {
-		LogBox.renderLogException(ex);
+		Log.logException(ex);
 		return; // The loader will detect that this did not load cleanly
 	}
 

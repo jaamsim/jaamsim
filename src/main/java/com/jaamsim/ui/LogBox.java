@@ -80,14 +80,6 @@ public class LogBox extends FrameBox {
 		super.dispose();
 	}
 
-	public static void renderLogException(Throwable ex) {
-		// Suppress renderer error messages when in batch mode
-		if (GUIFrame.getJaamSimModel().isBatchRun())
-			return;
-
-		Log.logException(ex);
-	}
-
 	private static class Listener implements Runnable, LogListener {
 		private AtomicBoolean isScheduled = new AtomicBoolean();
 		private int lastIdx = 0;

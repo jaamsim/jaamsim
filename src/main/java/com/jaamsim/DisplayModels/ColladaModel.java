@@ -390,7 +390,7 @@ public class ColladaModel extends DisplayModel {
 			Log.format("Successfully exported: %s\n", outputName);
 		} catch (Exception ex) {
 			Log.format("Could not export model. Error: %s\n", ex.getMessage());
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 		}
 
 	}

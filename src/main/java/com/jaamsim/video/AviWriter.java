@@ -23,6 +23,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.ui.LogBox;
 
 public class AviWriter {
@@ -63,7 +64,7 @@ public class AviWriter {
 		} catch (IOException ex) {
 			fc = null;
 			// TODO log this error
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 		}
 	}
 
@@ -102,7 +103,7 @@ public class AviWriter {
 			fc = null;
 		} catch (IOException ex) {
 			// Ignore for now...
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 		}
 	}
 
@@ -124,7 +125,7 @@ public class AviWriter {
 		try {
 			fc.write(buff);
 		} catch (IOException ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 			throw new RuntimeException(ex);
 		}
 	}
@@ -276,7 +277,7 @@ public class AviWriter {
 
 
 		} catch (IOException ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 			throw new RuntimeException(ex);
 		}
 

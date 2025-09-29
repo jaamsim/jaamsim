@@ -274,7 +274,7 @@ public class Renderer implements GLAnimatorControl {
 			errorString = e.getLocalizedMessage();
 			fatalStackTrace = e.getStackTrace();
 			Log.logLine("Renderer encountered a fatal error:");
-			LogBox.renderLogException(e);
+			Log.logException(e);
 		} finally {
 			if (sharedContext != null && sharedContext.isCurrent())
 				sharedContext.release();
@@ -1521,7 +1521,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		// For now print a synopsis for all exceptions thrown
 		printExceptionLog();
-		LogBox.renderLogException(t);
+		Log.logException(t);
 	}
 
 	private void printExceptionLog() {

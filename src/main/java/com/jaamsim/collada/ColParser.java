@@ -81,7 +81,7 @@ public class ColParser {
 			return finalData;
 
 		} catch (Exception e) {
-			LogBox.renderLogException(e);
+			Log.logException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}
@@ -1000,10 +1000,10 @@ public class ColParser {
 			ret.relTexture = img;
 			ret.texCoordName = texCoord;
 		} catch (MalformedURLException ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 			parseAssert(false);
 		} catch (URISyntaxException ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 			parseAssert(false);
 		}
 		return ret;

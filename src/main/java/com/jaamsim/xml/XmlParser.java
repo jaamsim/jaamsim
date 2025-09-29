@@ -29,6 +29,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.ui.LogBox;
 
@@ -109,7 +110,7 @@ public class XmlParser  extends DefaultHandler{
 			saxParser.parse(in, this);
 
 		} catch (Exception e) {
-			LogBox.renderLogException(e);
+			Log.logException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}

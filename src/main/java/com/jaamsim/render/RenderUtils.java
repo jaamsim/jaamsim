@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Plane;
@@ -600,12 +601,12 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 
 			return new MeshProtoKey(meshURL.toURI());
 		} catch (MalformedURLException e) {
-			LogBox.renderLogException(e);
+			Log.logException(e);
 			assert (false);
 		} catch (IOException e) {
 			assert (false);
 		} catch (URISyntaxException e) {
-			LogBox.renderLogException(e);
+			Log.logException(e);
 			assert (false);
 		}
 		return null;

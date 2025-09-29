@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.nio.charset.Charset;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.input.Input;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
@@ -45,7 +46,7 @@ public class MeshWriter {
 
 			baseDirURI = new File(filename).toURI().resolve(".");
 		} catch (Exception ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 			return;
 		}
 		isGood = true;
@@ -104,7 +105,7 @@ public class MeshWriter {
 
 			out.close();
 		} catch (IOException ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 			return false;
 		}
 

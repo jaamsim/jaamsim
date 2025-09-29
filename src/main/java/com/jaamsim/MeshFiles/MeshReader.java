@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.xml.parsers.SAXParserFactory;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
@@ -56,7 +57,7 @@ public class MeshReader {
 			return reader.getMeshData();
 
 		} catch (Exception e) {
-			LogBox.renderLogException(e);
+			Log.logException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}

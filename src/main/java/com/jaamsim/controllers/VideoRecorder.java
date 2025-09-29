@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import com.jaamsim.Graphics.View;
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.render.Future;
@@ -165,9 +166,9 @@ public class VideoRecorder {
 				out.close();
 
 			} catch (FileNotFoundException ex) {
-				LogBox.renderLogException(ex);
+				Log.logException(ex);
 			} catch (IOException ex) {
-				LogBox.renderLogException(ex);
+				Log.logException(ex);
 			}
 		}
 		_sampleNumber++;

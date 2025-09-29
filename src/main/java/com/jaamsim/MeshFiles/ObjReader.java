@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec2d;
@@ -46,7 +47,7 @@ public class ObjReader {
 			return reader.getMeshData();
 
 		} catch (Exception e) {
-			LogBox.renderLogException(e);
+			Log.logException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}

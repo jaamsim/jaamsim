@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 
+import com.jaamsim.basicsim.Log;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.ui.LogBox;
 
@@ -42,7 +43,7 @@ public class BinaryExporter {
 			FileOutputStream outStream = new FileOutputStream(outFile);
 			BlockWriter.writeBlock(outStream, block);
 		} catch (Exception ex) {
-			LogBox.renderLogException(ex);
+			Log.logException(ex);
 		}
 	}
 }
