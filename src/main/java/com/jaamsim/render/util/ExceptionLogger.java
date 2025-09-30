@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.jaamsim.basicsim.Log;
-import com.jaamsim.ui.LogBox;
 
 /**
  * This is a utility class that will keep statistical track of exceptions

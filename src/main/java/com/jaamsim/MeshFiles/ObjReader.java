@@ -35,7 +35,6 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.RenderException;
-import com.jaamsim.ui.LogBox;
 
 public class ObjReader {
 	public static MeshData parse(URI asset) throws RenderException {

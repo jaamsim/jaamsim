@@ -22,7 +22,6 @@ import java.net.URI;
 
 import com.jaamsim.basicsim.Log;
 import com.jaamsim.collada.ColParser;
-import com.jaamsim.ui.LogBox;
 
 public class BinaryExporter {
 

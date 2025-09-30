@@ -24,7 +24,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Log;
-import com.jaamsim.ui.LogBox;
 
 public class AviWriter {
 

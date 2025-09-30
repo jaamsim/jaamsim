@@ -62,7 +62,6 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
-import com.jaamsim.ui.LogBox;
 import com.jogamp.common.util.VersionNumber;
 import com.jogamp.nativewindow.NativeWindowFactory;
 import com.jogamp.newt.event.WindowEvent;

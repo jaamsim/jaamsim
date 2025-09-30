@@ -59,7 +59,6 @@ import com.jaamsim.basicsim.SimRun;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 

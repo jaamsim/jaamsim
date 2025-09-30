@@ -42,7 +42,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GL2GL3;
 
 /**

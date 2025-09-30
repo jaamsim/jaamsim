@@ -31,7 +31,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.jaamsim.basicsim.Log;
 import com.jaamsim.render.RenderException;
-import com.jaamsim.ui.LogBox;
 
 /**
  * A simple DOM like parser that handles arrays of white space separated numbers. This is used by both the COLLADA parser and the

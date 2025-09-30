@@ -29,7 +29,6 @@ import com.jaamsim.basicsim.Log;
 import com.jaamsim.input.Input;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.LogBox;
 
 
 public class MeshWriter {

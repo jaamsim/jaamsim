@@ -29,7 +29,6 @@ import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.LogBox;
 
 class EventTracer implements EventTraceListener {
 	private BufferedReader eventVerifyReader;

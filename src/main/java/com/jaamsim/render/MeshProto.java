@@ -35,7 +35,6 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
-import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;

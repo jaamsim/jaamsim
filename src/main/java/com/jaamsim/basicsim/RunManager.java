@@ -25,7 +25,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.RunProgressBox;
 
 /**
