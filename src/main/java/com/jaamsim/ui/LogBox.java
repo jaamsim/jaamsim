@@ -32,7 +32,7 @@ public class LogBox extends FrameBox {
 
 	private static final Listener logger = new Listener();
 
-	private JTextArea logArea;
+	private final JTextArea logArea;
 
 	static {
 		Log.addListener(logger);
