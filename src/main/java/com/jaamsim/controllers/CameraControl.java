@@ -44,7 +44,7 @@ public class CameraControl implements WindowInteractionListener {
 	private static final double ROT_SCALE_Z = 0.005;
 
 	private final Renderer _renderer;
-	private int _windowID;
+	private final int _windowID;
 	private final View _updateView;
 
 	private final Vec3d POI = new Vec3d();
@@ -54,8 +54,9 @@ public class CameraControl implements WindowInteractionListener {
 	private Vec3d dragViewCenter;    // ViewCenter input at start of a drag action
 	private Vec3d dragViewPosition;  // ViewPosition input at the start of a drag action
 
-	public CameraControl(Renderer renderer, View updateView) {
+	public CameraControl(Renderer renderer, int windowID, View updateView) {
 		_renderer = renderer;
+		_windowID = windowID;
 		_updateView = updateView;
 
 		Vec3d pos = _updateView.getGlobalCenter();
@@ -381,10 +382,6 @@ public class CameraControl implements WindowInteractionListener {
 		pi.rotX = rotX;
 		pi.rotZ = rotZ;
 		updateCamTrans(pi, true);
-	}
-
-	public void setWindowID(int windowID) {
-		_windowID = windowID;
 	}
 
 	@Override

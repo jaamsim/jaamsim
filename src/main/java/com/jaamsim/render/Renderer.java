@@ -628,12 +628,10 @@ public class Renderer implements GLAnimatorControl {
 		queueRedraw();
 	}
 
-	public int createWindow(int x, int y, int width, int height, int viewID, String title, String name, Image icon,
+	public void createWindow(int x, int y, int width, int height, int windowID, int viewID, String title, String name, Image icon,
 	                         WindowInteractionListener listener) {
-		int windowID = getAssetID();
 		addRenderMessage(new CreateWindowMessage(x, y, width, height, title,
 				name, windowID, viewID, icon, listener));
-		return windowID;
 	}
 
 	public void setWindowDebugInfo(int windowID, String debugString, ArrayList<Long> debugIDs) {

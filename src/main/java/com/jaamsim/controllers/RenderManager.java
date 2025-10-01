@@ -277,15 +277,15 @@ public class RenderManager implements DragSourceListener {
 
 		IntegerVector windSize = GUIFrame.getInstance().getWindowSize(view);
 		IntegerVector windPos = GUIFrame.getInstance().getWindowPos(view);
-		CameraControl control = new CameraControl(renderer, view);
+		int windowID = Renderer.getAssetID();
+		CameraControl control = new CameraControl(renderer, windowID, view);
 
-		int windowID = renderer.createWindow(windPos.get(0), windPos.get(1),
+		renderer.createWindow(windPos.get(0), windPos.get(1),
 		                                      windSize.get(0), windSize.get(1),
-		                                      view.getID(),
+		                                      windowID, view.getID(),
 		                                      view.getTitle(), view.getName(),
 		                                      null, control);
 
-		control.setWindowID(windowID);
 		windowControls.put(windowID, control);
 		windowToViewMap.put(windowID, view);
 
