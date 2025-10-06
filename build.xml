@@ -68,6 +68,7 @@ limitations under the License.
       <manifest>
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
         <attribute name="Add-Opens" value="java.desktop/sun.awt"/>
+        <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
         <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar"/>
       </manifest>
       <fileset dir="${class.dir}"/>
@@ -78,6 +79,7 @@ limitations under the License.
       <manifest>
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
         <attribute name="Add-Opens" value="java.desktop/sun.awt"/>
+        <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
