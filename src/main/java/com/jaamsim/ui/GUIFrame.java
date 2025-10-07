@@ -5555,7 +5555,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (RunProgressBox.hasInstance())
 			RunProgressBox.getInstance().setShow(false);
 		JaamSimModel sim = getJaamSimModel();
-		if (sim == null || sim.isBatchRun())
+		if (sim.isBatchRun())
 			GUIFrame.shutdown(1);
 		JPanel panel = new JPanel();
 		panel.setLayout( new BorderLayout() );
@@ -5654,7 +5654,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (RunProgressBox.hasInstance())
 			RunProgressBox.getInstance().setShow(false);
 		JaamSimModel sim = getJaamSimModel();
-		if (sim == null || sim.isBatchRun())
+		if (sim.isBatchRun())
 			GUIFrame.shutdown(1);
 
 		Object[] options = {"Yes", "No"};
