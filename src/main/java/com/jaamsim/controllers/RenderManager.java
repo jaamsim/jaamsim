@@ -20,6 +20,7 @@ package com.jaamsim.controllers;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
@@ -99,6 +100,7 @@ import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.ContextMenu;
 import com.jaamsim.ui.DragAndDropable;
+import com.jaamsim.ui.EntityPallet.TransferableObjectType;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
@@ -184,9 +186,6 @@ public class RenderManager implements DragSourceListener {
 	private Mat4d dragEntityTransMat;
 	private Mat4d dragEntityInvTransMat;
 	private IntegerVector dragEntityScreenPosition;
-
-	// The object type for drag-and-drop operation, if this is null, the user is not dragging
-	private DragAndDropable dndObjectType;
 
 	private final PreviewCache previewCache = new PreviewCache();
 
@@ -1792,10 +1791,6 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public void startDragAndDrop(DragAndDropable ot) {
-		dndObjectType = ot;
-	}
-
 	public void mouseMoved(int windowID, int x, int y) {
 
 		// Calculate the position on the x-y plane
@@ -1830,7 +1825,7 @@ public class RenderManager implements DragSourceListener {
 		mouseWindowID = isInWindow ? windowID : -1;
 	}
 
-	public Region getRegion(int windowID, int x, int y) {
+	private Region getRegion(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		int viewID = getActiveView().getID();
 		List<PickData> picks = pickForRay(currentRay, viewID, false);
@@ -1846,8 +1841,9 @@ public class RenderManager implements DragSourceListener {
 		return null;
 	}
 
-	public void createDNDObject(int windowID, int x, int y) {
-		JaamSimModel simModel = dndObjectType.getJaamSimModel();
+	private void createDNDObject(DragAndDropable dndObjectType, int windowID, int x, int y) {
+		Entity proto = (Entity) dndObjectType;
+		JaamSimModel simModel = proto.getJaamSimModel();
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
 
@@ -1865,12 +1861,11 @@ public class RenderManager implements DragSourceListener {
 
 		// Create a new instance
 		Class<? extends Entity> klass  = dndObjectType.getJavaClass();
-		String name = dndObjectType.getName();
+		String name = proto.getName();
 		if (parent != null && !(OverlayEntity.class.isAssignableFrom(klass))) {
 			name = parent.getName() + "." + name;
 		}
 		name = InputAgent.getUniqueName(simModel, name, "");
-		Entity proto = (Entity) dndObjectType;
 		if (proto instanceof ObjectType)
 			proto = null;
 		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, proto, name));
@@ -1888,7 +1883,6 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// We are no longer drag-and-dropping
-		dndObjectType = null;
 		FrameBox.setSelectedEntity(ent, false);
 
 		// Set the position for the entity
@@ -1926,6 +1920,10 @@ public class RenderManager implements DragSourceListener {
 
 	@Override
 	public void dragDropEnd(DragSourceDropEvent evt) {
+		Transferable t = evt.getDragSourceContext().getTransferable();
+		DragAndDropable d = null;
+		if (t instanceof TransferableObjectType)
+			d = ((TransferableObjectType)t).getType();
 
 		// Find the view windows that contain this screen point
 		ArrayList<Integer> list = new ArrayList<>();
@@ -1950,7 +1948,7 @@ public class RenderManager implements DragSourceListener {
 		int x = (int) Math.round(mouseInfo.scaleX * (double)(evt.getX() - mouseInfo.viewableX));
 		int y = (int) Math.round(mouseInfo.scaleY * (double)(evt.getY() - mouseInfo.viewableY));
 
-		createDNDObject(windowID, x, y);
+		createDNDObject(d, windowID, x, y);
 	}
 
 	@Override

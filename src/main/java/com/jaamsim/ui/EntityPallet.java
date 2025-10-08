@@ -140,7 +140,6 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 					}
 					if (RenderManager.isGood()) {
 						// The new renderer is initialized
-						RenderManager.inst().startDragAndDrop(type);
 						event.startDrag(cursor, new TransferableObjectType(type), RenderManager.inst());
 
 					} else {
@@ -315,7 +314,7 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		}
 	}
 
-	private static class TransferableObjectType implements Transferable {
+	public static class TransferableObjectType implements Transferable {
 		private final DragAndDropable type;
 
 		TransferableObjectType(DragAndDropable type) {
@@ -339,6 +338,10 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 			} else {
 				throw new UnsupportedFlavorException(flavor);
 			}
+		}
+
+		public DragAndDropable getType() {
+			return type;
 		}
 	}
 

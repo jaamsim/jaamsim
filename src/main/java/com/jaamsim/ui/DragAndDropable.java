@@ -19,20 +19,14 @@ package com.jaamsim.ui;
 import java.awt.image.BufferedImage;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 
 public interface DragAndDropable {
 
 	public Class<? extends Entity> getJavaClass();
-
-	public String getName();
 
 	public boolean isDragAndDrop();
 
 	public String getPaletteName();
 
 	public BufferedImage getIconImage();
-
-	public JaamSimModel getJaamSimModel();
-
 }
