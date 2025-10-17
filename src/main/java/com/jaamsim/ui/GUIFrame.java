@@ -491,7 +491,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static JaamSimModel getNextJaamSimModel() {
 		long num = modelCount.incrementAndGet();
-		return new JaamSimModel(DEFAULT_MODEL_NAME + num);
+		JaamSimModel simModel = new JaamSimModel(DEFAULT_MODEL_NAME + num);
+		simModel.autoLoad();
+		return simModel;
 	}
 
 	@Override
@@ -4458,7 +4460,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Create a graphic simulation
 		JaamSimModel simModel = getNextJaamSimModel();
-		simModel.autoLoad();
+
 		// Add the run manager
 		setRunManager(new RunManager(simModel));
 
@@ -4730,7 +4732,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Create the new JaamSimModel and load the default objects and inputs
 		JaamSimModel simModel = getNextJaamSimModel();
-		simModel.autoLoad();
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
