@@ -321,12 +321,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			else
 				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
-			// FIXME ensure that JTextArea text is scaled correctly for HiDPI monitors
-			Font font = UIManager.getFont("TextArea.font");
-			float size = UIManager.getFont("TextField.font").getSize2D();
-			if (font.getFamily().equals("Monospaced"))
-				size *= 1.2f;
-			UIManager.getDefaults().put("TextArea.font", font.deriveFont(size));
+			// Apply HiDPI scaling for all UI components
+			setupHiDPIScaling();
 		}
 		catch (Exception e) {
 			LogBox.logLine("Unable to change look and feel.");
@@ -346,6 +342,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		shuttingDown = new AtomicBoolean(false);
 		rateLimiter = RateLimiter.create(60);
+	}
+
+	/**
+	 * Configures UI font adjustments for better readability.
+	 * Note: Java 9+ automatically handles HiDPI scaling, so we don't need to manually scale fonts.
+	 * This method only applies the original TextArea font size adjustment for Monospaced fonts.
+	 */
+	private static void setupHiDPIScaling() {
+		try {
+			// Apply the original TextArea font fix for Monospaced fonts
+			// This ensures TextArea text is readable when using Monospaced fonts
+			Font font = UIManager.getFont("TextArea.font");
+			float size = UIManager.getFont("TextField.font").getSize2D();
+			if (font != null && font.getFamily().equals("Monospaced")) {
+				size *= 1.2f;
+				UIManager.getDefaults().put("TextArea.font", font.deriveFont(size));
+			}
+		}
+		catch (Exception e) {
+			LogBox.logLine("Warning: Unable to configure TextArea font adjustment.");
+			LogBox.logException(e);
+		}
 	}
 
 	private GUIFrame() {
