@@ -303,8 +303,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	int LOWER_START;
 	int VIEW_HEIGHT;
 	int VIEW_WIDTH;
-
-	int VIEW_OFFSET = 50;
+	int VIEW_OFFSET;
 
 	private static final String DEFAULT_MODEL_NAME = "Model";
 
@@ -366,8 +365,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		//Set window size
 		setResizable(false);
 		pack();
-
-		DEFAULT_GUI_HEIGHT = getSize().height;
 
 		controlStartResume.requestFocusInWindow();
 
@@ -3991,6 +3988,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
 		DEFAULT_GUI_WIDTH = winSize.width;
+		DEFAULT_GUI_HEIGHT = getSize().height;
 		COL1_WIDTH = 220;
 		COL4_WIDTH = 520;
 		int middleWidth = DEFAULT_GUI_WIDTH - COL1_WIDTH - COL4_WIDTH;
@@ -4011,6 +4009,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		TOP_START = this.getY() + DEFAULT_GUI_HEIGHT;
 		BOTTOM_START = TOP_START + HALF_TOP;
 		LOWER_START = TOP_START + VIEW_HEIGHT;
+
+		VIEW_OFFSET = 50;
 	}
 
 	public void setShowReferences(boolean bool) {
