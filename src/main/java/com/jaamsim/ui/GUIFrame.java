@@ -324,10 +324,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// FIXME ensure that JTextArea text is scaled correctly for HiDPI monitors
 			Font font = UIManager.getFont("TextArea.font");
-			float size = UIManager.getFont("TextField.font").getSize2D();
-			if (font.getFamily().equals("Monospaced"))
+			if (font.getFamily().equals("Monospaced")) {
+				float size = UIManager.getFont("TextField.font").getSize2D();
 				size *= 1.2f;
-			UIManager.getDefaults().put("TextArea.font", font.deriveFont(size));
+				UIManager.getDefaults().put("TextArea.font", font.deriveFont(size));
+			}
 		}
 		catch (Exception e) {
 			Log.logLine("Unable to change look and feel.");
