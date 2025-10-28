@@ -401,16 +401,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void componentResized(ComponentEvent e) {
 				JaamSimModel sim = getJaamSimModel();
-				if (sim == null || sim.getSimulation() == null)
-					return;
 				sim.getSimulation().setControlPanelWidth(getSize().width);
 			}
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				JaamSimModel sim = getJaamSimModel();
-				if (sim == null || sim.getSimulation() == null)
-					return;
 				windowOffset = new Point(getLocation().x - initLocation.x,
 						getLocation().y - initLocation.y);
 				updateToolLocations(sim.getSimulation());
