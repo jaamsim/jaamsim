@@ -119,6 +119,18 @@ public class AttributeDefinitionListInput extends ArrayListInput<NamedExpression
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		try {
+			for (NamedExpression ne : value) {
+				ExpParser.appendEntityReferences(ne.getExpression(), list);
+			}
+		}
+		catch (ExpError e) {}
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}
