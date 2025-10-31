@@ -1827,7 +1827,7 @@ public class RenderManager implements DragSourceListener {
 
 	private Region getRegion(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
-		int viewID = getActiveView().getID();
+		int viewID = _getActiveView().getID();
 		List<PickData> picks = pickForRay(currentRay, viewID, false);
 		Collections.sort(picks, new SelectionSorter());
 		for (PickData pd : picks) {
@@ -2015,7 +2015,14 @@ public class RenderManager implements DragSourceListener {
 		control.setRotationAngles(0.0000001, 0.0);
 	}
 
-	public View getActiveView() {
+	public static View getActiveView() {
+		if (!isGood())
+			return null;
+
+		return inst()._getActiveView();
+	}
+
+	private View _getActiveView() {
 		return windowToViewMap.get(activeWindowID);
 	}
 

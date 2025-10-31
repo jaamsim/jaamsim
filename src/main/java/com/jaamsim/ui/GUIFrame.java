@@ -522,12 +522,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void showWindows() {
-		JaamSimModel sim = getJaamSimModel();
-		if (!RenderManager.isGood() || sim == null || sim.getSimulation() == null)
-			return;
-
 		// Identity the view window that is active
-		View activeView = RenderManager.inst().getActiveView();
+		View activeView = RenderManager.getActiveView();
+		if (activeView == null)
+			return;
 
 		// Re-open the view windows
 		for (int i = 0; i < views.size(); i++) {
@@ -541,7 +539,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			RenderManager.inst().createWindow(activeView);
 
 		// Re-open the tools
-		showActiveTools(sim.getSimulation());
+		showActiveTools(getJaamSimModel().getSimulation());
 		updateUI();
 	}
 
@@ -1662,12 +1660,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bLock2D = lockViewXYPlane.isSelected();
-
-				if (RenderManager.isGood()) {
-					View currentView = RenderManager.inst().getActiveView();
-					if (currentView != null) {
-						currentView.setLock2D(bLock2D);
-					}
+				View currentView = RenderManager.getActiveView();
+				if (currentView != null) {
+					currentView.setLock2D(bLock2D);
 				}
 				controlStartResume.requestFocusInWindow();
 			}
@@ -3692,9 +3687,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void update2dButton() {
-		if (!RenderManager.isGood())
-			return;
-		View view = RenderManager.inst().getActiveView();
+		View view = RenderManager.getActiveView();
 		if (view == null)
 			return;
 		lockViewXYPlane.setEnabled(view.isMovable());
@@ -4291,9 +4284,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		IntegerVector ret = new IntegerVector(v.getWindowPos());
 
 		// Presentation mode
-		View activeView = null;
-		if (RenderManager.isGood())
-			activeView = RenderManager.inst().getActiveView();
+		View activeView = RenderManager.getActiveView();
 		if (presentMode.isSelected() && v == activeView) {
 			ret.set(0, COL1_START);
 			ret.set(1, TOP_START);
@@ -4310,9 +4301,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		IntegerVector ret = new IntegerVector(v.getWindowSize());
 
 		// Presentation mode
-		View activeView = null;
-		if (RenderManager.isGood())
-			activeView = RenderManager.inst().getActiveView();
+		View activeView = RenderManager.getActiveView();
 		if (presentMode.isSelected() && v == activeView) {
 			ret.set(0, VIEW_WIDTH + COL1_WIDTH);
 			ret.set(1, VIEW_HEIGHT + LOWER_HEIGHT);

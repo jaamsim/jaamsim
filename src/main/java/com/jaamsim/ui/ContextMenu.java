@@ -35,11 +35,11 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EditableText;
 import com.jaamsim.Graphics.EntityLabel;
-import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Log;
@@ -361,11 +361,11 @@ public class ContextMenu {
 
 		// 5) Centre in View
 		JMenuItem centerInViewMenuItem = new JMenuItem( "Center in View" );
-		final View v = RenderManager.inst().getActiveView();
 		centerInViewMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				View v = RenderManager.getActiveView();
 				// Move the camera position so that the entity is in the centre of the screen
 				Vec3d viewPos = new Vec3d(v.getViewPosition());
 				Vec3d viewCenter = new Vec3d(v.getEffViewCenter());
@@ -380,7 +380,7 @@ public class ContextMenu {
 				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
 			}
 		} );
-		if (v == null) {
+		if (RenderManager.getActiveView() == null) {
 			centerInViewMenuItem.setEnabled(false);
 		}
 		menu.add( centerInViewMenuItem );
