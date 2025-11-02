@@ -4000,6 +4000,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 
 		VIEW_OFFSET = 50;
+		Simulation.setWindowDefaults(winSize.width, winSize.height, getSize().height, this.getX(), this.getY());
 	}
 
 	public void setShowReferences(boolean bool) {
