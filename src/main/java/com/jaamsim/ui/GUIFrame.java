@@ -467,7 +467,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		GUIFrame gui = getInstance();
 		if (gui == null)
 			return;
-		gui.setWindowDefaults(sm.getSimulation());
+
 		RenderManager.clear();
 		EntityPallet.update();
 		ObjectSelector.allowUpdate();
@@ -4216,10 +4216,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	private void setWindowDefaults(Simulation simulation) {
-		clearUndoRedo();
-	}
-
 	public ArrayList<View> getViews() {
 		synchronized (views) {
 			return views;
@@ -4448,7 +4444,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (minimize) {
 				gui.setExtendedState(JFrame.ICONIFIED);
 			}
-			gui.setWindowDefaults(simModel.getSimulation());
+			gui.clearUndoRedo();
 			gui.setVisible(true);
 			if (!batch) {
 				RenderManager.initialize(SAFE_GRAPHICS);
