@@ -68,13 +68,6 @@ public class FrameBox extends OSFixJFrame {
 		allInstances.add(this);
 	}
 
-	public static void clear() {
-		ArrayList<FrameBox> boxes = new ArrayList<>(allInstances);
-		for (FrameBox each : boxes) {
-			each.dispose();
-		}
-	}
-
 	public static void stop() {
 		ArrayList<FrameBox> boxes = new ArrayList<>(allInstances);
 		for (FrameBox each : boxes) {

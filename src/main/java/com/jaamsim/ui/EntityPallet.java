@@ -220,16 +220,6 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		return myInstance;
 	}
 
-	/**
-	 * Disposes the only instance of the entity pallet
-	 */
-	public synchronized static void clear() {
-		if (myInstance != null) {
-			myInstance.dispose();
-			myInstance = null;
-		}
-	}
-
 	private static class TreeCellRenderer extends DefaultTreeCellRenderer {
 		private final ImageIcon icon = new ImageIcon();
 
