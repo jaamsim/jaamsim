@@ -410,7 +410,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JaamSimModel sim = getJaamSimModel();
 				windowOffset = new Point(getLocation().x - initLocation.x,
 						getLocation().y - initLocation.y);
-				updateToolLocations(sim.getSimulation());
+				updateToolPositionSizes(sim.getSimulation());
 				updateViewLocations();
 			}
 		});
@@ -3381,8 +3381,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateShowReferencesButton(simulation.isShowReferences());
 		updateShowEntityFlowButton(simulation.isShowEntityFlow());
 		updateToolVisibilities(simulation);
-		updateToolSizes(simulation);
-		updateToolLocations(simulation);
+		updateToolPositionSizes(simulation);
 		updateViewVisibilities();
 		updateViewSizes();
 		updateViewLocations();
@@ -4134,47 +4133,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			frame.toFront();
 	}
 
-	public void updateToolSizes(Simulation simulation) {
-		EntityPallet.getInstance().setSize(simulation.getModelBuilderSize().get(0),
-				simulation.getModelBuilderSize().get(1));
-		ObjectSelector.getInstance().setSize(simulation.getObjectSelectorSize().get(0),
-				simulation.getObjectSelectorSize().get(1));
-		EditBox.getInstance().setSize(simulation.getInputEditorSize().get(0),
-				simulation.getInputEditorSize().get(1));
-		OutputBox.getInstance().setSize(simulation.getOutputViewerSize().get(0),
-				simulation.getOutputViewerSize().get(1));
-		PropertyBox.getInstance().setSize(simulation.getPropertyViewerSize().get(0),
-				simulation.getPropertyViewerSize().get(1));
-		LogBox.getInstance().setSize(simulation.getLogViewerSize().get(0),
-				simulation.getLogViewerSize().get(1));
-		if (EventViewer.hasInstance()) {
-			EventViewer.getInstance().setSize(simulation.getEventViewerSize().get(0),
-					simulation.getEventViewerSize().get(1));
-		}
+	private void updateToolPositionSizes(Simulation simulation) {
+		setToolPositionSize(EntityPallet.getInstance(), simulation.getModelBuilderPos(), simulation.getModelBuilderSize());
+		setToolPositionSize(ObjectSelector.getInstance(), simulation.getObjectSelectorPos(), simulation.getObjectSelectorSize());
+		setToolPositionSize(EditBox.getInstance(), simulation.getInputEditorPos(), simulation.getInputEditorSize());
+		setToolPositionSize(OutputBox.getInstance(), simulation.getOutputViewerPos(), simulation.getOutputViewerSize());
+		setToolPositionSize(PropertyBox.getInstance(), simulation.getPropertyViewerPos(), simulation.getPropertyViewerSize());
+		setToolPositionSize(LogBox.getInstance(), simulation.getLogViewerPos(), simulation.getLogViewerSize());
+		if (EventViewer.hasInstance())
+			setToolPositionSize(EventViewer.getInstance(), simulation.getEventViewerPos(), simulation.getEventViewerSize());
 	}
 
-	public void updateToolLocations(Simulation simulation) {
-		setToolLocation(EntityPallet.getInstance(), simulation.getModelBuilderPos().get(0),
-				simulation.getModelBuilderPos().get(1));
-		setToolLocation(ObjectSelector.getInstance(), simulation.getObjectSelectorPos().get(0),
-				simulation.getObjectSelectorPos().get(1));
-		setToolLocation(EditBox.getInstance(), simulation.getInputEditorPos().get(0),
-				simulation.getInputEditorPos().get(1));
-		setToolLocation(OutputBox.getInstance(), simulation.getOutputViewerPos().get(0),
-				simulation.getOutputViewerPos().get(1));
-		setToolLocation(PropertyBox.getInstance(), simulation.getPropertyViewerPos().get(0),
-				simulation.getPropertyViewerPos().get(1));
-		setToolLocation(LogBox.getInstance(), simulation.getLogViewerPos().get(0),
-				simulation.getLogViewerPos().get(1));
-		if (EventViewer.hasInstance()) {
-			setToolLocation(EventViewer.getInstance(), simulation.getEventViewerPos().get(0),
-					simulation.getEventViewerPos().get(1));
-		}
-	}
-
-	public void setToolLocation(JFrame tool, int x, int y) {
-		Point pt = getGlobalLocation(x, y);
+	private void setToolPositionSize(JFrame tool, IntegerVector pos, IntegerVector size) {
+		Point pt = getGlobalLocation(pos.get(0), pos.get(1));
 		tool.setLocation(pt);
+		tool.setSize(size.get(0), size.get(1));
 	}
 
 	private void updateViewVisibilities() {
