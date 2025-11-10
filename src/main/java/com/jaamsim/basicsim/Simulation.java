@@ -1239,11 +1239,6 @@ public class Simulation extends Entity {
 		return showEventViewer.getValue();
 	}
 
-	public static void setWindowDefaults(int winWidth, int winHeight, int guiHeight, int guiX, int guiY) {
-		WindowDefaults winDefs = new WindowDefaults(winWidth, winHeight, guiHeight, guiX, guiY);
-
-	}
-
 	public void setModelBuilderDefaults(int x, int y, int width, int height) {
 		modelBuilderPos.setDefaultValue(x, y);
 		modelBuilderSize.setDefaultValue(width, height);

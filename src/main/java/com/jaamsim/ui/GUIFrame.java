@@ -138,6 +138,7 @@ import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -4000,7 +4001,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 
 		VIEW_OFFSET = 50;
-		Simulation.setWindowDefaults(winSize.width, winSize.height, getSize().height, this.getX(), this.getY());
+		final WindowDefaults winDefs = new WindowDefaults(winSize.width, winSize.height, getSize().height, this.getX(), this.getY());
+		View.setDefaults(winDefs);
 	}
 
 	public void setShowReferences(boolean bool) {
@@ -4214,11 +4216,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void setWindowDefaults(Simulation simulation) {
-
-		// Set the default size and position for view windows before reading the configuration file
-		View.setDefaultPosition(COL2_START, TOP_START);
-		View.setDefaultSize(VIEW_WIDTH, VIEW_HEIGHT);
-
 		simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
 		simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
 		simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);

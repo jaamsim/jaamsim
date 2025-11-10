@@ -25,6 +25,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.controllers.PolarInfo;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityInput;
@@ -107,8 +108,8 @@ public class View extends Entity {
 
 	private double cachedSimTime = 0;
 
-	private static IntegerVector defPos = new IntegerVector(2);
-	private static IntegerVector defSize = new IntegerVector(2);
+	private static final IntegerVector defPos = new IntegerVector(2);
+	private static final IntegerVector defSize = new IntegerVector(2);
 
 	static {
 		defPos.fillWithEntriesOf(2, 0);
@@ -205,14 +206,12 @@ public class View extends Entity {
 		gui.createWindow(this);
 	}
 
-	public static void setDefaultPosition(int x, int y) {
-		defPos.set(0, x);
-		defPos.set(1, y);
-	}
+	public static void setDefaults(WindowDefaults winDefs) {
+		defPos.set(0, winDefs.COL2_START);
+		defPos.set(1, winDefs.TOP_START);
 
-	public static void setDefaultSize(int width, int height) {
-		defSize.set(0, width);
-		defSize.set(1, height);
+		defSize.set(0, winDefs.VIEW_WIDTH);
+		defSize.set(1, winDefs.VIEW_HEIGHT);
 	}
 
 	public Vec3d getViewCenter() {
