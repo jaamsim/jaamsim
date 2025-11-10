@@ -285,27 +285,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static File userManualFile;
 
-	// Collection of default window parameters
-	int DEFAULT_GUI_WIDTH;
-	int DEFAULT_GUI_HEIGHT;
-	int COL1_WIDTH;
-	int COL2_WIDTH;
-	int COL3_WIDTH;
-	int COL4_WIDTH;
-	int COL1_START;
-	int COL2_START;
-	int COL3_START;
-	int COL4_START;
-	int HALF_TOP;
-	int HALF_BOTTOM;
-	int TOP_START;
-	int BOTTOM_START;
-	int LOWER_HEIGHT;
-	int LOWER_START;
-	int VIEW_HEIGHT;
-	int VIEW_WIDTH;
-	int VIEW_OFFSET;
-
+	private static WindowDefaults winDefs;
 	private static final String DEFAULT_MODEL_NAME = "Model";
 
 	private static final String LAST_USED_FOLDER = "";
@@ -1120,7 +1100,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							View lastView = viewList.get(viewList.size() - 1);
 							winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
 							winPos = new IntegerVector(winPos);
-							winPos.set(0, winPos.get(0) + VIEW_OFFSET);
+							winPos.set(0, winPos.get(0) + winDefs.VIEW_OFFSET);
 							pos = lastView.getViewPosition();
 							center = lastView.getViewCenter();
 						}
@@ -3388,7 +3368,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (getExtendedState() == MAXIMIZED_BOTH) {
 			setExtendedState(NORMAL);
 		}
-		setSize(simulation.getControlPanelWidth(), DEFAULT_GUI_HEIGHT);
+		setSize(simulation.getControlPanelWidth(), winDefs.DEFAULT_GUI_HEIGHT);
 	}
 
 	private void updateSaveButton() {
@@ -3976,31 +3956,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void calcWindowDefaults() {
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-		DEFAULT_GUI_WIDTH = winSize.width;
-		DEFAULT_GUI_HEIGHT = getSize().height;
-		COL1_WIDTH = 220;
-		COL4_WIDTH = 520;
-		int middleWidth = DEFAULT_GUI_WIDTH - COL1_WIDTH - COL4_WIDTH;
-		COL2_WIDTH = Math.max(520, middleWidth / 2);
-		COL3_WIDTH = Math.max(420, middleWidth - COL2_WIDTH);
-		VIEW_WIDTH = DEFAULT_GUI_WIDTH - COL1_WIDTH;
-
-		COL1_START = this.getX();
-		COL2_START = COL1_START + COL1_WIDTH;
-		COL3_START = COL2_START + COL2_WIDTH;
-		COL4_START = Math.min(COL3_START + COL3_WIDTH, winSize.width - COL4_WIDTH);
-
-		HALF_TOP = (winSize.height - DEFAULT_GUI_HEIGHT) / 2;
-		HALF_BOTTOM = (winSize.height - DEFAULT_GUI_HEIGHT - HALF_TOP);
-		LOWER_HEIGHT = Math.min(250, (winSize.height - DEFAULT_GUI_HEIGHT) / 3);
-		VIEW_HEIGHT = winSize.height - DEFAULT_GUI_HEIGHT - LOWER_HEIGHT;
-
-		TOP_START = this.getY() + DEFAULT_GUI_HEIGHT;
-		BOTTOM_START = TOP_START + HALF_TOP;
-		LOWER_START = TOP_START + VIEW_HEIGHT;
-
-		VIEW_OFFSET = 50;
-		final WindowDefaults winDefs = new WindowDefaults(winSize.width, winSize.height, getSize().height, this.getX(), this.getY());
+		winDefs = new WindowDefaults(winSize.width, winSize.height, getSize().height, this.getX(), this.getY());
 		View.setDefaults(winDefs);
 		Simulation.setDefaults(winDefs);
 	}
@@ -4245,8 +4201,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Presentation mode
 		View activeView = RenderManager.getActiveView();
 		if (presentMode.isSelected() && v == activeView) {
-			ret.set(0, COL1_START);
-			ret.set(1, TOP_START);
+			ret.set(0, winDefs.COL1_START);
+			ret.set(1, winDefs.TOP_START);
 		}
 
 		Point pt = getGlobalLocation(ret.get(0), ret.get(1));
@@ -4262,8 +4218,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Presentation mode
 		View activeView = RenderManager.getActiveView();
 		if (presentMode.isSelected() && v == activeView) {
-			ret.set(0, VIEW_WIDTH + COL1_WIDTH);
-			ret.set(1, VIEW_HEIGHT + LOWER_HEIGHT);
+			ret.set(0, winDefs.VIEW_WIDTH + winDefs.COL1_WIDTH);
+			ret.set(1, winDefs.VIEW_HEIGHT + winDefs.LOWER_HEIGHT);
 		}
 
 		ret.addAt(fix.x, 0);
