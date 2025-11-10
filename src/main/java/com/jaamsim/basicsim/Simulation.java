@@ -378,7 +378,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The width of the Control Panel window in pixels.",
 	         exampleList = {"1920"})
-	private final IntegerInput controlPanelWidth;
+	private final IntegerListInput controlPanelWidth;
 
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         exampleList = {"2160 h"})
@@ -389,6 +389,40 @@ public class Simulation extends Entity {
 	                     + "the configuration file.  The input report can always be generated "
 	                     + "when needed by selecting \"Print Input Report\" under the File menu.")
 	private final BooleanInput printInputReport;
+
+	private static final IntegerVector modelBuilderPosDef = new IntegerVector(2);
+	private static final IntegerVector modelBuilderSizeDef = new IntegerVector(2);
+	private static final IntegerVector objectSelectorPosDef = new IntegerVector(2);
+	private static final IntegerVector objectSelectorSizeDef = new IntegerVector(2);
+	private static final IntegerVector inputEditorPosDef = new IntegerVector(2);
+	private static final IntegerVector inputEditorSizeDef = new IntegerVector(2);
+	private static final IntegerVector outputViewerPosDef = new IntegerVector(2);
+	private static final IntegerVector outputViewerSizeDef = new IntegerVector(2);
+	private static final IntegerVector propertyViewerPosDef = new IntegerVector(2);
+	private static final IntegerVector propertyViewerSizeDef = new IntegerVector(2);
+	private static final IntegerVector logViewerPosDef = new IntegerVector(2);
+	private static final IntegerVector logViewerSizeDef = new IntegerVector(2);
+	private static final IntegerVector eventViewerPosDef = new IntegerVector(2);
+	private static final IntegerVector eventViewerSizeDef = new IntegerVector(2);
+	private static final IntegerVector controlPanelWidthDef = new IntegerVector(1);
+
+	static {
+		modelBuilderPosDef.fillWithEntriesOf(2, 1);
+		modelBuilderSizeDef.fillWithEntriesOf(2, 1);
+		objectSelectorPosDef.fillWithEntriesOf(2, 1);
+		objectSelectorSizeDef.fillWithEntriesOf(2, 1);
+		inputEditorPosDef.fillWithEntriesOf(2, 1);
+		inputEditorSizeDef.fillWithEntriesOf(2, 1);
+		outputViewerPosDef.fillWithEntriesOf(2, 1);
+		outputViewerSizeDef.fillWithEntriesOf(2, 1);
+		propertyViewerPosDef.fillWithEntriesOf(2, 1);
+		propertyViewerSizeDef.fillWithEntriesOf(2, 1);
+		logViewerPosDef.fillWithEntriesOf(2, 1);
+		logViewerSizeDef.fillWithEntriesOf(2, 1);
+		eventViewerPosDef.fillWithEntriesOf(2, 1);
+		eventViewerSizeDef.fillWithEntriesOf(2, 1);
+		controlPanelWidthDef.fillWithEntriesOf(1, 1);
+	}
 
 	{
 		// Key Inputs tab
@@ -621,109 +655,106 @@ public class Simulation extends Entity {
 		showEventViewer.setHidden(true);
 		this.addInput(showEventViewer);
 
-		final IntegerVector def = new IntegerVector(2);
-		def.add(1);
-		def.add(1);
-
-		modelBuilderPos = new IntegerListInput("ModelBuilderPos", GUI, def);
+		modelBuilderPos = new IntegerListInput("ModelBuilderPos", GUI, modelBuilderPosDef);
 		modelBuilderPos.setValidCount(2);
 		modelBuilderPos.setValidRange(-8192, 8192);
 		modelBuilderPos.setPromptReqd(false);
 		modelBuilderPos.setHidden(true);
 		this.addInput(modelBuilderPos);
 
-		modelBuilderSize = new IntegerListInput("ModelBuilderSize", GUI, def);
+		modelBuilderSize = new IntegerListInput("ModelBuilderSize", GUI, modelBuilderSizeDef);
 		modelBuilderSize.setValidCount(2);
 		modelBuilderSize.setValidRange(1, 8192);
 		modelBuilderSize.setPromptReqd(false);
 		modelBuilderSize.setHidden(true);
 		this.addInput(modelBuilderSize);
 
-		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", GUI, def);
+		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", GUI, objectSelectorPosDef);
 		objectSelectorPos.setValidCount(2);
 		objectSelectorPos.setValidRange(-8192, 8192);
 		objectSelectorPos.setPromptReqd(false);
 		objectSelectorPos.setHidden(true);
 		this.addInput(objectSelectorPos);
 
-		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", GUI, def);
+		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", GUI, objectSelectorSizeDef);
 		objectSelectorSize.setValidCount(2);
 		objectSelectorSize.setValidRange(1, 8192);
 		objectSelectorSize.setPromptReqd(false);
 		objectSelectorSize.setHidden(true);
 		this.addInput(objectSelectorSize);
 
-		inputEditorPos = new IntegerListInput("InputEditorPos", GUI, def);
+		inputEditorPos = new IntegerListInput("InputEditorPos", GUI, inputEditorPosDef);
 		inputEditorPos.setValidCount(2);
 		inputEditorPos.setValidRange(-8192, 8192);
 		inputEditorPos.setPromptReqd(false);
 		inputEditorPos.setHidden(true);
 		this.addInput(inputEditorPos);
 
-		inputEditorSize = new IntegerListInput("InputEditorSize", GUI, def);
+		inputEditorSize = new IntegerListInput("InputEditorSize", GUI, inputEditorSizeDef);
 		inputEditorSize.setValidCount(2);
 		inputEditorSize.setValidRange(1, 8192);
 		inputEditorSize.setPromptReqd(false);
 		inputEditorSize.setHidden(true);
 		this.addInput(inputEditorSize);
 
-		outputViewerPos = new IntegerListInput("OutputViewerPos", GUI, def);
+		outputViewerPos = new IntegerListInput("OutputViewerPos", GUI, outputViewerPosDef);
 		outputViewerPos.setValidCount(2);
 		outputViewerPos.setValidRange(-8192, 8192);
 		outputViewerPos.setPromptReqd(false);
 		outputViewerPos.setHidden(true);
 		this.addInput(outputViewerPos);
 
-		outputViewerSize = new IntegerListInput("OutputViewerSize", GUI, def);
+		outputViewerSize = new IntegerListInput("OutputViewerSize", GUI, outputViewerSizeDef);
 		outputViewerSize.setValidCount(2);
 		outputViewerSize.setValidRange(1, 8192);
 		outputViewerSize.setPromptReqd(false);
 		outputViewerSize.setHidden(true);
 		this.addInput(outputViewerSize);
 
-		propertyViewerPos = new IntegerListInput("PropertyViewerPos", GUI, def);
+		propertyViewerPos = new IntegerListInput("PropertyViewerPos", GUI, propertyViewerPosDef);
 		propertyViewerPos.setValidCount(2);
 		propertyViewerPos.setValidRange(-8192, 8192);
 		propertyViewerPos.setPromptReqd(false);
 		propertyViewerPos.setHidden(true);
 		this.addInput(propertyViewerPos);
 
-		propertyViewerSize = new IntegerListInput("PropertyViewerSize", GUI, def);
+		propertyViewerSize = new IntegerListInput("PropertyViewerSize", GUI, propertyViewerSizeDef);
 		propertyViewerSize.setValidCount(2);
 		propertyViewerSize.setValidRange(1, 8192);
 		propertyViewerSize.setPromptReqd(false);
 		propertyViewerSize.setHidden(true);
 		this.addInput(propertyViewerSize);
 
-		logViewerPos = new IntegerListInput("LogViewerPos", GUI, def);
+		logViewerPos = new IntegerListInput("LogViewerPos", GUI, logViewerPosDef);
 		logViewerPos.setValidCount(2);
 		logViewerPos.setValidRange(-8192, 8192);
 		logViewerPos.setPromptReqd(false);
 		logViewerPos.setHidden(true);
 		this.addInput(logViewerPos);
 
-		logViewerSize = new IntegerListInput("LogViewerSize", GUI, def);
+		logViewerSize = new IntegerListInput("LogViewerSize", GUI, logViewerSizeDef);
 		logViewerSize.setValidCount(2);
 		logViewerSize.setValidRange(1, 8192);
 		logViewerSize.setPromptReqd(false);
 		logViewerSize.setHidden(true);
 		this.addInput(logViewerSize);
 
-		eventViewerPos = new IntegerListInput("EventViewerPos", GUI, def);
+		eventViewerPos = new IntegerListInput("EventViewerPos", GUI, eventViewerPosDef);
 		eventViewerPos.setValidCount(2);
 		eventViewerPos.setValidRange(-8192, 8192);
 		eventViewerPos.setPromptReqd(false);
 		eventViewerPos.setHidden(true);
 		this.addInput(eventViewerPos);
 
-		eventViewerSize = new IntegerListInput("EventViewerSize", GUI, def);
+		eventViewerSize = new IntegerListInput("EventViewerSize", GUI, eventViewerSizeDef);
 		eventViewerSize.setValidCount(2);
 		eventViewerSize.setValidRange(1, 8192);
 		eventViewerSize.setPromptReqd(false);
 		eventViewerSize.setHidden(true);
 		this.addInput(eventViewerSize);
 
-		controlPanelWidth = new IntegerInput("ControlPanelWidth", GUI, Integer.valueOf(1));
+		controlPanelWidth = new IntegerListInput("ControlPanelWidth", GUI, controlPanelWidthDef);
+		controlPanelWidth.setValidCount(1);
 		controlPanelWidth.setValidRange(1, 8192);
 		controlPanelWidth.setPromptReqd(false);
 		controlPanelWidth.setHidden(true);
@@ -1201,14 +1232,14 @@ public class Simulation extends Entity {
 	}
 
 	public void setControlPanelWidth(int width) {
-		if (controlPanelWidth.getValue() == width)
+		if (controlPanelWidth.getValue().get(0) == width)
 			return;
 		KeywordIndex kw = InputAgent.formatIntegers(controlPanelWidth.getKeyword(), width);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public int getControlPanelWidth() {
-		return controlPanelWidth.getValue();
+		return controlPanelWidth.getValue().get(0);
 	}
 
 	public boolean isModelBuilderVisible() {
@@ -1239,43 +1270,50 @@ public class Simulation extends Entity {
 		return showEventViewer.getValue();
 	}
 
-	public void setModelBuilderDefaults(int x, int y, int width, int height) {
-		modelBuilderPos.setDefaultValue(x, y);
-		modelBuilderSize.setDefaultValue(width, height);
-	}
+	public static void setDefaults(WindowDefaults winDefs) {
+		modelBuilderPosDef.set(0, winDefs.COL1_START);
+		modelBuilderPosDef.set(1, winDefs.TOP_START);
 
-	public void setObjectSelectorDefaults(int x, int y, int width, int height) {
-		objectSelectorPos.setDefaultValue(x, y);
-		objectSelectorSize.setDefaultValue(width, height);
-	}
+		modelBuilderSizeDef.set(0, winDefs.COL1_WIDTH);
+		modelBuilderSizeDef.set(1, winDefs.HALF_TOP);
 
-	public void setInputEditorDefaults(int x, int y, int width, int height) {
-		inputEditorPos.setDefaultValue(x, y);
-		inputEditorSize.setDefaultValue(width, height);
-	}
+		objectSelectorPosDef.set(0, winDefs.COL1_START);
+		objectSelectorPosDef.set(1, winDefs.BOTTOM_START);
 
-	public void setOutputViewerDefaults(int x, int y, int width, int height) {
-		outputViewerPos.setDefaultValue(x, y);
-		outputViewerSize.setDefaultValue(width, height);
-	}
+		objectSelectorSizeDef.set(0, winDefs.COL1_WIDTH);
+		objectSelectorSizeDef.set(1, winDefs.HALF_BOTTOM);
 
-	public void setPropertyViewerDefaults(int x, int y, int width, int height) {
-		propertyViewerPos.setDefaultValue(x, y);
-		propertyViewerSize.setDefaultValue(width, height);
-	}
+		inputEditorPosDef.set(0, winDefs.COL2_START);
+		inputEditorPosDef.set(1, winDefs.LOWER_START);
 
-	public void setLogViewerDefaults(int x, int y, int width, int height) {
-		logViewerPos.setDefaultValue(x, y);
-		logViewerSize.setDefaultValue(width, height);
-	}
+		inputEditorSizeDef.set(0, winDefs.COL2_WIDTH);
+		inputEditorSizeDef.set(1, winDefs.LOWER_HEIGHT);
 
-	public void setEventViewerDefaults(int x, int y, int width, int height) {
-		eventViewerPos.setDefaultValue(x, y);
-		eventViewerSize.setDefaultValue(width, height);
-	}
+		outputViewerPosDef.set(0, winDefs.COL3_START);
+		outputViewerPosDef.set(1, winDefs.LOWER_START);
 
-	public void setControlPanelWidthDefault(int width) {
-		controlPanelWidth.setDefaultValue(width);
+		outputViewerSizeDef.set(0, winDefs.COL3_WIDTH);
+		outputViewerSizeDef.set(1, winDefs.LOWER_HEIGHT);
+
+		propertyViewerPosDef.set(0, winDefs.COL4_START);
+		propertyViewerPosDef.set(1, winDefs.LOWER_START);
+
+		propertyViewerSizeDef.set(0, winDefs.COL4_WIDTH);
+		propertyViewerSizeDef.set(1, winDefs.LOWER_HEIGHT);
+
+		logViewerPosDef.set(0, winDefs.COL4_START);
+		logViewerPosDef.set(1, winDefs.LOWER_START);
+
+		logViewerSizeDef.set(0, winDefs.COL4_WIDTH);
+		logViewerSizeDef.set(1, winDefs.LOWER_HEIGHT);
+
+		eventViewerPosDef.set(0, winDefs.COL4_START);
+		eventViewerPosDef.set(1, winDefs.LOWER_START);
+
+		eventViewerSizeDef.set(0, winDefs.COL4_WIDTH);
+		eventViewerSizeDef.set(1, winDefs.LOWER_HEIGHT);
+
+		controlPanelWidthDef.set(0, winDefs.DEFAULT_GUI_WIDTH);
 	}
 
 	public int getNumberOfReplications() {
