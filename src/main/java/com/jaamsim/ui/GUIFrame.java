@@ -474,7 +474,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public Dimension getPreferredSize() {
 		Point fix = OSFix.getSizeAdjustment(isResizable());
-		return new Dimension(DEFAULT_GUI_WIDTH + fix.x, super.getPreferredSize().height);
+		if (winDefs != null)
+			return new Dimension(winDefs.DEFAULT_GUI_WIDTH + fix.x, super.getPreferredSize().height);
+
+		// Only called from pack() inside the GUIFrame constructor
+		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		return new Dimension(winSize.width + fix.x, super.getPreferredSize().height);
 	}
 
 	public static synchronized GUIFrame getInstance() {
@@ -483,7 +488,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static synchronized GUIFrame createInstance() {
 		instance = new GUIFrame();
-		instance.calcWindowDefaults();
+		calcWindowDefaults();
 		UIUpdater updater = new UIUpdater(instance);
 		GUIFrame.registerCallback(new Runnable() {
 			@Override
@@ -3953,10 +3958,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Sets variables used to determine the position and size of various
 	 * windows based on the size of the computer display being used.
 	 */
-	private void calcWindowDefaults() {
+	private static void calcWindowDefaults() {
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-		winDefs = new WindowDefaults(winSize.width, winSize.height, getSize().height, this.getX(), this.getY());
+		winDefs = new WindowDefaults(winSize.width, winSize.height, instance.getSize().height, instance.getX(), instance.getY());
 		View.setDefaults(winDefs);
 		Simulation.setDefaults(winDefs);
 	}
