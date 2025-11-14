@@ -2096,7 +2096,10 @@ public class RenderManager implements DragSourceListener {
 	public boolean isResizable(View v) {
 		int winID = getWindowID(v);
 		Frame frame = renderer.getAWTFrame(winID);
-		return frame != null && frame.isResizable();
+		if (frame == null)
+			return true;
+		else
+			return frame.isResizable();
 	}
 
 	/**
