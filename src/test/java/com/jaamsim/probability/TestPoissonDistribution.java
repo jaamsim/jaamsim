@@ -40,10 +40,10 @@ public class TestPoissonDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		PoissonDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, PoissonDistribution.class, "Dist", "-", true);
+		PoissonDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, PoissonDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
 		InputAgent.applyArgs(dist, "RandomSeed", "0");

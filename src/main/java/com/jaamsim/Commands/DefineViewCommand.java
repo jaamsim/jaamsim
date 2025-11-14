@@ -48,7 +48,7 @@ public class DefineViewCommand implements Command {
 	public void execute() {
 
 		// Create the new view
-		view = InputAgent.defineEntityWithUniqueName(simModel, View.class, viewName, "", true);
+		view = InputAgent.defineEntityWithUniqueName(simModel, View.class, null, viewName, "", true);
 		simModel.setSessionEdited(true);
 
 		// Position the window on the screen

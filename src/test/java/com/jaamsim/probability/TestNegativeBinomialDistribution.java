@@ -40,10 +40,10 @@ public class TestNegativeBinomialDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		NegativeBinomialDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, NegativeBinomialDistribution.class, "Dist", "-", true);
+		NegativeBinomialDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, NegativeBinomialDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "SuccessfulTrials", "3");
 		InputAgent.applyArgs(dist, "Probability", "0.4");

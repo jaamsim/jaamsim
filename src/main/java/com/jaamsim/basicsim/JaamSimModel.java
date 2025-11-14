@@ -744,7 +744,7 @@ public class JaamSimModel implements EventTimeListener {
 	public void defineEntity(String type, String name) {
 		try {
 			Class<? extends Entity> klass = Input.parseEntityType(this, type);
-			InputAgent.defineEntityWithUniqueName(this, klass, name, "_", true);
+			InputAgent.defineEntityWithUniqueName(this, klass, null, name, "_", true);
 		}
 		catch (InputErrorException e) {
 			throw new RuntimeException(e);

@@ -40,10 +40,10 @@ public class TestGeometricDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		GeometricDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, GeometricDistribution.class, "Dist", "-", true);
+		GeometricDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, GeometricDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Probability", "0.4");
 		InputAgent.applyArgs(dist, "RandomSeed", "0");

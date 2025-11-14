@@ -39,7 +39,7 @@ public class TestEntitlementSelector {
 	@Test
 	public void EntityCounts() {
 
-		EntitlementSelector selector = InputAgent.defineEntityWithUniqueName(simModel, EntitlementSelector.class, "Dist", "-", true);
+		EntitlementSelector selector = InputAgent.defineEntityWithUniqueName(simModel, EntitlementSelector.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "ProportionList", "0.5", "0.3", "0.2");
 		selector.validate();
 		selector.earlyInit();

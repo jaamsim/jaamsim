@@ -77,10 +77,10 @@ public class TestContinuousDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		ContinuousDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, ContinuousDistribution.class, "Dist", "-", true);
+		ContinuousDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, ContinuousDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "ValueList", "1.0", "3.0", "5.0", "10.0");
 		InputAgent.applyArgs(dist, "CumulativeProbabilityList", "0.0", "0.5", "0.8", "1.0");

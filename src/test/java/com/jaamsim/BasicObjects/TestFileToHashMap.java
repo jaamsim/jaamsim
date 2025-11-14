@@ -43,7 +43,7 @@ public class TestFileToHashMap {
 
 	@Test
 	public void testValue() {
-		FileToHashMap fileToHashMap = InputAgent.defineEntityWithUniqueName(simModel, FileToHashMap.class, "FileToHashMap1", "", true);
+		FileToHashMap fileToHashMap = InputAgent.defineEntityWithUniqueName(simModel, FileToHashMap.class, null, "FileToHashMap1", "", true);
 		LinkedHashMap<String, ArrayList<Object>> data = new LinkedHashMap<>();
 
 		ArrayList<Object> list1 = new ArrayList<>();

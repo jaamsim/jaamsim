@@ -40,10 +40,10 @@ public class TestBinomialDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		BinomialDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, BinomialDistribution.class, "Dist", "-", true);
+		BinomialDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, BinomialDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "NumberOfTrials", "10");
 		InputAgent.applyArgs(dist, "Probability", "0.4");

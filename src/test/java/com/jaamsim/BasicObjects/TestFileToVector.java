@@ -44,10 +44,10 @@ public class TestFileToVector {
 
 	@Test
 	public void testValue() {
-		FileToVector fileToVector = InputAgent.defineEntityWithUniqueName(simModel, FileToVector.class, "FileToVector1", "", true);
+		FileToVector fileToVector = InputAgent.defineEntityWithUniqueName(simModel, FileToVector.class, null, "FileToVector1", "", true);
 		Double x = 1.5d;
 		String str = "abc";
-		Server ent = InputAgent.defineEntityWithUniqueName(simModel, Server.class, "Server1", "", true);
+		Server ent = InputAgent.defineEntityWithUniqueName(simModel, Server.class, null, "Server1", "", true);
 		ArrayList<Double> list = new ArrayList<>();
 		list.add(2.5d);
 		list.add(3.5d);

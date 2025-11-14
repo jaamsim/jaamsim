@@ -41,10 +41,10 @@ public class TestNormalDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		NormalDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, NormalDistribution.class, "Dist", "-", true);
+		NormalDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, NormalDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
 		InputAgent.applyArgs(dist, "StandardDeviation", "2.0");

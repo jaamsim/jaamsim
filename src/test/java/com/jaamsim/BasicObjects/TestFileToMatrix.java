@@ -43,7 +43,7 @@ public class TestFileToMatrix {
 
 	@Test
 	public void testValue() {
-		FileToMatrix fileToMatrix = InputAgent.defineEntityWithUniqueName(simModel, FileToMatrix.class, "FileToMatrix1", "", true);
+		FileToMatrix fileToMatrix = InputAgent.defineEntityWithUniqueName(simModel, FileToMatrix.class, null, "FileToMatrix1", "", true);
 		ArrayList<ArrayList<Object>> data = new ArrayList<>();
 
 		ArrayList<Object> list1 = new ArrayList<>();

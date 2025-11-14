@@ -44,10 +44,10 @@ public class TestGammaDistribution {
 	 * Tests the gamma distribution for Shape >= 1
 	 */
 	public void MeanAndStandardDeviation1() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, GammaDistribution.class, "Dist", "-", true);
+		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, GammaDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
 		InputAgent.applyArgs(dist, "Shape", "2.0");
@@ -69,10 +69,10 @@ public class TestGammaDistribution {
 	 * Tests the gamma distribution for Shape < 1
 	 */
 	public void MeanAndStandardDeviation2() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, GammaDistribution.class, "Dist", "-", true);
+		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, GammaDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
 		InputAgent.applyArgs(dist, "Shape", "0.5");

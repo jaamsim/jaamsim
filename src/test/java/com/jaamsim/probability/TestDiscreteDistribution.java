@@ -41,10 +41,10 @@ public class TestDiscreteDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		DiscreteDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, DiscreteDistribution.class, "Dist", "-", true);
+		DiscreteDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, DiscreteDistribution.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "ValueList", "1.0", "3.0", "10.0");
 		InputAgent.applyArgs(dist, "ProbabilityList", "0.5", "0.3", "0.2");

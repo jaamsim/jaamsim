@@ -46,7 +46,7 @@ public class TestSimulation {
 			Class<? extends Entity> klass = Input.parseEntityType(simModel, each.getName());
 			if (klass == Simulation.class)
 				continue;
-			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, klass, each.getName(), "-", true);
+			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, klass, null, each.getName(), "-", true);
 			assertTrue(ent != null);
 		}
 	}
@@ -64,7 +64,7 @@ public class TestSimulation {
 			if (klass == Simulation.class)
 				ent = simModel.getSimulation();
 			else
-				ent = InputAgent.defineEntityWithUniqueName(simModel, klass, each.getName(), "-", true);
+				ent = InputAgent.defineEntityWithUniqueName(simModel, klass, null, each.getName(), "-", true);
 			KeywordIndex kw = new KeywordIndex("none", new ArrayList<String>(0), null);
 			for (Input<?> inp : ent.getEditableInputs()) {
 				// This is a hack to make the in non-default so we hit updateForInput()
@@ -101,7 +101,7 @@ public class TestSimulation {
 			if (klass == Simulation.class)
 				ent = simModel.getSimulation();
 			else
-				ent = InputAgent.defineEntityWithUniqueName(simModel, klass, each.getName(), "-", true);
+				ent = InputAgent.defineEntityWithUniqueName(simModel, klass, null, each.getName(), "-", true);
 
 			// Check that the outputs generated for inputs do not collide with the named outputs
 			HashMap<String, ValueHandle> handleMap = new HashMap<>();

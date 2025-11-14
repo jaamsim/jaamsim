@@ -384,15 +384,12 @@ public class InputAgent {
 	 * or after the 'AddedRecord' flag is found in the configuration file.
 	 * @param simModel - JaamSimModel in which to create the entity
 	 * @param klass - class for the entity to be created
+	 * @param proto - prototype for the newly defined Entity
 	 * @param key - base absolute name for the entity to be created
 	 * @param sep - string to append to the name if it is already in use
 	 * @param addedEntity - true if the entity is new to the model
 	 * @return new entity
 	 */
-	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, String key, String sep, boolean addedEntity) {
-		return defineEntityWithUniqueName(simModel, klass, null, key, sep, addedEntity);
-	}
-
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, Entity proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(simModel, key, sep);
 		return defineEntity(simModel, klass, proto, name, addedEntity);

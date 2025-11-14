@@ -39,7 +39,7 @@ public class TestBooleanSelector {
 
 	@Test
 	public void allTrue() {
-		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, "Dist", "-", true);
+		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "RandomSeed", "1");
 		selector.validate();
 		selector.earlyInit();
@@ -59,7 +59,7 @@ public class TestBooleanSelector {
 
 	@Test
 	public void allFalse() {
-		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, "Dist", "-", true);
+		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "RandomSeed", "1");
 		InputAgent.applyArgs(selector, "TrueProbability", "0.0");
 		selector.validate();
@@ -88,7 +88,7 @@ public class TestBooleanSelector {
 	}
 
 	private void testMix(double trueProb, int numSamples) {
-		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, "Dist", "-", true);
+		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, null, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "RandomSeed", "1");
 		InputAgent.applyArgs(selector, "TrueProbability", Double.toString(trueProb));
 		selector.validate();

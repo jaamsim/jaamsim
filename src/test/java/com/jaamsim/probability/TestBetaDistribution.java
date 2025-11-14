@@ -42,10 +42,10 @@ public class TestBetaDistribution {
 	@Test
 	public void MeanAndStandardDeviation() {
 
-		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, null, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		BetaDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, BetaDistribution.class, "Dist2", "-", true);
+		BetaDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, BetaDistribution.class, null, "Dist2", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "AlphaParam", "2.0");
 		InputAgent.applyArgs(dist, "BetaParam", "2.0");
