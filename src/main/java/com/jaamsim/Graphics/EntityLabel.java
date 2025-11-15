@@ -189,9 +189,8 @@ public class EntityLabel extends TextBasics {
 
 		// Create the EntityLabel object
 		JaamSimModel simModel = ent.getJaamSimModel();
-		String name = InputAgent.getUniqueName(simModel, ent.getName() + ".Label", "");
 		EntityLabel proto = EntityLabel.getLabel(ent.getPrototype());
-		EntityLabel label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
+		EntityLabel label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, ent.getName() + ".Label", "", true);
 
 		// Set the label's position
 		Vec3d pos = label.getDefaultPosition();
