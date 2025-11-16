@@ -288,7 +288,7 @@ public class JaamSimModel implements EventTimeListener {
 		this.logMessage("Runtime error in replication %s of scenario %s at time %f s:",
 				this.getReplicationNumber(), this.getScenarioNumber(), this.getSimTime());
 		this.logMessage("%s", t.getLocalizedMessage());
-		
+
 		// Stack trace for the root cause
 		Throwable rootCause = t;
 		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
@@ -1540,7 +1540,7 @@ public class JaamSimModel implements EventTimeListener {
 		logFile.flush();
 	}
 
-	public void recordError() {
+	private void recordError() {
 		numErrors++;
 	}
 
@@ -1548,7 +1548,7 @@ public class JaamSimModel implements EventTimeListener {
 		return numErrors;
 	}
 
-	public void recordWarning() {
+	private void recordWarning() {
 		numWarnings++;
 	}
 
