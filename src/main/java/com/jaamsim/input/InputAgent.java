@@ -171,8 +171,7 @@ public class InputAgent {
 		}
 
 		if (url == null) {
-			InputAgent.logError(simModel,
-					"Unable to resolve path %s%s - %s", jailPrefix, context.toString(), filePath);
+			simModel.logError("Unable to resolve path %s%s - %s", jailPrefix, context.toString(), filePath);
 			return false;
 		}
 
@@ -181,8 +180,7 @@ public class InputAgent {
 			InputStream in = url.openStream();
 			buf = new BufferedReader(new InputStreamReader(in));
 		} catch (IOException e) {
-			InputAgent.logError(simModel,
-					"Could not read from url: '%s'%n%s", url.toString(), e.getMessage());
+			simModel.logError("Could not read from url: '%s'%n%s", url.toString(), e.getMessage());
 			return false;
 		}
 
@@ -221,7 +219,7 @@ public class InputAgent {
 				braceDepth = InputAgent.getBraceDepth(simModel, record, braceDepth, previousRecordSize);
 
 				if (braceDepth < 0 || braceDepth > MAX_BRACE_DEPTH) {
-					InputAgent.logError(simModel, "Invalid brace depth: %s", braceDepth);
+					simModel.logError("Invalid brace depth: %s", braceDepth);
 					record.clear();
 					braceDepth = 0;
 					quoted = false;
@@ -271,7 +269,7 @@ public class InputAgent {
 					sb.append("- missing a closing single quote (')%n");
 				sb.append("The bad input began with the following line:%n");
 				sb.append(firstLine);
-				InputAgent.logError(simModel, sb.toString());
+				simModel.logError(sb.toString());
 			}
 
 			buf.close();
@@ -284,8 +282,7 @@ public class InputAgent {
 
 	private static void processIncludeRecord(JaamSimModel simModel, ParseContext pc, ArrayList<String> record) throws URISyntaxException {
 		if (record.size() != 2) {
-			InputAgent.logError(simModel,
-					"Bad Include record, should be: Include <File>");
+			simModel.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
 		InputAgent.readStream(simModel, pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
@@ -295,8 +292,7 @@ public class InputAgent {
 		if (record.size() < 5 ||
 		    !record.get(2).equals("{") ||
 		    !record.get(record.size() - 1).equals("}")) {
-			InputAgent.logError(simModel,
-					"Bad Define record, should be: Define <Type> { <names>... }");
+			simModel.logError("Bad Define record, should be: Define <Type> { <names>... }");
 			return;
 		}
 
@@ -321,8 +317,7 @@ public class InputAgent {
 			}
 		}
 		catch (InputErrorException e) {
-			InputAgent.logError(simModel,
-					"%s", e.getMessage());
+			simModel.logError("%s", e.getMessage());
 			return;
 		}
 
@@ -419,8 +414,7 @@ public class InputAgent {
 	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
 		if (existingEnt != null) {
-			InputAgent.logError(simModel,
-					INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
+			simModel.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
 			return null;
 		}
 
@@ -434,21 +428,20 @@ public class InputAgent {
 			parent = simModel.getEntityFromNames(names);
 			if (parent == null) {
 				String parentName = key.substring(0, key.length() - localName.length() - 1);
-				InputAgent.logError(simModel, INP_ERR_BADPARENT, parentName);
+				simModel.logError(INP_ERR_BADPARENT, parentName);
 				return null;
 			}
 		}
 
 		if (!isValidName(localName)) {
-			InputAgent.logError(simModel, INP_ERR_BADNAME, localName);
+			simModel.logError(INP_ERR_BADNAME, localName);
 			return null;
 		}
 
 		T ent = simModel.createInstance(klass, proto, localName, parent, addedEntity, false, true, true);
 
 		if (ent == null) {
-			InputAgent.logError(simModel,
-					"Could not create new child Entity: %s for parent: %s", localName, parent);
+			simModel.logError("Could not create new child Entity: %s for parent: %s", localName, parent);
 			return null;
 		}
 
@@ -458,8 +451,7 @@ public class InputAgent {
 	public static void processKeywordRecord(JaamSimModel simModel, ArrayList<String> record, ParseContext context) {
 		Entity ent = Input.tryParseEntity(simModel, record.get(0), Entity.class);
 		if (ent == null) {
-			InputAgent.logError(simModel,
-					"Could not find Entity: %s", record.get(0));
+			simModel.logError("Could not find Entity: %s", record.get(0));
 			return;
 		}
 
@@ -890,17 +882,6 @@ public class InputAgent {
 		simModel.recordWarning();
 		String msg = String.format(fmt, args);
 		simModel.logMessage("***WARNING*** %s%n", msg);
-	}
-
-	/**
-	 * Writes an error message to standard error, the Log Viewer, and the Log File.
-	 * @param fmt - format string for the error message
-	 * @param args - objects used by the format string
-	 */
-	public static void logError(JaamSimModel simModel, String fmt, Object... args) {
-		simModel.recordError();
-		String msg = String.format(fmt, args);
-		simModel.logMessage("*** ERROR *** %s%n", msg);
 	}
 
 	/**
