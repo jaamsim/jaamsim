@@ -1520,7 +1520,7 @@ public class JaamSimModel implements EventTimeListener {
 		logFile = null;
 	}
 
-	public void logMessage(String msg) {
+	public void logFileMessage(String msg) {
 		if (logFile == null)
 			return;
 

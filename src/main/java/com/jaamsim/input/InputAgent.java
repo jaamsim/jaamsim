@@ -216,7 +216,7 @@ public class InputAgent {
 				quoted = Parser.tokenize(record, line, quoted, true);
 
 				// Print the inputs to the .log file
-				simModel.logMessage(line);
+				simModel.logFileMessage(line);
 
 				// Keep reading the input file until the opening and closing braces are matched
 				braceDepth = InputAgent.getBraceDepth(simModel, record, braceDepth, previousRecordSize);
@@ -885,7 +885,7 @@ public class InputAgent {
 		String msg = String.format(fmt, args);
 		Log.logLine(msg);
 		System.err.println(msg);
-		simModel.logMessage(msg);
+		simModel.logFileMessage(msg);
 	}
 
 	/**
