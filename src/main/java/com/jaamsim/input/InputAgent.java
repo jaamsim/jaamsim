@@ -464,8 +464,7 @@ public class InputAgent {
 			catch (Throwable e) {
 				simModel.logInpError("Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
 				if (e.getMessage() == null) {
-					for (StackTraceElement each : e.getStackTrace())
-						simModel.logMessage(each.toString());
+					simModel.logStackTrace(e);
 				}
 			}
 		}
@@ -863,16 +862,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
-	 * @param t - exception to be traced
-	 */
-	public static void logStackTrace(JaamSimModel simModel, Throwable t) {
-		for (StackTraceElement each : t.getStackTrace()) {
-			simModel.logMessage(each.toString());
-		}
-	}
-
-	/**
 	 * Writes a warning message to standard error, the Log Viewer, and the Log File.
 	 * @param fmt - format string for the warning message
 	 * @param args - objects used by the format string
@@ -901,7 +890,7 @@ public class InputAgent {
 			rootCause = rootCause.getCause();
 		}
 		simModel.logMessage("Stack trace:");
-		InputAgent.logStackTrace(simModel, rootCause);
+		simModel.logStackTrace(rootCause);
 		simModel.logMessage("");
 	}
 

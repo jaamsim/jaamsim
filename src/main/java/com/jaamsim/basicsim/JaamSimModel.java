@@ -469,7 +469,7 @@ public class JaamSimModel implements EventTimeListener {
 					msg = String.format("Validation Error - %s%n", t.getMessage());
 				this.logMessage(msg);
 				if (t.getMessage() == null || t.getMessage().equals("null"))
-					InputAgent.logStackTrace(this, t);
+					this.logStackTrace(t);
 				if (gui != null) {
 					gui.handleInputError(t, each);
 				}
@@ -1575,6 +1575,16 @@ public class JaamSimModel implements EventTimeListener {
 		this.recordError();
 		String msg = String.format(fmt, args);
 		this.logMessage("*** INPUT ERROR *** %s%n", msg);
+	}
+
+	/**
+	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
+	 * @param t - exception to be traced
+	 */
+	public final void logStackTrace(Throwable t) {
+		for (StackTraceElement each : t.getStackTrace()) {
+			this.logMessage(each.toString());
+		}
 	}
 
 	public final void trace(int indent, Entity ent, String fmt, Object... args) {
