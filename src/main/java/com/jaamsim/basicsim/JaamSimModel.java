@@ -284,7 +284,19 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void handleError(Throwable t) {
-		InputAgent.logRuntimeError(this, t);
+		this.recordError();
+		this.logMessage("Runtime error in replication %s of scenario %s at time %f s:",
+				this.getReplicationNumber(), this.getScenarioNumber(), this.getSimTime());
+		this.logMessage("%s", t.getLocalizedMessage());
+		
+		// Stack trace for the root cause
+		Throwable rootCause = t;
+		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+			rootCause = rootCause.getCause();
+		}
+		this.logMessage("Stack trace:");
+		this.logStackTrace(rootCause);
+		this.logMessage("");
 		if (isMultipleRuns()) {
 			runListener.handleRuntimeError(this, t);
 			return;

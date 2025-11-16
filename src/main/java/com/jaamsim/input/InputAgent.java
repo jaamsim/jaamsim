@@ -862,28 +862,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Writes a runtime error message to standard error, the Log Viewer, and the Log File.
-	 * @param simModel - model in which the error occurred
-	 * @param t - error that occurred
-	 */
-	public static void logRuntimeError(JaamSimModel simModel, Throwable t) {
-		simModel.recordError();
-		simModel.logMessage("Runtime error in replication %s of scenario %s at time %f s:",
-				simModel.getReplicationNumber(), simModel.getScenarioNumber(),
-				simModel.getSimTime());
-		simModel.logMessage("%s", t.getLocalizedMessage());
-
-		// Stack trace for the root cause
-		Throwable rootCause = t;
-		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
-			rootCause = rootCause.getCause();
-		}
-		simModel.logMessage("Stack trace:");
-		simModel.logStackTrace(rootCause);
-		simModel.logMessage("");
-	}
-
-	/**
 	 * Prints the present state of the model to a new configuration file.
 	 *
 	 * @param f - the full path and file name for the new configuration file.
