@@ -1501,7 +1501,7 @@ public class JaamSimModel implements EventTimeListener {
 			logFile = new FileEntity(this, f);
 		}
 		catch( Exception e ) {
-			InputAgent.logWarning(this, "Could not create log file.%n%s", e.getMessage());
+			this.logWarning("Could not create log file.%n%s", e.getMessage());
 		}
 	}
 
@@ -1553,6 +1553,17 @@ public class JaamSimModel implements EventTimeListener {
 		String msg = String.format(fmt, args);
 		Log.logLine(msg);
 		this.logFileMessage(msg);
+	}
+
+	/**
+	 * Writes a warning message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the warning message
+	 * @param args - objects used by the format string
+	 */
+	public final void logWarning(String fmt, Object... args) {
+		this.recordWarning();
+		String msg = String.format(fmt, args);
+		this.logMessage("***WARNING*** %s%n", msg);
 	}
 
 	/**

@@ -88,8 +88,7 @@ public class EntityListInput<T extends Entity> extends ArrayListInput<T> {
 			ArrayList<T> removedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, entClass, unique);
 			for( T val : removedValues ) {
 				if( ! newValue.contains( val ) )
-					InputAgent.logWarning(thisEnt.getJaamSimModel(),
-							"Could not remove " + val + " from " + this.getKeyword() );
+					thisEnt.getJaamSimModel().logWarning("Could not remove " + val + " from " + this.getKeyword() );
 				newValue.remove( val );
 			}
 			value = newValue;

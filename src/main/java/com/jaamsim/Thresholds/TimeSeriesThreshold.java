@@ -24,7 +24,6 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -137,12 +136,12 @@ public class TimeSeriesThreshold extends Threshold {
 					timeSeries.getValue().getUnitType(), this.getUnitType());
 
 		if (timeSeries.getValue().getMinValue() > maxOpenLimit.getValue().getMaxValue())
-			InputAgent.logWarning(getJaamSimModel(),
+			getJaamSimModel().logWarning(
 					"Threshold %s is closed forever.  MaxOpenLimit = %f Min TimeSeries Value = %f",
 					this, maxOpenLimit.getValue().getMaxValue(), timeSeries.getValue().getMinValue());
 
 		if (timeSeries.getValue().getMaxValue() < minOpenLimit.getValue().getMinValue())
-			InputAgent.logWarning(getJaamSimModel(),
+			getJaamSimModel().logWarning(
 					"Threshold %s is closed forever.  MinOpenLimit = %f Max TimeSeries Value = %f",
 					this, minOpenLimit.getValue().getMinValue(), timeSeries.getValue().getMaxValue());
 	}

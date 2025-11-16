@@ -862,17 +862,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Writes a warning message to standard error, the Log Viewer, and the Log File.
-	 * @param fmt - format string for the warning message
-	 * @param args - objects used by the format string
-	 */
-	public static void logWarning(JaamSimModel simModel, String fmt, Object... args) {
-		simModel.recordWarning();
-		String msg = String.format(fmt, args);
-		simModel.logMessage("***WARNING*** %s%n", msg);
-	}
-
-	/**
 	 * Writes a runtime error message to standard error, the Log Viewer, and the Log File.
 	 * @param simModel - model in which the error occurred
 	 * @param t - error that occurred

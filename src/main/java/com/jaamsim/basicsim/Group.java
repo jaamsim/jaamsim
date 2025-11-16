@@ -119,8 +119,7 @@ public class Group extends Entity {
 				ArrayList<Entity> removedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, Entity.class, true);
 				for( Entity ent : removedValues ) {
 					if( ! list.contains( ent ) )
-						InputAgent.logWarning(thisEnt.getJaamSimModel(),
-								"Could not remove " + ent + " from " + this.getKeyword() );
+						thisEnt.getJaamSimModel().logWarning("Could not remove " + ent + " from " + this.getKeyword());
 					list.remove( ent );
 				}
 			}
@@ -211,8 +210,7 @@ public class Group extends Entity {
 
 		// If there can never be elements in the group, throw a warning
 		if( type == null && list.size() == 0 ) {
-			InputAgent.logWarning(getJaamSimModel(),
-					"The group %s has no elements to apply keyword: %s", this, kw.keyword);
+			getJaamSimModel().logWarning("The group %s has no elements to apply keyword: %s", this, kw.keyword);
 		}
 	}
 

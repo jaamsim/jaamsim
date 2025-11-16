@@ -75,8 +75,7 @@ public class StringListInput extends ArrayListInput<String> {
 			ArrayList<String> newValue = new ArrayList<>( value );
 			for (String val : input) {
 				if (! newValue.contains( val ))
-					InputAgent.logWarning(thisEnt.getJaamSimModel(),
-							"Could not remove " + val + " from " + this.getKeyword() );
+					thisEnt.getJaamSimModel().logWarning("Could not remove " + val + " from " + this.getKeyword() );
 				newValue.remove( val );
 			}
 			value = newValue;

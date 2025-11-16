@@ -38,6 +38,6 @@ public class DeprecatedInput extends Input<String> {
 		if (fatal)
 			throw new InputErrorException(value);
 
-		InputAgent.logWarning(thisEnt.getJaamSimModel(), "%s - %s", this.getKeyword(), value);
+		thisEnt.getJaamSimModel().logWarning("%s - %s", this.getKeyword(), value);
 	}
 }
