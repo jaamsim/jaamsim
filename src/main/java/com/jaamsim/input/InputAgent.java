@@ -50,7 +50,6 @@ import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Scenario;
 import com.jaamsim.basicsim.SimRun;
@@ -475,7 +474,7 @@ public class InputAgent {
 						"Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
 				if (e.getMessage() == null) {
 					for (StackTraceElement each : e.getStackTrace())
-						InputAgent.logMessage(simModel, each.toString());
+						simModel.logMessage(each.toString());
 				}
 			}
 		}
@@ -872,29 +871,13 @@ public class InputAgent {
 		inputReportFile.close();
 	}
 
-	private static final String errPrefix = "*** ERROR *** %s%n";
-	private static final String inpErrPrefix = "*** INPUT ERROR *** %s%n";
-	private static final String wrnPrefix = "***WARNING*** %s%n";
-
-	/**
-	 * Writes an error or warning message to standard error, the Log Viewer, and the Log File.
-	 * @param fmt - format for the message
-	 * @param args - objects to be printed in the message
-	 */
-	public static void logMessage(JaamSimModel simModel, String fmt, Object... args) {
-		String msg = String.format(fmt, args);
-		Log.logLine(msg);
-		System.err.println(msg);
-		simModel.logFileMessage(msg);
-	}
-
 	/**
 	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
 	 * @param t - exception to be traced
 	 */
 	public static void logStackTrace(JaamSimModel simModel, Throwable t) {
 		for (StackTraceElement each : t.getStackTrace()) {
-			InputAgent.logMessage(simModel, each.toString());
+			simModel.logMessage(each.toString());
 		}
 	}
 
@@ -906,7 +889,7 @@ public class InputAgent {
 	public static void logWarning(JaamSimModel simModel, String fmt, Object... args) {
 		simModel.recordWarning();
 		String msg = String.format(fmt, args);
-		InputAgent.logMessage(simModel, wrnPrefix, msg);
+		simModel.logMessage("***WARNING*** %s%n", msg);
 	}
 
 	/**
@@ -917,7 +900,7 @@ public class InputAgent {
 	public static void logError(JaamSimModel simModel, String fmt, Object... args) {
 		simModel.recordError();
 		String msg = String.format(fmt, args);
-		InputAgent.logMessage(simModel, errPrefix, msg);
+		simModel.logMessage("*** ERROR *** %s%n", msg);
 	}
 
 	/**
@@ -928,7 +911,7 @@ public class InputAgent {
 	public static void logInpError(JaamSimModel simModel, String fmt, Object... args) {
 		simModel.recordError();
 		String msg = String.format(fmt, args);
-		InputAgent.logMessage(simModel, inpErrPrefix, msg);
+		simModel.logMessage("*** INPUT ERROR *** %s%n", msg);
 	}
 
 	/**
@@ -938,20 +921,19 @@ public class InputAgent {
 	 */
 	public static void logRuntimeError(JaamSimModel simModel, Throwable t) {
 		simModel.recordError();
-		InputAgent.logMessage(simModel,
-				"Runtime error in replication %s of scenario %s at time %f s:",
+		simModel.logMessage("Runtime error in replication %s of scenario %s at time %f s:",
 				simModel.getReplicationNumber(), simModel.getScenarioNumber(),
 				simModel.getSimTime());
-		InputAgent.logMessage(simModel, "%s", t.getLocalizedMessage());
+		simModel.logMessage("%s", t.getLocalizedMessage());
 
 		// Stack trace for the root cause
 		Throwable rootCause = t;
 		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
 			rootCause = rootCause.getCause();
 		}
-		InputAgent.logMessage(simModel, "Stack trace:");
+		simModel.logMessage("Stack trace:");
 		InputAgent.logStackTrace(simModel, rootCause);
-		InputAgent.logMessage(simModel, "");
+		simModel.logMessage("");
 	}
 
 	/**
@@ -1250,7 +1232,7 @@ public class InputAgent {
 			file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getInputString());
 		}
 		catch (Exception e) {
-			InputAgent.logMessage(ent.getJaamSimModel(), "Error writing Entity:%s Keyword:%s", ent.getName(), in.getKeyword());
+			ent.getJaamSimModel().logMessage("Error writing Entity:%s Keyword:%s", ent.getName(), in.getKeyword());
 		}
 	}
 
@@ -2017,9 +1999,7 @@ public class InputAgent {
 
 		// Check that the file path includes the jail folder
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
-			InputAgent.logMessage(sm, "Failed jail test: %s\n"
-					+ "jail: %s\n"
-					+ "context: %s\n",
+			sm.logMessage("Failed jail test: %s%njail: %s%ncontext: %s%n",
 					ret.toString(), jailPrefix, context.toString());
 			return null; // This resolved URI is not in our jail
 		}

@@ -4745,7 +4745,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JaamSimModel sim = getJaamSimModel();
 		String msg = t.getLocalizedMessage();
 		if (t instanceof InputErrorException) {
-			InputAgent.logMessage(sim, "Input Error: %s", msg);
+			sim.logMessage("Input Error: %s", msg);
 			GUIFrame.showErrorOptionDialog("Input Error",
 					String.format("Input errors were detected while loading file: '%s'\n\n"
 							+ "%s\n\n"
@@ -4754,7 +4754,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		InputAgent.logMessage(sim, "Fatal Error while loading file '%s': %s\n", file.getName(), msg);
+		sim.logMessage("Fatal Error while loading file '%s': %s\n", file.getName(), msg);
 		InputAgent.logStackTrace(sim, t);
 		GUIFrame.showErrorDialog("Fatal Error",
 				String.format("A fatal error has occured while loading the file '%s':", file.getName()),

@@ -406,8 +406,7 @@ public class JaamSimModel implements EventTimeListener {
 			}
 			catch (Throwable e) {
 				recordError();
-				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
-				InputAgent.logMessage(this, msg);
+				this.logMessage("Validation Error - %s: %s%n", each, e.getMessage());
 			}
 		}
 
@@ -468,7 +467,7 @@ public class JaamSimModel implements EventTimeListener {
 				String msg = String.format("Validation Error - %s: %s%n", each, t.getMessage());
 				if (t instanceof ErrorException)
 					msg = String.format("Validation Error - %s%n", t.getMessage());
-				InputAgent.logMessage(this, msg);
+				this.logMessage(msg);
 				if (t.getMessage() == null || t.getMessage().equals("null"))
 					InputAgent.logStackTrace(this, t);
 				if (gui != null) {
@@ -1543,6 +1542,17 @@ public class JaamSimModel implements EventTimeListener {
 
 	public int getNumWarnings() {
 		return numWarnings;
+	}
+
+	/**
+	 * Writes an error or warning message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format for the message
+	 * @param args - objects to be printed in the message
+	 */
+	public final void logMessage(String fmt, Object... args) {
+		String msg = String.format(fmt, args);
+		Log.logLine(msg);
+		this.logFileMessage(msg);
 	}
 
 	public final void trace(int indent, Entity ent, String fmt, Object... args) {

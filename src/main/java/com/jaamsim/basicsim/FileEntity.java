@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 
 /**
@@ -70,7 +69,7 @@ public class FileEntity {
 		}
 		catch( IOException e ) {
 			outputStream = null;
-			InputAgent.logMessage(sm, "Unable to close FileEntity: " + backingFileObject.getName());
+			sm.logMessage("Unable to close FileEntity: " + backingFileObject.getName());
 		}
 	}
 
