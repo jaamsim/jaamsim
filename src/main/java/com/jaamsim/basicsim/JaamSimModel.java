@@ -19,12 +19,15 @@ package com.jaamsim.basicsim;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1726,16 +1729,45 @@ public class JaamSimModel implements EventTimeListener {
 		return u.getConversionFactorToSI();
 	}
 
+	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
+	static {
+		coordFormat.applyPattern("0.0#####");
+	}
+
+	private KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset, double factor, String unitStr) {
+		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
+		for (Vec3d v : points) {
+			tokens.add("{");
+			tokens.add(coordFormat.format((v.x + offset.x)/factor));
+			tokens.add(coordFormat.format((v.y + offset.y)/factor));
+			tokens.add(coordFormat.format((v.z + offset.z)/factor));
+			tokens.add(unitStr);
+			tokens.add("}");
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
+	private KeywordIndex formatVec3dInput(String keyword, Vec3d point, double factor, String unitStr) {
+		ArrayList<String> tokens = new ArrayList<>(4);
+		tokens.add(coordFormat.format(point.x/factor));
+		tokens.add(coordFormat.format(point.y/factor));
+		tokens.add(coordFormat.format(point.z/factor));
+		if (!unitStr.isEmpty()) {
+			tokens.add(unitStr);
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
 	public KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
 		double factor = getDisplayedUnitFactor(ut);
 		String unitStr = getDisplayedUnit(ut);
-		return InputAgent.formatVec3dInput(keyword, point, factor, unitStr);
+		return this.formatVec3dInput(keyword, point, factor, unitStr);
 	}
 
 	public KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
 		double factor = getDisplayedUnitFactor(DistanceUnit.class);
 		String unitStr = getDisplayedUnit(DistanceUnit.class);
-		return InputAgent.formatPointsInputs(keyword, points, offset, factor, unitStr);
+		return this.formatPointsInputs(keyword, points, offset, factor, unitStr);
 	}
 
 	/**

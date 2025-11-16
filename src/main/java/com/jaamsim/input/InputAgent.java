@@ -31,8 +31,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -441,11 +439,6 @@ public class InputAgent {
 				return null;
 			}
 		}
-
-		return defineEntity(simModel, klass, proto, localName, parent, addedEntity);
-	}
-
-	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String localName, Entity parent, boolean addedEntity) {
 
 		if (!isValidName(localName)) {
 			InputAgent.logError(simModel, INP_ERR_BADNAME, localName);
@@ -1879,35 +1872,6 @@ public class InputAgent {
 
 		// Set the model state to unedited
 		simModel.setSessionEdited(false);
-	}
-
-	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
-	static {
-		coordFormat.applyPattern("0.0#####");
-	}
-
-	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset, double factor, String unitStr) {
-		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
-		for (Vec3d v : points) {
-			tokens.add("{");
-			tokens.add(coordFormat.format((v.x + offset.x)/factor));
-			tokens.add(coordFormat.format((v.y + offset.y)/factor));
-			tokens.add(coordFormat.format((v.z + offset.z)/factor));
-			tokens.add(unitStr);
-			tokens.add("}");
-		}
-		return new KeywordIndex(keyword, tokens, null);
-	}
-
-	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, double factor, String unitStr) {
-		ArrayList<String> tokens = new ArrayList<>(4);
-		tokens.add(coordFormat.format(point.x/factor));
-		tokens.add(coordFormat.format(point.y/factor));
-		tokens.add(coordFormat.format(point.z/factor));
-		if (!unitStr.isEmpty()) {
-			tokens.add(unitStr);
-		}
-		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	public static KeywordIndex formatArgs(String keyword, String... args) {
