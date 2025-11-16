@@ -1566,6 +1566,17 @@ public class JaamSimModel implements EventTimeListener {
 		this.logMessage("*** ERROR *** %s%n", msg);
 	}
 
+	/**
+	 * Writes a input error message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 */
+	public final void logInpError(String fmt, Object... args) {
+		this.recordError();
+		String msg = String.format(fmt, args);
+		this.logMessage("*** INPUT ERROR *** %s%n", msg);
+	}
+
 	public final void trace(int indent, Entity ent, String fmt, Object... args) {
 		if (!EventManager.hasCurrent())
 			return;

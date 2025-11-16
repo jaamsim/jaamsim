@@ -462,8 +462,7 @@ public class InputAgent {
 				InputAgent.processKeyword(ent, keyword);
 			}
 			catch (Throwable e) {
-				InputAgent.logInpError(simModel,
-						"Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
+				simModel.logInpError("Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
 				if (e.getMessage() == null) {
 					for (StackTraceElement each : e.getStackTrace())
 						simModel.logMessage(each.toString());
@@ -882,17 +881,6 @@ public class InputAgent {
 		simModel.recordWarning();
 		String msg = String.format(fmt, args);
 		simModel.logMessage("***WARNING*** %s%n", msg);
-	}
-
-	/**
-	 * Writes a input error message to standard error, the Log Viewer, and the Log File.
-	 * @param fmt - format string for the error message
-	 * @param args - objects used by the format string
-	 */
-	public static void logInpError(JaamSimModel simModel, String fmt, Object... args) {
-		simModel.recordError();
-		String msg = String.format(fmt, args);
-		simModel.logMessage("*** INPUT ERROR *** %s%n", msg);
 	}
 
 	/**
