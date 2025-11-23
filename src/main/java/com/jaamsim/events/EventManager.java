@@ -89,7 +89,7 @@ public final class EventManager {
 		eventTree = new EventTree();
 		condEvents = new ArrayList<>();
 
-		runningProc = new AtomicReference<>(null);
+		runningProc = new AtomicReference<>(NO_ENTRY);
 		executeEvents = false;
 		disableSchedule = false;
 
@@ -204,7 +204,7 @@ public final class EventManager {
 				entries = entries.next;
 			}
 			executeEvents = false;
-			runningProc.set(null);
+			runningProc.set(NO_ENTRY);
 			timelistener.handleError(e);
 		}
 	}
@@ -247,7 +247,7 @@ public final class EventManager {
 				}
 
 				if (!executeEvents) {
-					runningProc.set(null);
+					runningProc.set(NO_ENTRY);
 					timelistener.timeRunning();
 					return;
 				}
@@ -326,7 +326,7 @@ public final class EventManager {
 	}
 
 	public final boolean isRunning() {
-		return runningProc.get() != null;
+		return runningProc.get() != NO_ENTRY;
 	}
 
 	private void evaluateConditions() {
@@ -360,7 +360,7 @@ public final class EventManager {
 		}
 		catch (Throwable e) {
 			executeEvents = false;
-			runningProc.set(null);
+			runningProc.set(NO_ENTRY);
 			timelistener.handleError(e);
 		}
 
@@ -767,6 +767,7 @@ public final class EventManager {
 		}
 	}
 
+	private static final ThreadEntry NO_ENTRY = new ThreadEntry();
 	private static class ThreadEntry {
 		final ThreadEntry next;
 		final Thread proc;
@@ -790,6 +791,15 @@ public final class EventManager {
 			cond = evt.getWaitCondition();
 			dieFlag = new AtomicBoolean(false);
 			target = t;
+			start = false;
+		}
+
+		ThreadEntry() {
+			next = null;
+			proc = null;
+			cond = null;
+			dieFlag = null;
+			target = null;
 			start = false;
 		}
 	}
