@@ -2338,12 +2338,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
 				final String presentFontName = textEnt.getFontName();
-				ArrayList<String> valuesInUse = GUIFrame.getFontsInUse(sim);
+				ArrayList<String> valuesInUse = GUIFrame.getFontsInUse(textEnt.getJaamSimModel());
 				ArrayList<String> choices = TextModel.validFontNames;
 				PreviewablePopupMenu fontMenu = new PreviewablePopupMenu(presentFontName,
 						valuesInUse, choices, true) {
@@ -2417,13 +2416,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				TextEntity textEnt = (TextEntity) selectedEntity;
 
 				double height = textEnt.getTextHeight(0.0d);
-				double spacing = sim.getSimulation().getSnapGridSpacing();
+				double spacing = textEnt.getJaamSimModel().getSimulation().getSnapGridSpacing();
 				if (textEnt instanceof OverlayText || textEnt instanceof BillboardText)
 					spacing = 1.0d;
 				height = Math.round(height/spacing) * spacing;
@@ -2495,12 +2493,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
 				final Color4d presentColour = textEnt.getFontColor(0.0d);
-				ArrayList<Color4d> coloursInUse = GUIFrame.getFontColoursInUse(sim);
+				ArrayList<Color4d> coloursInUse = GUIFrame.getFontColoursInUse(textEnt.getJaamSimModel());
 				ColourMenu fontMenu = new ColourMenu(presentColour, coloursInUse, true) {
 
 					@Override
@@ -2529,13 +2526,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof DisplayEntity)
 						|| selectedEntity instanceof OverlayEntity)
 					return;
 				DisplayEntity dispEnt = (DisplayEntity) selectedEntity;
 
-				double delta = sim.getSimulation().getSnapGridSpacing()/100.0d;
+				double delta = dispEnt.getSimulation().getSnapGridSpacing()/100.0d;
 				Vec3d pos = dispEnt.getPosition();
 				ArrayList<Vec3d> points = dispEnt.getPoints();
 				Vec3d offset = new Vec3d();
@@ -2661,13 +2657,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof LineEntity)
 						|| selectedEntity.getInput("LineColour") == null)
 					return;
 				final LineEntity lineEnt = (LineEntity) selectedEntity;
 				final Color4d presentColour = lineEnt.getLineColour(0.0d);
-				ArrayList<Color4d> coloursInUse = GUIFrame.getLineColoursInUse(sim);
+				ArrayList<Color4d> coloursInUse = GUIFrame.getLineColoursInUse(lineEnt.getJaamSimModel());
 				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
 					@Override
@@ -2733,13 +2728,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof FillEntity)
 						|| selectedEntity.getInput("FillColour") == null)
 					return;
 				final FillEntity fillEnt = (FillEntity) selectedEntity;
 				final Color4d presentColour = fillEnt.getFillColour(0.0d);
-				ArrayList<Color4d> coloursInUse = GUIFrame.getFillColoursInUse(sim);
+				ArrayList<Color4d> coloursInUse = GUIFrame.getFillColoursInUse(fillEnt.getJaamSimModel());
 				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
 					@Override

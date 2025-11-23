@@ -96,9 +96,6 @@ public class ContextMenu {
 	 */
 	public static void populateMenu(JPopupMenu menu, final Entity ent, final int nodeIndex,
 			Component c, final int x, final int y) {
-
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-
 		// 1) Input Editor
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
@@ -106,7 +103,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				GUIFrame.getInstance().clearPresentationMode();
-				InputAgent.applyBoolean(simulation, "ShowInputEditor", true);
+				InputAgent.applyBoolean(ent.getSimulation(), "ShowInputEditor", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -122,7 +119,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				GUIFrame.getInstance().clearPresentationMode();
-				InputAgent.applyBoolean(simulation, "ShowOutputViewer", true);
+				InputAgent.applyBoolean(ent.getSimulation(), "ShowOutputViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -138,7 +135,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				GUIFrame.getInstance().clearPresentationMode();
-				InputAgent.applyBoolean(simulation, "ShowPropertyViewer", true);
+				InputAgent.applyBoolean(ent.getSimulation(), "ShowPropertyViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
