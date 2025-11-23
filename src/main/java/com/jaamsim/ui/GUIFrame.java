@@ -475,12 +475,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public Dimension getPreferredSize() {
 		OSFix fix = OSFix.get(isResizable());
-		if (winDefs != null)
-			return new Dimension(winDefs.DEFAULT_GUI_WIDTH + fix.width, super.getPreferredSize().height);
-
-		// Only called from pack() inside the GUIFrame constructor
-		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		return new Dimension(winSize.width + fix.width, super.getPreferredSize().height);
+		return new Dimension(winDefs.DEFAULT_GUI_WIDTH + fix.width, super.getPreferredSize().height);
 	}
 
 	public static synchronized GUIFrame getInstance() {
@@ -488,8 +483,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private static synchronized GUIFrame createInstance() {
+		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		// a workaround to calls to getPreferredSize from within the GUIFrame constructor
+		winDefs = new WindowDefaults(winSize.width, winSize.height, 100, 0, 0);
 		instance = new GUIFrame();
-		calcWindowDefaults();
+		winDefs = new WindowDefaults(winSize.width, winSize.height, instance.getSize().height, instance.getX(), instance.getY());
+		View.setDefaults(winDefs);
+		Simulation.setDefaults(winDefs);
 		GUIFrame.registerCallback(new UIUpdater(instance));
 		return instance;
 	}
@@ -3943,18 +3943,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void enableSave(boolean bool) {
 		saveConfigurationMenuItem.setEnabled(bool);
-	}
-
-	/**
-	 * Sets variables used to determine the position and size of various
-	 * windows based on the size of the computer display being used.
-	 */
-	private static void calcWindowDefaults() {
-		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-
-		winDefs = new WindowDefaults(winSize.width, winSize.height, instance.getSize().height, instance.getX(), instance.getY());
-		View.setDefaults(winDefs);
-		Simulation.setDefaults(winDefs);
 	}
 
 	public void setShowReferences(boolean bool) {
