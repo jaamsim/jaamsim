@@ -16,56 +16,51 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Point;
-
 /**
  * Provides OS-dependent fixes for bugs in Swing.
  */
 public class OSFix {
+	private static final String OS_NAME;
+	private static final OSFix resizeAdjust;
+	private static final OSFix noresizeAdjust;
 
-	private static final String OS_NAME = System.getProperty("os.name");
-	private static final Point DEFAULT_ADJUST = new Point();
-	private static final String WIN_10 = "Windows 10";
-	private static final String WIN_11 = "Windows 11";
+	static {
+		OS_NAME = System.getProperty("os.name");
+		switch (OS_NAME) {
+		case "Windows 10":
+		case "Windows 11":
+			// Drop shadow border in Windows 10 and above: 7,0,7,7 (left, top, right, bottom)
+			resizeAdjust = new OSFix(-7, 0, 15, 8);
+			// Non-resizable drop shadow border in Windows 10 and above: 2,0,2,2 (left, top, right, bottom)
+			noresizeAdjust = new OSFix(-2, 0, 5, 3);
+			break;
+		default:
+			resizeAdjust = new OSFix(0, 0, 0, 0);
+			noresizeAdjust = new OSFix(0, 0, 0, 0);
+			break;
+		}
+	}
 
-	// Drop shadow border in Windows 10 and above: 7,0,7,7 (left, top, right, bottom)
-	private static final Point WIN_10_LOCATION_ADJUST = new Point(-7, 0);
-	private static final Point WIN_10_SIZE_ADJUST = new Point(15, 8);
+	public final int x;
+	public final int y;
+	public final int width;
+	public final int height;
 
-	// Non-resizable drop shadow border in Windows 10 and above: 2,0,2,2 (left, top, right, bottom)
-	private static final Point WIN_10_LOCATION_ADJUST_NON_RESIZABLE = new Point(-2, 0);
-	private static final Point WIN_10_SIZE_ADJUST_NON_RESIZABLE = new Point(5, 3);
+	OSFix(int x, int y, int width, int height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
 
 	public static final boolean isWindows() {
 		return OS_NAME.startsWith("Win");
 	}
 
-	public static final Point getSizeAdjustment(boolean resizable) {
-		Point ret;
-		switch (OS_NAME) {
-		case WIN_10:
-		case WIN_11:
-			ret = resizable ? WIN_10_SIZE_ADJUST : WIN_10_SIZE_ADJUST_NON_RESIZABLE;
-			break;
-		default:
-			ret = DEFAULT_ADJUST;
-			break;
-		}
-		return ret;
+	public static final OSFix get(boolean resizable) {
+		if (resizable)
+			return resizeAdjust;
+		else
+			return noresizeAdjust;
 	}
-
-	public static final Point getLocationAdjustment(boolean resizable) {
-		Point ret;
-		switch (OS_NAME) {
-		case WIN_10:
-		case WIN_11:
-			ret = resizable ? WIN_10_LOCATION_ADJUST : WIN_10_LOCATION_ADJUST_NON_RESIZABLE;
-			break;
-		default:
-			ret = DEFAULT_ADJUST;
-			break;
-		}
-		return ret;
-	}
-
 }

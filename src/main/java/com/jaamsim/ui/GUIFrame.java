@@ -474,13 +474,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public Dimension getPreferredSize() {
-		Point fix = OSFix.getSizeAdjustment(isResizable());
+		OSFix fix = OSFix.get(isResizable());
 		if (winDefs != null)
-			return new Dimension(winDefs.DEFAULT_GUI_WIDTH + fix.x, super.getPreferredSize().height);
+			return new Dimension(winDefs.DEFAULT_GUI_WIDTH + fix.width, super.getPreferredSize().height);
 
 		// Only called from pack() inside the GUIFrame constructor
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		return new Dimension(winSize.width + fix.x, super.getPreferredSize().height);
+		return new Dimension(winSize.width + fix.width, super.getPreferredSize().height);
 	}
 
 	public static synchronized GUIFrame getInstance() {
@@ -4191,7 +4191,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowPos(View v) {
-		Point fix = OSFix.getLocationAdjustment(isResizable(v));
+		OSFix fix = OSFix.get(isResizable(v));
 		IntegerVector ret = new IntegerVector(v.getWindowPos());
 
 		// Presentation mode
@@ -4208,7 +4208,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowSize(View v) {
-		Point fix = OSFix.getSizeAdjustment(isResizable(v));
+		OSFix fix = OSFix.get(isResizable(v));
 		IntegerVector ret = new IntegerVector(v.getWindowSize());
 
 		// Presentation mode
@@ -4218,8 +4218,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			ret.set(1, winDefs.VIEW_HEIGHT + winDefs.LOWER_HEIGHT);
 		}
 
-		ret.addAt(fix.x, 0);
-		ret.addAt(fix.y, 1);
+		ret.addAt(fix.width, 0);
+		ret.addAt(fix.height, 1);
 		return ret;
 	}
 
@@ -4228,10 +4228,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (presentMode.isSelected() || simModel.getSimulation().isLockWindows()
 				|| simModel.isConfiguring())
 			return;
-		Point posFix = OSFix.getLocationAdjustment(isResizable(v));
-		Point sizeFix = OSFix.getSizeAdjustment(isResizable(v));
-		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
-		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
+		OSFix fix = OSFix.get(isResizable(v));
+		Point pt = getRelativeLocation(x - fix.x, y - fix.y);
+		v.setWindowPos(pt.x, pt.y, width - fix.width, height - fix.height);
 	}
 
 	@Override
