@@ -31,6 +31,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +59,7 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 
 public class InputAgent {
@@ -516,7 +519,7 @@ public class InputAgent {
 	}
 
 	public static void applyVec3d(Entity ent, String keyword, Vec3d point, Class<? extends Unit> ut) {
-		KeywordIndex kw = ent.getJaamSimModel().formatVec3dInput(keyword, point, ut);
+		KeywordIndex kw = formatVec3dInput(ent, keyword, point, ut);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -533,6 +536,50 @@ public class InputAgent {
 	public static void applyValue(Entity ent, String keyword, double val, String unit){
 		KeywordIndex kw = formatDoubleInput(keyword, val, unit);
 		InputAgent.apply(ent, kw);
+	}
+
+	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
+	static {
+		coordFormat.applyPattern("0.0#####");
+	}
+
+	public static KeywordIndex formatVec3dInput(Entity ent, String keyword, Vec3d point, Class<? extends Unit> ut) {
+		double factor = 1.0d;
+		String unitStr = Unit.getSIUnit(ut);
+		Unit u = ent.getJaamSimModel().getPreferredUnit(ut);
+		if (u != null) {
+			factor = u.getConversionFactorToSI();
+			unitStr = u.getName();
+		}
+		ArrayList<String> tokens = new ArrayList<>(4);
+		tokens.add(coordFormat.format(point.x/factor));
+		tokens.add(coordFormat.format(point.y/factor));
+		tokens.add(coordFormat.format(point.z/factor));
+		if (!unitStr.isEmpty()) {
+			tokens.add(unitStr);
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
+
+	public static KeywordIndex formatPointsInputs(Entity ent, String keyword, ArrayList<Vec3d> points, Vec3d offset) {
+		double factor = 1.0d;
+		String unitStr = Unit.getSIUnit(DistanceUnit.class);
+		Unit u = ent.getJaamSimModel().getPreferredUnit(DistanceUnit.class);
+		if (u != null) {
+			factor = u.getConversionFactorToSI();
+			unitStr = u.getName();
+		}
+		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
+		for (Vec3d v : points) {
+			tokens.add("{");
+			tokens.add(coordFormat.format((v.x + offset.x)/factor));
+			tokens.add(coordFormat.format((v.y + offset.y)/factor));
+			tokens.add(coordFormat.format((v.z + offset.z)/factor));
+			tokens.add(unitStr);
+			tokens.add("}");
+		}
+		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	public static final void apply(Entity ent, KeywordIndex kw) {

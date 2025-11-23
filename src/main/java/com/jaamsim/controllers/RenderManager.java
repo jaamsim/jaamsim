@@ -1309,14 +1309,14 @@ public class RenderManager implements DragSourceListener {
 		// Move the selected entity
 		ArrayList<Command> cmdList = new ArrayList<>();
 		if (!selectedEntity.usePointsInput()) {
-			KeywordIndex kw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
+			KeywordIndex kw = InputAgent.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
 			cmdList.add(new KeywordCommand(selectedEntity, kw));
 		}
 		else {
 			ArrayList<Vec3d> points = selectedEntity.getPoints();
 			Vec3d offset = new Vec3d(localPos);
 			offset.sub3(selectedEntity.getPosition());
-			KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
+			KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, offset);
 			cmdList.add(new KeywordCommand(selectedEntity, ptsKw));
 		}
 
@@ -1330,7 +1330,7 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(globalOffset);
 			localPos = ent.getLocalPosition(pos);
 			if (!ent.usePointsInput()) {
-				KeywordIndex kw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
+				KeywordIndex kw = InputAgent.formatVec3dInput(ent, "Position", localPos, DistanceUnit.class);
 				cmdList.add(new KeywordCommand(ent, kw));
 			}
 			else {
@@ -1339,7 +1339,7 @@ public class RenderManager implements DragSourceListener {
 				globalPos.add3(globalOffset);
 				Vec3d offset = ent.getLocalPosition(globalPos);
 				offset.sub3(points.get(0));
-				KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs(ent, "Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
 		}
@@ -1352,8 +1352,6 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
-		JaamSimModel simModel = selectedEntity.getJaamSimModel();
-		Simulation simulation = simModel.getSimulation();
 
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
@@ -1411,8 +1409,8 @@ public class RenderManager implements DragSourceListener {
 		scale.x = Math.max(0.0d, scale.x);
 		scale.y = Math.max(0.0d, scale.y);
 
-		if (simulation.isSnapToGrid())
-			scale = simulation.getSnapGridPosition(scale, dragEntitySize, false);
+		if (selectedEntity.getSimulation().isSnapToGrid())
+			scale = selectedEntity.getSimulation().getSnapGridPosition(scale, dragEntitySize, false);
 
 		// Determine the new position for the entity
 		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -1428,8 +1426,8 @@ public class RenderManager implements DragSourceListener {
 		pos.add3(posAdjust);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 
-		KeywordIndex sizeKw = simModel.formatVec3dInput("Size", scale, DistanceUnit.class);
-		KeywordIndex posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
+		KeywordIndex sizeKw = InputAgent.formatVec3dInput(selectedEntity, "Size", scale, DistanceUnit.class);
+		KeywordIndex posKw = InputAgent.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
 		return true;
 	}
@@ -1440,8 +1438,6 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
-		JaamSimModel simModel = selectedEntity.getJaamSimModel();
-		Simulation simulation = simModel.getSimulation();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1466,18 +1462,16 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d orient = new Vec3d(dragEntityOrientation);
 		orient.z += theta;
-		if (simulation.isSnapToGrid())
+		if (selectedEntity.getSimulation().isSnapToGrid())
 			orient = Simulation.getSnapGridPosition(orient, dragEntityOrientation, true, ANGLE_SPACING);
 
-		KeywordIndex kw = simModel.formatVec3dInput("Orientation", orient, AngleUnit.class);
+		KeywordIndex kw = InputAgent.formatVec3dInput(selectedEntity, "Orientation", orient, AngleUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
 
 	private boolean handleLineMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
 		DisplayEntity selectedEntity = getSelectedEntity();
-		JaamSimModel simModel = selectedEntity.getJaamSimModel();
-		Simulation simulation = simModel.getSimulation();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1500,11 +1494,11 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Align the first node to snap grid
-		if (simulation.isSnapToGrid()) {
+		if (selectedEntity.getSimulation().isSnapToGrid()) {
 			Vec3d point = new Vec3d();
 			point.add3(globalPts.get(0), delta);
 			Vec3d localPos = selectedEntity.getLocalPosition(point);
-			localPos = simulation.getSnapGridPosition(localPos, dragEntityPoints.get(0), shift);
+			localPos = selectedEntity.getSimulation().getSnapGridPosition(localPos, dragEntityPoints.get(0), shift);
 			point = selectedEntity.getGlobalPosition(localPos);
 			delta.sub3(point, globalPts.get(0));
 		}
@@ -1515,7 +1509,7 @@ public class RenderManager implements DragSourceListener {
 		}
 		ArrayList<Vec3d> localPts = selectedEntity.getLocalPosition(globalPts);
 
-		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", localPts, new Vec3d());
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", localPts, new Vec3d());
 		ArrayList<Command> cmdList = new ArrayList<>();
 		cmdList.add(new KeywordCommand(selectedEntity, -1, ptsKw));
 
@@ -1529,7 +1523,7 @@ public class RenderManager implements DragSourceListener {
 				Vec3d pos = ent.getGlobalPosition();
 				pos.add3(globalOffset);
 				Vec3d localPos = ent.getLocalPosition(pos);
-				KeywordIndex posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
+				KeywordIndex posKw = InputAgent.formatVec3dInput(ent, "Position", localPos, DistanceUnit.class);
 				cmdList.add(new KeywordCommand(ent, posKw));
 			}
 			else {
@@ -1538,7 +1532,7 @@ public class RenderManager implements DragSourceListener {
 				globalPos.add3(globalOffset);
 				Vec3d offset = ent.getLocalPosition(globalPos);
 				offset.sub3(points.get(0));
-				ptsKw = simModel.formatPointsInputs("Points", points, offset);
+				ptsKw = InputAgent.formatPointsInputs(ent, "Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
 		}
@@ -1551,8 +1545,6 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
-		JaamSimModel simModel = selectedEntity.getJaamSimModel();
-		Simulation simulation = simModel.getSimulation();
 
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 
@@ -1576,9 +1568,9 @@ public class RenderManager implements DragSourceListener {
 		Vec3d localPos = selectedEntity.getLocalPosition(point);
 
 		// Align the node to snap grid
-		if (simulation.isSnapToGrid()) {
+		if (selectedEntity.getSimulation().isSnapToGrid()) {
 			Vec3d oldPos = screenPoints.get(nodeIndex);
-			localPos = simulation.getSnapGridPosition(localPos, oldPos, shift);
+			localPos = selectedEntity.getSimulation().getSnapGridPosition(localPos, oldPos, shift);
 		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
@@ -1589,14 +1581,13 @@ public class RenderManager implements DragSourceListener {
 		// Set the new position for the node
 		newPoints.set(nodeIndex, localPos);
 
-		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", newPoints, new Vec3d());
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", newPoints, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
 		return true;
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {
 		DisplayEntity selectedEntity = getSelectedEntity();
-		JaamSimModel simModel = selectedEntity.getJaamSimModel();
 
 		Ray currentRay = getRayForMouse(windowID, x, y);
 
@@ -1632,13 +1623,12 @@ public class RenderManager implements DragSourceListener {
 		// Insert the new node
 		points.add(splitInd + 1, selectedEntity.getLocalPosition(nearPoint));
 
-		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, new Vec3d());
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
 		DisplayEntity selectedEntity = getSelectedEntity();
-		JaamSimModel simModel = selectedEntity.getJaamSimModel();
 
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null || points.size() <= 2)
@@ -1651,7 +1641,7 @@ public class RenderManager implements DragSourceListener {
 		// Remove the selected node
 		points.remove(removeInd);
 
-		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, new Vec3d());
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 

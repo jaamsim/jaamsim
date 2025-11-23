@@ -62,12 +62,10 @@ public class CoordinateCommand extends KeywordCommand {
 	}
 
 	private void resetPosition() {
-		JaamSimModel simModel = dispEnt.getJaamSimModel();
-
 		// Normal object
 		if (!dispEnt.usePointsInput()) {
 			Vec3d localPos = dispEnt.getLocalPosition(globalPos);
-			KeywordIndex posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
+			KeywordIndex posKw = InputAgent.formatVec3dInput(dispEnt, "Position", localPos, DistanceUnit.class);
 			InputAgent.apply(dispEnt, posKw);
 			return;
 		}
@@ -75,7 +73,7 @@ public class CoordinateCommand extends KeywordCommand {
 		// Polyline object
 		if (globalPts != null) {
 			ArrayList<Vec3d> localPts = dispEnt.getLocalPosition(globalPts);
-			KeywordIndex ptsKw = simModel.formatPointsInputs("Points", localPts, new Vec3d());
+			KeywordIndex ptsKw = InputAgent.formatPointsInputs(dispEnt, "Points", localPts, new Vec3d());
 			InputAgent.apply(dispEnt, ptsKw);
 		}
 	}

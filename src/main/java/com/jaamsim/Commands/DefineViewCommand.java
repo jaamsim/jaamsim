@@ -63,11 +63,11 @@ public class DefineViewCommand implements Command {
 
 		// Set the camera position
 		if (viewPosition != null) {
-			KeywordIndex kw1 = simModel.formatVec3dInput("ViewPosition", viewPosition, DistanceUnit.class);
+			KeywordIndex kw1 = InputAgent.formatVec3dInput(view, "ViewPosition", viewPosition, DistanceUnit.class);
 			InputAgent.apply(view, kw1);
 		}
 		if (viewCenter != null) {
-			KeywordIndex kw2 = simModel.formatVec3dInput("ViewCenter", viewCenter, DistanceUnit.class);
+			KeywordIndex kw2 = InputAgent.formatVec3dInput(view, "ViewCenter", viewCenter, DistanceUnit.class);
 			InputAgent.apply(view, kw2);
 		}
 	}

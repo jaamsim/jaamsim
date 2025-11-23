@@ -2214,7 +2214,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextBasics))
 					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
@@ -2224,10 +2223,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				align.x = alignRight.isSelected() ? 0.5d : align.x;
 				if (align.x == textEnt.getAlignment().x)
 					return;
-				KeywordIndex kw = sim.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
+				KeywordIndex kw = InputAgent.formatVec3dInput(textEnt, "Alignment", align, DimensionlessUnit.class);
 
 				Vec3d pos = textEnt.getPositionForAlignment(align);
-				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex posKw = InputAgent.formatVec3dInput(textEnt, "Position", pos, DistanceUnit.class);
 
 				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
 				controlStartResume.requestFocusInWindow();
@@ -2296,7 +2295,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					int style = (bold.isSelected() ? Font.BOLD : 0) + (italic.isSelected() ? Font.ITALIC : 0);
 					Vec3d size = t.getAutoSize(t.getFontName(), style, t.getTextHeight(0.0d));
 					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-						kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+						kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 					}
 				}
 				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
@@ -2370,7 +2369,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							Text t = (Text) textEnt;
 							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight(0.0d));
 							if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-								kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+								kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 							}
 						}
 						KeywordIndex[] kws = new KeywordIndex[kwList.size()];
@@ -2453,7 +2452,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					Text t = (Text) textEnt;
 					Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), height);
 					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-						kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+						kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 					}
 				}
 				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
@@ -2557,14 +2556,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 				// Normal object
 				if (!dispEnt.usePointsInput()) {
-					KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
+					KeywordIndex posKw = InputAgent.formatVec3dInput(dispEnt, "Position", pos, DistanceUnit.class);
 					InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw));
 					controlStartResume.requestFocusInWindow();
 					return;
 				}
 
 				// Polyline object
-				KeywordIndex ptsKw = sim.formatPointsInputs("Points", points, offset);
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs(dispEnt, "Points", points, offset);
 				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, ptsKw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -3908,7 +3907,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				double textHeight = Input.parseDoubles(getJaamSimModel(), kwList.get(0), 0.0d, Double.POSITIVE_INFINITY, DistanceUnit.class).get(0);
 				Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), textHeight);
 				if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-					kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+					kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 				}
 			}
 			KeywordIndex[] kws = new KeywordIndex[kwList.size()];

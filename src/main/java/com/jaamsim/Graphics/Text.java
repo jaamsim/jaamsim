@@ -163,7 +163,7 @@ public class Text extends TextBasics {
 		kwList.add( InputAgent.formatArgs("Format", getText()) );
 		if (isAutoSize()) {
 			Vec3d size = getAutoSize(getFontName(), getStyle(), getTextHeight(0.0d));
-			kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+			kwList.add( InputAgent.formatVec3dInput(this, "Size", size, DistanceUnit.class) );
 		}
 		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 		kwList.toArray(kws);

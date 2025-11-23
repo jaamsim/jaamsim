@@ -19,15 +19,12 @@ package com.jaamsim.basicsim;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,12 +47,10 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ParseContext;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -1792,49 +1787,6 @@ public class JaamSimModel implements EventTimeListener {
 		if (u == null)
 			return 1.0;
 		return u.getConversionFactorToSI();
-	}
-
-	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
-	static {
-		coordFormat.applyPattern("0.0#####");
-	}
-
-	public KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
-		double factor = 1.0d;
-		String unitStr = Unit.getSIUnit(ut);
-		Unit u = getPreferredUnit(ut);
-		if (u != null) {
-			factor = u.getConversionFactorToSI();
-			unitStr = u.getName();
-		}
-		ArrayList<String> tokens = new ArrayList<>(4);
-		tokens.add(coordFormat.format(point.x/factor));
-		tokens.add(coordFormat.format(point.y/factor));
-		tokens.add(coordFormat.format(point.z/factor));
-		if (!unitStr.isEmpty()) {
-			tokens.add(unitStr);
-		}
-		return new KeywordIndex(keyword, tokens, null);
-	}
-
-	public KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
-		double factor = 1.0d;
-		String unitStr = Unit.getSIUnit(DistanceUnit.class);
-		Unit u = getPreferredUnit(DistanceUnit.class);
-		if (u != null) {
-			factor = u.getConversionFactorToSI();
-			unitStr = u.getName();
-		}
-		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
-		for (Vec3d v : points) {
-			tokens.add("{");
-			tokens.add(coordFormat.format((v.x + offset.x)/factor));
-			tokens.add(coordFormat.format((v.y + offset.y)/factor));
-			tokens.add(coordFormat.format((v.z + offset.z)/factor));
-			tokens.add(unitStr);
-			tokens.add("}");
-		}
-		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	/**
