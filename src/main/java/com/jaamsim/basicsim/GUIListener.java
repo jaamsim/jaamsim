@@ -25,7 +25,7 @@ public interface GUIListener extends EventTimeListener {
 
 	public void handleInputError(Throwable t, Entity ent);
 	public void invokeErrorDialogBox(String title, String msg);
-	public void updateObjectSelector();
+	public void updateObjectSelector(Entity ent);
 	public void updateModelBuilder();
 	public void updateInputEditor();
 	public void storeAndExecute(Command cmd);

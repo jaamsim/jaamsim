@@ -48,7 +48,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.rng.MRG1999a;
-import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -1076,10 +1075,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		if (gui != null && !isConfiguring()) {
-			gui.updateObjectSelector();
-			if (ent instanceof DragAndDropable && ((DragAndDropable) ent).isDragAndDrop()) {
-				gui.updateModelBuilder();
-			}
+			gui.updateObjectSelector(ent);
 		}
 	}
 

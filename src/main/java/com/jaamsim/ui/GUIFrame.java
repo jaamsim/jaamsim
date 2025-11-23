@@ -3291,7 +3291,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
-	public void updateObjectSelector() {
+	public void updateObjectSelector(Entity ent) {
+		if (ent instanceof DragAndDropable && ((DragAndDropable) ent).isDragAndDrop()) {
+			EntityPallet.update();
+		}
+
 		ObjectSelector.allowUpdate();
 		GUIFrame.updateUI();
 	}
