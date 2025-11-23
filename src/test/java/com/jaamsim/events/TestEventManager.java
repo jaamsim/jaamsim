@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jaamsim.basicsim.ErrorException;
+
 public class TestEventManager {
 	/**
 	 * Test the static EventManager methods that can only be called from a Process
@@ -353,6 +355,26 @@ public class TestEventManager {
 		for (int i = 0; i < expected.size(); i++) {
 			assertTrue(expected.get(i).equals(log.get(i)));
 		}
+	}
+
+	/**
+	 * Schedule events at the same time and test LIFO for the tiebreaker.
+	 */
+	@Test
+	public void testErrorHandling() {
+		EventManager evt = new EventManager("testErrorHandlingEVT");
+		evt.clear();
+
+		evt.scheduleProcessExternal(0, 0, false, new ProcessTarget() {
+			@Override
+			public String getDescription() { return ""; }
+
+			@Override
+			public void process() {
+				throw new ErrorException("Error Unit Test");
+			}
+		}, null);
+		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 	}
 
 	private static class LogTarget extends ProcessTarget {

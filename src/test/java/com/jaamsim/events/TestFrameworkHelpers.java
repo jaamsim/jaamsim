@@ -60,6 +60,7 @@ public class TestFrameworkHelpers {
 
 		@Override
 		public void handleError(Throwable t) {
+			System.out.println("ERROR Handled");
 			synchronized (this) {
 				if (waitThread != null)
 					waitThread.interrupt();
