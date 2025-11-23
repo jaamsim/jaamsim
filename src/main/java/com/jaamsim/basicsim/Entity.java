@@ -802,19 +802,6 @@ public class Entity {
 	}
 
 	/**
-	 * Sets the absolute name of the entity.
-	 * @param newName - new absolute name
-	 */
-	public void setName(String newName) {
-		String localName = newName;
-		if (newName.contains(".")) {
-			String[] names = newName.split("\\.");
-			localName = names[names.length - 1];
-		}
-		setNameInput(localName);
-	}
-
-	/**
 	 * Sets the local name of the entity.
 	 * @param newName - new local name
 	 */
