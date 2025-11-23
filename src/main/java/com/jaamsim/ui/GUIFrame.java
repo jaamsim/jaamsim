@@ -140,6 +140,7 @@ import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.controllers.RateLimiter;
+import com.jaamsim.controllers.RateLimiter.CallbackRunnable;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
@@ -489,17 +490,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static synchronized GUIFrame createInstance() {
 		instance = new GUIFrame();
 		calcWindowDefaults();
-		UIUpdater updater = new UIUpdater(instance);
-		GUIFrame.registerCallback(new Runnable() {
-			@Override
-			public void run() {
-				SwingUtilities.invokeLater(updater);
-			}
-		});
+		GUIFrame.registerCallback(new UIUpdater(instance));
 		return instance;
 	}
 
-	public static final void registerCallback(Runnable r) {
+	public static final void registerCallback(CallbackRunnable r) {
 		rateLimiter.registerCallback(r);
 	}
 
@@ -4539,7 +4534,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	volatile long simTicks;
 
-	private static class UIUpdater implements Runnable {
+	private static class UIUpdater implements CallbackRunnable, Runnable {
 		private final GUIFrame frame;
 
 		UIUpdater(GUIFrame gui) {
@@ -4564,6 +4559,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			if (RunProgressBox.hasInstance())
 				RunProgressBox.getInstance().update();
+		}
+
+		@Override
+		public void callback() {
+			SwingUtilities.invokeLater(this);
 		}
 	}
 

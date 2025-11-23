@@ -65,6 +65,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.controllers.RateLimiter.CallbackRunnable;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -220,11 +221,11 @@ public class RenderManager implements DragSourceListener {
 		GUIFrame.registerCallback(redraw);
 	}
 
-	private class RedrawCallback implements Runnable {
+	private class RedrawCallback implements CallbackRunnable {
 		final AtomicBoolean redraw = new AtomicBoolean(false);
 
 		@Override
-		public void run() {
+		public void callback() {
 			synchronized(this) {
 				if (windowControls.size() == 0 && recorder.get() == null) {
 					return; // Do not queue a redraw if there are no open windows

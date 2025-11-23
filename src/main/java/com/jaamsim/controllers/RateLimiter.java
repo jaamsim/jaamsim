@@ -30,7 +30,7 @@ public class RateLimiter implements Runnable {
 	private final Object timingLock = new Object();
 	private final long frameTime;
 
-	private final ArrayList<Runnable> callbacks = new ArrayList<>();
+	private final ArrayList<CallbackRunnable> callbacks = new ArrayList<>();
 
 	public static RateLimiter create(double updatesPerSecond) {
 		RateLimiter ret = new RateLimiter(updatesPerSecond);
@@ -43,6 +43,10 @@ public class RateLimiter implements Runnable {
 	private RateLimiter(double updatesPerSecond) {
 		// Start the display timer
 		frameTime = (long)(1000.0d / updatesPerSecond);
+	}
+
+	public interface CallbackRunnable {
+		void callback();
 	}
 
 	@Override
@@ -63,8 +67,8 @@ public class RateLimiter implements Runnable {
 
 				lastCallbackTime = currentTime;
 				schedTime.set(Long.MAX_VALUE);
-				for (Runnable r : callbacks) {
-					r.run();
+				for (CallbackRunnable r : callbacks) {
+					r.callback();
 				}
 			}
 		}
@@ -83,7 +87,7 @@ public class RateLimiter implements Runnable {
 		}
 	}
 
-	public void registerCallback(Runnable r) {
+	public void registerCallback(CallbackRunnable r) {
 		synchronized (timingLock) {
 			callbacks.add(r);
 		}
