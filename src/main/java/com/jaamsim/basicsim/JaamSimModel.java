@@ -1074,7 +1074,7 @@ public class JaamSimModel implements EventTimeListener {
 			addNamedEntity(ent);
 		}
 
-		if (gui != null && !isConfiguring()) {
+		if (gui != null) {
 			gui.updateObjectSelector(ent);
 		}
 	}

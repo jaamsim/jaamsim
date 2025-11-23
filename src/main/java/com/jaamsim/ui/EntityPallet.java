@@ -32,6 +32,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -150,14 +151,25 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		}
 	}
 
+	private static final RunnableUpdater updater = new RunnableUpdater();
 	public static void update() {
-		SwingUtilities.invokeLater(new RunnableUpdater());
+		updater.update();
 	}
 
 	private static class RunnableUpdater implements Runnable {
+		private final AtomicBoolean isScheduled = new AtomicBoolean(false);
+
+		void update() {
+			if (isScheduled.get())
+				return;
+
+			isScheduled.set(true);
+			SwingUtilities.invokeLater(this);
+		}
 
 		@Override
 		public void run() {
+			isScheduled.set(false);
 			EntityPallet.getInstance().updateTree();
 		}
 	}
