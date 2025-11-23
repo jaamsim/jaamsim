@@ -21,7 +21,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DistanceUnit;
@@ -63,12 +62,10 @@ public class DefineViewCommand implements Command {
 
 		// Set the camera position
 		if (viewPosition != null) {
-			KeywordIndex kw1 = InputAgent.formatVec3dInput(view, "ViewPosition", viewPosition, DistanceUnit.class);
-			InputAgent.apply(view, kw1);
+			InputAgent.applyVec3d(view, "ViewPosition", viewPosition, DistanceUnit.class);
 		}
 		if (viewCenter != null) {
-			KeywordIndex kw2 = InputAgent.formatVec3dInput(view, "ViewCenter", viewCenter, DistanceUnit.class);
-			InputAgent.apply(view, kw2);
+			InputAgent.applyVec3d(view, "ViewCenter", viewCenter, DistanceUnit.class);
 		}
 	}
 

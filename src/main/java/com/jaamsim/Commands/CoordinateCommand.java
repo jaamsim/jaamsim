@@ -65,8 +65,7 @@ public class CoordinateCommand extends KeywordCommand {
 		// Normal object
 		if (!dispEnt.usePointsInput()) {
 			Vec3d localPos = dispEnt.getLocalPosition(globalPos);
-			KeywordIndex posKw = InputAgent.formatVec3dInput(dispEnt, "Position", localPos, DistanceUnit.class);
-			InputAgent.apply(dispEnt, posKw);
+			InputAgent.applyVec3d(dispEnt, "Position", localPos, DistanceUnit.class);
 			return;
 		}
 

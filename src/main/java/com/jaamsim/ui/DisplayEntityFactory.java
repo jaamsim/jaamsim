@@ -201,7 +201,7 @@ public class DisplayEntityFactory extends Entity {
 			Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
 			if (imageDims != null)
 				size.x = imageDims.x / imageDims.y;
-			InputAgent.apply(de, InputAgent.formatVec3dInput(de, "Size", size, DistanceUnit.class));
+			InputAgent.applyVec3d(de, "Size", size, DistanceUnit.class);
 		}
 	}
 
@@ -267,9 +267,9 @@ public class DisplayEntityFactory extends Entity {
 			modelSize.scale3(2);
 
 			// Set the DisplayEntity's position, size, and alignment
-			InputAgent.apply(de, InputAgent.formatVec3dInput(de, "Position", entityPos, DistanceUnit.class));
-			InputAgent.apply(de, InputAgent.formatVec3dInput(de, "Alignment", new Vec3d(), DimensionlessUnit.class));
-			InputAgent.apply(de, InputAgent.formatVec3dInput(de, "Size", modelSize, DistanceUnit.class));
+			InputAgent.applyVec3d(de, "Position", entityPos, DistanceUnit.class);
+			InputAgent.applyVec3d(de, "Alignment", new Vec3d(), DimensionlessUnit.class);
+			InputAgent.applyVec3d(de, "Size", modelSize, DistanceUnit.class);
 		}
 	}
 

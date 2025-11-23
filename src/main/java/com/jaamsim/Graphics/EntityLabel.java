@@ -193,8 +193,7 @@ public class EntityLabel extends TextBasics {
 		EntityLabel label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, ent.getName() + ".Label", "", true);
 
 		// Set the label's position
-		Vec3d pos = label.getDefaultPosition();
-		InputAgent.apply(label, InputAgent.formatVec3dInput(label, "Position", pos, DistanceUnit.class));
+		InputAgent.applyVec3d(label, "Position", label.getDefaultPosition(), DistanceUnit.class);
 
 		// Set the label's size
 		label.resizeForText();
