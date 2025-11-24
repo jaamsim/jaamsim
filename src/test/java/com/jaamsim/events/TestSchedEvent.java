@@ -234,6 +234,7 @@ public class TestSchedEvent {
 
 		@Override
 		public void process() {
+			long endSchedNanos = System.nanoTime();
 			EmptyTarget target = new EmptyTarget();
 			long[] nanoStamps = new long[11];
 			for (int i = 0; i <= 1000000; i++) {
@@ -243,7 +244,7 @@ public class TestSchedEvent {
 				}
 				EventManager.startProcess(target);
 			}
-			long endSchedNanos = System.nanoTime();
+
 
 			long endExecNanos = System.nanoTime();
 
