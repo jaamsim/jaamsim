@@ -1385,10 +1385,7 @@ public class JaamSimModel implements EventTimeListener {
 		if (configFile != null)
 			return configFile.getParentFile().getPath();
 
-		if (gui != null)
-			return JaamSimModel.getPreferenceFolder("");
-
-		return null;
+		return JaamSimModel.getPreferenceFolder("");
 	}
 
 	public static String getPreferenceFolder(String key) {
@@ -1416,11 +1413,8 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return file path
 	 */
 	public String getReportFileName(String ext) {
-		String dir = getReportDirectory();
-		if (dir == null)
-			return null;
 		StringBuilder sb = new StringBuilder();
-		sb.append(dir);
+		sb.append(getReportDirectory());
 		sb.append(File.separator);
 		sb.append(getRunName());
 		sb.append(ext);
