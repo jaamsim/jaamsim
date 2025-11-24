@@ -154,7 +154,7 @@ public class GraphicBox extends JDialog {
 				}
 
 				// Create a file chooser
-				final JFileChooser chooser = new JFileChooser(GUIFrame.get3DFolder());
+				final JFileChooser chooser = new JFileChooser(JaamSimModel.getPreferenceFolder(DisplayEntityFactory.LAST_USED_3D_FOLDER));
 
 				// Set the file extension filters
 				chooser.setAcceptAllFileFilterUsed(false);
@@ -178,7 +178,7 @@ public class GraphicBox extends JDialog {
 				// Create the selected graphics files
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
-					GUIFrame.set3DFolder(f.getParent());
+					JaamSimModel.setPreferenceFolder(DisplayEntityFactory.LAST_USED_3D_FOLDER, f.getParent());
 
 					// Determine the file name and extension
 					String fileName = f.getName();

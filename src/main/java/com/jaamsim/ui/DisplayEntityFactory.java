@@ -47,6 +47,9 @@ import com.jaamsim.units.DistanceUnit;
  */
 public class DisplayEntityFactory extends Entity {
 
+	public static final String LAST_USED_3D_FOLDER = "3D_FOLDER";
+	public static final String LAST_USED_IMAGE_FOLDER = "IMAGE_FOLDER";
+
 	/**
 	 * Opens a FileDialog for selecting images to import.
 	 *
@@ -55,7 +58,7 @@ public class DisplayEntityFactory extends Entity {
 	public static void importImages(GUIFrame gui) {
 
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(GUIFrame.getImageFolder());
+		final JFileChooser chooser = new JFileChooser(JaamSimModel.getPreferenceFolder(DisplayEntityFactory.LAST_USED_IMAGE_FOLDER));
 		chooser.setMultiSelectionEnabled(true);
 
 		// Set the file extension filters
@@ -73,7 +76,7 @@ public class DisplayEntityFactory extends Entity {
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File[] files = chooser.getSelectedFiles();
-			GUIFrame.setImageFolder(files[0].getParent());
+			JaamSimModel.setPreferenceFolder(DisplayEntityFactory.LAST_USED_IMAGE_FOLDER, files[0].getParent());
 			DisplayEntityFactory.importImageFiles(files);
 		}
 	}
@@ -86,7 +89,7 @@ public class DisplayEntityFactory extends Entity {
 	public static void import3D(GUIFrame gui) {
 
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(GUIFrame.get3DFolder());
+		final JFileChooser chooser = new JFileChooser(JaamSimModel.getPreferenceFolder(DisplayEntityFactory.LAST_USED_3D_FOLDER));
 		chooser.setMultiSelectionEnabled(true);
 
 		// Set the file extension filters
@@ -105,7 +108,7 @@ public class DisplayEntityFactory extends Entity {
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File[] files = chooser.getSelectedFiles();
-			GUIFrame.set3DFolder(files[0].getParent());
+			JaamSimModel.setPreferenceFolder(DisplayEntityFactory.LAST_USED_3D_FOLDER, files[0].getParent());
 			DisplayEntityFactory.import3DFiles(files);
 		}
 	}

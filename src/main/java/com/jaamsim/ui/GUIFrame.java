@@ -290,8 +290,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final String DEFAULT_MODEL_NAME = "Model";
 
 	private static final String LAST_USED_FOLDER = "";
-	private static final String LAST_USED_3D_FOLDER = "3D_FOLDER";
-	private static final String LAST_USED_IMAGE_FOLDER = "IMAGE_FOLDER";
 
 	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run (space key)", "Starts or resumes the simulation run.");
 	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
@@ -5224,26 +5222,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public static void setConfigFolder(String path) {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
 		prefs.put(LAST_USED_FOLDER, path);
-	}
-
-	public static String getImageFolder() {
-		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		return prefs.get(LAST_USED_IMAGE_FOLDER, getConfigFolder());
-	}
-
-	public static void setImageFolder(String path) {
-		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		prefs.put(LAST_USED_IMAGE_FOLDER, path);
-	}
-
-	public static String get3DFolder() {
-		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		return prefs.get(LAST_USED_3D_FOLDER, getConfigFolder());
-	}
-
-	public static void set3DFolder(String path) {
-		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		prefs.put(LAST_USED_3D_FOLDER, path);
 	}
 
 	/**
