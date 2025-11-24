@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.prefs.Preferences;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
@@ -1388,6 +1389,24 @@ public class JaamSimModel implements EventTimeListener {
 			return gui.getDefaultFolder();
 
 		return null;
+	}
+
+	public static String getPreferenceFolder(String key) {
+		Preferences prefs = Preferences.userRoot().node("com.jaamsim.ui.GUIFrame");
+		String folder = prefs.get(key, null);
+		if (folder != null)
+			return folder;
+
+		folder = prefs.get("", null);
+		if (folder != null)
+			return folder;
+
+		return new File(".").getAbsolutePath();
+	}
+
+	public static void setPreferenceFolder(String key, String path) {
+		Preferences prefs = Preferences.userRoot().node("com.jaamsim.ui.GUIFrame");
+		prefs.put(key, path);
 	}
 
 	/**
