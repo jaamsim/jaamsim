@@ -1385,8 +1385,8 @@ public class JaamSimModel implements EventTimeListener {
 		if (configFile != null)
 			return configFile.getParentFile().getPath();
 
-		if (gui != null && gui.getDefaultFolder() != null)
-			return gui.getDefaultFolder();
+		if (gui != null)
+			return JaamSimModel.getPreferenceFolder("");
 
 		return null;
 	}

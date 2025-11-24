@@ -38,7 +38,6 @@ public interface GUIListener extends EventTimeListener {
 	public void closeWindow(View v);
 	public int getNextViewID();
 	public Vec3d getPOI(View v);
-	public String getDefaultFolder();
 	public boolean isSelected(Entity ent);
 	public void allowResizing(boolean bool);
 

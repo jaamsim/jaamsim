@@ -67,7 +67,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -288,8 +287,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static WindowDefaults winDefs;
 	private static final String DEFAULT_MODEL_NAME = "Model";
-
-	private static final String LAST_USED_FOLDER = "";
 
 	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run (space key)", "Starts or resumes the simulation run.");
 	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
@@ -5209,19 +5206,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
-	@Override
-	public String getDefaultFolder() {
-		return GUIFrame.getConfigFolder();
-	}
-
 	public static String getConfigFolder() {
-		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		return prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
+		return JaamSimModel.getPreferenceFolder("");
 	}
 
 	public static void setConfigFolder(String path) {
-		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		prefs.put(LAST_USED_FOLDER, path);
+		JaamSimModel.setPreferenceFolder("", path);
 	}
 
 	/**
