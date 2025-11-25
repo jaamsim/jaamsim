@@ -171,7 +171,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final AtomicLong modelCount = new AtomicLong(0);  // number of JaamSimModels
 
 	private final ArrayList<View> views = new ArrayList<>();
-	private int nextViewID = 1;
 
 	// global shutdown flag
 	static private AtomicBoolean shuttingDown;
@@ -503,10 +502,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			View activeView = RenderManager.getActiveView();
 
 			// Re-open the view windows
-			for (int i = 0; i < views.size(); i++) {
-				View v = views.get(i);
-				if (v != null && v.showWindow() && v != activeView)
-					RenderManager.inst().createWindow(v);
+			synchronized (views) {
+				for (int i = 0; i < views.size(); i++) {
+					View v = views.get(i);
+					if (v.showWindow() && v != activeView)
+						RenderManager.inst().createWindow(v);
+				}
 			}
 
 			// Re-open the active view window last
@@ -4085,44 +4086,58 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!RenderManager.isGood())
 			return;
 		boolean iconified = isIconified();
-		for (View v : views) {
-			boolean isVisible = RenderManager.inst().isVisible(v);
-			if (!iconified && v.showWindow()) {
-				if (!isVisible) {
-					RenderManager.inst().createWindow(v);
+		synchronized (views) {
+			for (View v : views) {
+				boolean isVisible = RenderManager.inst().isVisible(v);
+				if (!iconified && v.showWindow()) {
+					if (!isVisible) {
+						RenderManager.inst().createWindow(v);
+					}
 				}
-			}
-			else {
-				if (isVisible) {
-					RenderManager.inst().closeWindow(v);
+				else {
+					if (isVisible) {
+						RenderManager.inst().closeWindow(v);
+					}
 				}
 			}
 		}
 	}
 
 	private void updateViewSizes() {
-		for (View v : views) {
-			final Frame window = RenderManager.getOpenWindowForView(v);
-			if (window == null)
-				continue;
-			IntegerVector size = getWindowSize(v);
-			window.setSize(size.get(0), size.get(1));
+		synchronized (views) {
+			for (View v : views) {
+				final Frame window = RenderManager.getOpenWindowForView(v);
+				if (window == null)
+					continue;
+				IntegerVector size = getWindowSize(v);
+				window.setSize(size.get(0), size.get(1));
+			}
 		}
 	}
 
 	public void updateViewLocations() {
-		for (View v : views) {
-			final Frame window = RenderManager.getOpenWindowForView(v);
-			if (window == null)
-				continue;
-			IntegerVector pos = getWindowPos(v);
-			window.setLocation(pos.get(0), pos.get(1));
+		synchronized (views) {
+			for (View v : views) {
+				final Frame window = RenderManager.getOpenWindowForView(v);
+				if (window == null)
+					continue;
+				IntegerVector pos = getWindowPos(v);
+				window.setLocation(pos.get(0), pos.get(1));
+			}
 		}
 	}
 
 	public ArrayList<View> getViews() {
 		synchronized (views) {
-			return views;
+			return new ArrayList<View>(views);
+		}
+	}
+
+	public void updateViewTime(double simTime) {
+		synchronized (views) {
+			for (int i = 0; i < views.size(); i++) {
+				views.get(i).update(simTime);
+			}
 		}
 	}
 
@@ -4152,12 +4167,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!RenderManager.isGood())
 			return;
 		RenderManager.inst().closeWindow(v);
-	}
-
-	@Override
-	public int getNextViewID() {
-		nextViewID++;
-		return nextViewID;
 	}
 
 	private void resetViews() {
@@ -4219,12 +4228,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return RenderManager.inst().getPOI(v);
 	}
 
-	public void setResizable(View v, boolean bool) {
-		if (!RenderManager.isGood())
-			return;
-		RenderManager.inst().setResizable(v, bool);
-	}
-
 	public boolean isResizable(View v) {
 		if (!RenderManager.isGood())
 			return false;
@@ -4235,8 +4238,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void allowResizing(boolean bool) {
 		FrameBox.allowResizing(bool);
 		EntityPallet.allowResizing(bool);
-		for (View v : views) {
-			setResizable(v, bool);
+
+		if (!RenderManager.isGood())
+			return;
+
+		synchronized (views) {
+			for (View v : views) {
+				RenderManager.inst().setResizable(v, bool);
+			}
 		}
 	}
 

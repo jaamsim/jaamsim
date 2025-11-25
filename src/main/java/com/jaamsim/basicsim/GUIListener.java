@@ -36,7 +36,6 @@ public interface GUIListener extends EventTimeListener {
 	public void removeView(View v);
 	public void createWindow(View v);
 	public void closeWindow(View v);
-	public int getNextViewID();
 	public Vec3d getPOI(View v);
 	public void allowResizing(boolean bool);
 

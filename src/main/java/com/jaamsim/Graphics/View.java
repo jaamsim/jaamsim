@@ -19,6 +19,7 @@ package com.jaamsim.Graphics;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
@@ -49,6 +50,7 @@ public class View extends Entity {
 	public static final int OMNI_VIEW_ID = -1;
 	public static final int NO_VIEW_ID = 0;
 
+	private static final AtomicInteger viewCounter = new AtomicInteger(1);
 	private final int viewID;
 
 	@Keyword(description = "The region in which the view's coordinates are given.")
@@ -176,13 +178,12 @@ public class View extends Entity {
 	}
 
 	public View() {
+		viewID = viewCounter.incrementAndGet();
 		GUIListener gui = getJaamSimModel().getGUIListener();
 		if (gui == null) {
-			viewID = -1;
 			return;
 		}
 		gui.addView(this);
-		viewID = gui.getNextViewID();
 	}
 
 	@Override
