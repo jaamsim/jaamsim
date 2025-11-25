@@ -27,7 +27,7 @@ public interface GUIListener extends EventTimeListener {
 	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector(Entity ent);
 	public void updateModelBuilder();
-	public void updateInputEditor();
+	public void updateInputEditor(Entity ent);
 	public void storeAndExecute(Command cmd);
 	public void updateAll();
 	public void deleteEntity(Entity ent);
@@ -38,7 +38,6 @@ public interface GUIListener extends EventTimeListener {
 	public void closeWindow(View v);
 	public int getNextViewID();
 	public Vec3d getPOI(View v);
-	public boolean isSelected(Entity ent);
 	public void allowResizing(boolean bool);
 
 }

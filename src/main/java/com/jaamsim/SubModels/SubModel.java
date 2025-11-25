@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
@@ -31,7 +32,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueHandle;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.units.Unit;
 
@@ -90,8 +90,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			SubModel sm = (SubModel)ent;
 			sm.updateKeywords();
 			GUIListener gui = sm.getJaamSimModel().getGUIListener();
-			if (gui != null && gui.isSelected(sm))
-				gui.updateInputEditor();
+			if (gui != null)
+				gui.updateInputEditor(sm);
 		}
 	};
 

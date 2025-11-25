@@ -794,6 +794,7 @@ public final class EventManager {
 			start = false;
 		}
 
+		// Only used to initialize the NO_ENTRY constant
 		ThreadEntry() {
 			next = null;
 			proc = null;

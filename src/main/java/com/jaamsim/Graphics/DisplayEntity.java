@@ -358,8 +358,8 @@ public class DisplayEntity extends Entity {
 
 		// Refresh the contents of the Input Editor
 		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui != null && gui.isSelected(this) && usePointsInput() != bool)
-			gui.updateInputEditor();
+		if (gui != null && usePointsInput() != bool)
+			gui.updateInputEditor(this);
 	}
 
 	static final InputCallback regionCallback = new InputCallback() {
