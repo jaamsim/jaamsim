@@ -386,7 +386,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				windowOffset = new Point(getLocation().x - initLocation.x,
 						getLocation().y - initLocation.y);
 				updateToolPositionSizes(sim.getSimulation());
-				updateViewLocations();
+				updateViewSizeLocation();
 			}
 		});
 	}
@@ -3356,8 +3356,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateToolVisibilities(simulation);
 		updateToolPositionSizes(simulation);
 		updateViewVisibilities();
-		updateViewSizes();
-		updateViewLocations();
+		updateViewSizeLocation();
 		if (getExtendedState() == MAXIMIZED_BOTH) {
 			setExtendedState(NORMAL);
 		}
@@ -4103,25 +4102,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	private void updateViewSizes() {
+	public void updateViewSizeLocation() {
 		synchronized (views) {
 			for (View v : views) {
 				final Frame window = RenderManager.getOpenWindowForView(v);
 				if (window == null)
 					continue;
 				IntegerVector size = getWindowSize(v);
-				window.setSize(size.get(0), size.get(1));
-			}
-		}
-	}
-
-	public void updateViewLocations() {
-		synchronized (views) {
-			for (View v : views) {
-				final Frame window = RenderManager.getOpenWindowForView(v);
-				if (window == null)
-					continue;
 				IntegerVector pos = getWindowPos(v);
+				window.setSize(size.get(0), size.get(1));
 				window.setLocation(pos.get(0), pos.get(1));
 			}
 		}
