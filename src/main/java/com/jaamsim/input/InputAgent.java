@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 
@@ -1867,39 +1866,6 @@ public class InputAgent {
 		ArrayList<String> tokens = new ArrayList<>();
 		Parser.tokenize(tokens, str, true);
 		return new KeywordIndex(keyword, tokens, pc);
-	}
-
-	/**
-	 * Split an input (list of strings) down to a single level of nested braces, this may then be called again for
-	 * further nesting.
-	 * @param input
-	 */
-	public static ArrayList<ArrayList<String>> splitForNestedBraces(List<String> input) {
-		ArrayList<ArrayList<String>> inputs = new ArrayList<>();
-
-		int braceDepth = 0;
-		ArrayList<String> currentLine = null;
-		for (int i = 0; i < input.size(); i++) {
-			if (currentLine == null)
-				currentLine = new ArrayList<>();
-
-			currentLine.add(input.get(i));
-			if (input.get(i).equals("{")) {
-				braceDepth++;
-				continue;
-			}
-
-			if (input.get(i).equals("}")) {
-				braceDepth--;
-				if (braceDepth == 0) {
-					inputs.add(currentLine);
-					currentLine = null;
-					continue;
-				}
-			}
-		}
-
-		return inputs;
 	}
 
 	/**

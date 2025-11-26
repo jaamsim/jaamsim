@@ -1915,6 +1915,39 @@ public abstract class Input<T> {
 		}
 	}
 
+	/**
+	 * Split an input (list of strings) down to a single level of nested braces, this may then be called again for
+	 * further nesting.
+	 * @param input
+	 */
+	public static ArrayList<ArrayList<String>> splitForNestedBraces(List<String> input) {
+		ArrayList<ArrayList<String>> inputs = new ArrayList<>();
+
+		int braceDepth = 0;
+		ArrayList<String> currentLine = null;
+		for (int i = 0; i < input.size(); i++) {
+			if (currentLine == null)
+				currentLine = new ArrayList<>();
+
+			currentLine.add(input.get(i));
+			if (input.get(i).equals("{")) {
+				braceDepth++;
+				continue;
+			}
+
+			if (input.get(i).equals("}")) {
+				braceDepth--;
+				if (braceDepth == 0) {
+					inputs.add(currentLine);
+					currentLine = null;
+					continue;
+				}
+			}
+		}
+
+		return inputs;
+	}
+
 	private static void assertUnique(ArrayList<? extends Entity> list) {
 		for (int i = 0; i < list.size(); i++) {
 			Entity ent = list.get(i);

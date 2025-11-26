@@ -45,7 +45,7 @@ public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 		for (int i = 0; i < kw.numArgs(); i++) {
 			strings.add(kw.getArg(i));
 		}
-		ArrayList<ArrayList<String>> keys = InputAgent.splitForNestedBraces(strings);
+		ArrayList<ArrayList<String>> keys = Input.splitForNestedBraces(strings);
 		for( ArrayList<String> key : keys) {
 			parseKey(thisEnt.getJaamSimModel(), key, temp);
 		}
@@ -57,7 +57,7 @@ public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 			throw new InputErrorException("Malformed key entry: %s", key.toString());
 		}
 
-		ArrayList<ArrayList<String>> keyEntries = InputAgent.splitForNestedBraces(key.subList(1, key.size()-1));
+		ArrayList<ArrayList<String>> keyEntries = Input.splitForNestedBraces(key.subList(1, key.size()-1));
 		if (keyEntries.size() != 2) {
 			throw new InputErrorException("Expected two values in keyed input for key entry: %s", key.toString());
 		}
