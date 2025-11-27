@@ -4118,7 +4118,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public ArrayList<View> getViews() {
 		synchronized (views) {
-			return new ArrayList<View>(views);
+			return new ArrayList<>(views);
 		}
 	}
 
