@@ -2845,10 +2845,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					if (bool) {
 						controlStartResume.setPressedIcon(pausePressedIcon);
 					}
-					else {
-						controlStartResume.setSelected(false);
-						controlStartResume.setEnabled(true);
-					}
+					updateForSimulationState();
 				}
 				else {
 					if (getJaamSimModel().isRunning())
