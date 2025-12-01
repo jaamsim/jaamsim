@@ -18,10 +18,9 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.View;
-import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.math.Vec3d;
 
-public interface GUIListener extends EventTimeListener {
+public interface GUIListener {
 
 	public void handleInputError(Throwable t, Entity ent);
 	public void invokeErrorDialogBox(String title, String msg);
@@ -39,4 +38,7 @@ public interface GUIListener extends EventTimeListener {
 	public Vec3d getPOI(View v);
 	public void allowResizing(boolean bool);
 
+	public void gui_tickUpdate(long tick);
+	public void gui_timeRunning();
+	public void gui_handleError(Throwable t);
 }

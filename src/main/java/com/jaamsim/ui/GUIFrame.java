@@ -143,7 +143,6 @@ import com.jaamsim.controllers.RateLimiter.CallbackRunnable;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
@@ -163,7 +162,7 @@ import com.jaamsim.units.TimeUnit;
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
  */
-public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListener {
+public class GUIFrame extends OSFixJFrame implements GUIListener {
 	private static GUIFrame instance;
 
 	private static RunManager runManager;
@@ -455,7 +454,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Pass the simulation time for the new model to the user interface
 		gui.initSpeedUp(sm.getSimTime());
-		gui.tickUpdate(sm.getSimTicks());
+		gui.gui_tickUpdate(sm.getSimTicks());
 		gui.updateForSimulationState();
 	}
 
@@ -3229,7 +3228,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			FrameBox.stop();
 			updateForSimulationState();
 			initSpeedUp(0.0d);
-			tickUpdate(0L);
+			gui_tickUpdate(0L);
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
@@ -4522,7 +4521,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
-	public void tickUpdate(long tick) {
+	public void gui_tickUpdate(long tick) {
 		if (tick == simTicks)
 			return;
 
@@ -4532,7 +4531,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
-	public void timeRunning() {
+	public void gui_timeRunning() {
 		updateForSimulationState();
 	}
 
@@ -4562,7 +4561,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
-	public void handleError(Throwable t) {
+	public void gui_handleError(Throwable t) {
 		String msg = t.getLocalizedMessage();
 		if (msg == null)
 			msg = "null";

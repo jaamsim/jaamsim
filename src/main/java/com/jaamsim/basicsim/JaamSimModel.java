@@ -268,13 +268,13 @@ public class JaamSimModel implements EventTimeListener {
 	public void tickUpdate(long tick) {
 		if (gui == null)
 			return;
-		gui.tickUpdate(tick);
+		gui.gui_tickUpdate(tick);
 	}
 
 	@Override
 	public void timeRunning() {
 		if (gui != null)
-			gui.timeRunning();
+			gui.gui_timeRunning();
 	}
 
 	@Override
@@ -297,7 +297,7 @@ public class JaamSimModel implements EventTimeListener {
 			return;
 		}
 		if (gui != null)
-			gui.handleError(t);
+			gui.gui_handleError(t);
 	}
 
 	public boolean isStarted() {
