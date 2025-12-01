@@ -2201,12 +2201,19 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
-		DisplayEntity selectedEntity = getSelectedEntity();
+	public static boolean handleKeyPressed(KeyEvent e) {
+		RenderManager rm = RenderManager.inst();
+		DisplayEntity selectedEntity = rm.getSelectedEntity();
+
+		final int keyCode = e.getKeyCode();
+		final char keyChar = e.getKeyChar();
+		final boolean shift = e.isShiftDown();
+		final boolean control = e.isControlDown();
+		final boolean alt = e.isAltDown();
 
 		// Selected entity in edit mode
 		if (selectedEntity instanceof Editable && ((Editable) selectedEntity).isEditMode()) {
-			if (!isSingleEntitySelected())
+			if (!rm.isSingleEntitySelected())
 				return false;
 			selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
 			return true;
@@ -2275,7 +2282,7 @@ public class RenderManager implements DragSourceListener {
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {
 			boolean bool = false;
-			for (DisplayEntity ent : getSelectedEntityList()) {
+			for (DisplayEntity ent : rm.getSelectedEntityList()) {
 				boolean b = ent.handleKeyPressed(keyCode, keyChar, shift, control, alt);
 				bool = bool || b;
 			}
@@ -2293,8 +2300,17 @@ public class RenderManager implements DragSourceListener {
 		return bool;
 	}
 
-	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
-		ArrayList<DisplayEntity> list = new ArrayList<>(getSelectedEntityList());
+	public static void handleKeyReleased(KeyEvent e) {
+		RenderManager rm = RenderManager.inst();
+		if (!rm.isEntitySelected())
+			return;
+
+		final int keyCode = e.getKeyCode();
+		final char keyChar = e.getKeyChar();
+		final boolean shift = e.isShiftDown();
+		final boolean control = e.isControlDown();
+		final boolean alt = e.isAltDown();
+		ArrayList<DisplayEntity> list = new ArrayList<>(rm.getSelectedEntityList());
 		for (DisplayEntity ent : list) {
 			ent.handleKeyReleased(keyCode, keyChar, shift, control, alt);
 		}

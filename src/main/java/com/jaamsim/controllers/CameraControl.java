@@ -481,9 +481,7 @@ public class CameraControl implements WindowInteractionListener {
 	public void keyPressed(KeyEvent e) {
 
 		// If an entity has been selected, pass the key event to it
-		boolean bool = RenderManager.inst().handleKeyPressed(e.getKeyCode(), e.getKeyChar(),
-				e.isShiftDown(), e.isControlDown(), e.isAltDown());
-		if (bool)
+		if (RenderManager.handleKeyPressed(e))
 			return;
 
 		// If no entity has been selected, the camera will handle the key event
@@ -551,10 +549,6 @@ public class CameraControl implements WindowInteractionListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (RenderManager.inst().isEntitySelected()) {
-			RenderManager.inst().handleKeyReleased(e.getKeyCode(), e.getKeyChar(),
-					e.isShiftDown(), e.isControlDown(), e.isAltDown());
-			return;
-		}
+		RenderManager.handleKeyReleased(e);
 	}
 }
