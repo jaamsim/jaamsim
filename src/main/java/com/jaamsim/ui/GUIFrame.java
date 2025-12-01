@@ -4391,23 +4391,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// If no configuration files were specified on the command line, then load the default configuration file
 		if (configFiles.size() == 0 && !scriptMode) {
-			// Load the default model from the AWT thread to avoid synchronization problems with updateUI and
-			// setWindowDefaults
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					simModel.setConfiguring(true);
-					GUIFrame gui = GUIFrame.getInstance();
-					if (gui != null)
-						gui.updateForSimulationState();
-
-					InputAgent.loadDefault(simModel);
-
-					simModel.setConfiguring(false);
-					if (gui != null)
-						gui.updateForSimulationState();
-				}
-			});
+			simModel.setConfiguring(true);
+			if (gui != null) gui.updateForSimulationState();
+			InputAgent.loadDefault(simModel);
+			simModel.setConfiguring(false);
+			if (gui != null) gui.updateForSimulationState();
 		}
 
 		// If in batch or quiet mode, close the any tools that were opened
