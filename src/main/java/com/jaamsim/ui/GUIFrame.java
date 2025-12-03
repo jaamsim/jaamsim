@@ -4634,7 +4634,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 	}
 
-	public void load(File file) {
+	void load(File file) {
 
 		// Create the new JaamSimModel and load the default objects and inputs
 		JaamSimModel simModel = new JaamSimModel(file.getName());
