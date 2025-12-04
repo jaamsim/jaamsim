@@ -4561,7 +4561,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	@Override
-	public void gui_handleError(Throwable t) {
+	public void gui_handleError(JaamSimModel sm, Throwable t) {
 		String msg = t.getLocalizedMessage();
 		if (msg == null)
 			msg = "null";
@@ -4575,10 +4575,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			source = ((ErrorException) t).source;
 			pos = ((ErrorException) t).position;
 		}
-		JaamSimModel simModel = getJaamSimModel();
-		double simTime = 0.0d;
-		if (simModel != null)
-			simTime = simModel.getSimTime();
+		double simTime = sm.getSimTime();
 		GUIFrame.invokeErrorDialog("Runtime Error",
 				source,
 				pos,

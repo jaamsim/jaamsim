@@ -90,6 +90,13 @@ public class SimRun implements RunListener {
 
 	@Override
 	public void handleRuntimeError(JaamSimModel sm, Throwable t) {
+		if (!sm.isMultipleRuns()) {
+			GUIListener gui = sm.getGUIListener();
+			if (gui != null)
+				gui.gui_handleError(sm, t);
+			return;
+		}
+
 		double simTime = sm.getSimTime();
 		runParameterStrings = sm.getSimulation().getRunParameterStrings(simTime);
 		errorMessage = t.getMessage();

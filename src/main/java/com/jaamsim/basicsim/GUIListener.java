@@ -40,5 +40,5 @@ public interface GUIListener {
 
 	public void gui_tickUpdate(long tick);
 	public void gui_timeRunning();
-	public void gui_handleError(Throwable t);
+	public void gui_handleError(JaamSimModel sm, Throwable t);
 }

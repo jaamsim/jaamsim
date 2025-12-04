@@ -266,9 +266,8 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void tickUpdate(long tick) {
-		if (gui == null)
-			return;
-		gui.gui_tickUpdate(tick);
+		if (gui != null)
+			gui.gui_tickUpdate(tick);
 	}
 
 	@Override
@@ -292,12 +291,8 @@ public class JaamSimModel implements EventTimeListener {
 		this.logMessage("Stack trace:");
 		this.logStackTrace(rootCause);
 		this.logMessage("");
-		if (isMultipleRuns()) {
-			runListener.handleRuntimeError(this, t);
-			return;
-		}
-		if (gui != null)
-			gui.gui_handleError(t);
+
+		runListener.handleRuntimeError(this, t);
 	}
 
 	public boolean isStarted() {
