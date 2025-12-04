@@ -90,6 +90,20 @@ public class SimRun implements RunListener {
 
 	@Override
 	public void handleRuntimeError(JaamSimModel sm, Throwable t) {
+		double simTime = sm.getSimTime();
+		sm.logMessage("Runtime error in replication %s of scenario %s at time %f s:",
+				sm.getReplicationNumber(), sm.getScenarioNumber(), simTime);
+		sm.logMessage("%s", t.getLocalizedMessage());
+
+		// Stack trace for the root cause
+		Throwable rootCause = t;
+		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+			rootCause = rootCause.getCause();
+		}
+		sm.logMessage("Stack trace:");
+		sm.logStackTrace(rootCause);
+		sm.logMessage("");
+
 		if (!sm.isMultipleRuns()) {
 			GUIListener gui = sm.getGUIListener();
 			if (gui != null)
@@ -97,7 +111,6 @@ public class SimRun implements RunListener {
 			return;
 		}
 
-		double simTime = sm.getSimTime();
 		runParameterStrings = sm.getSimulation().getRunParameterStrings(simTime);
 		errorMessage = t.getMessage();
 		if (errorMessage == null)
