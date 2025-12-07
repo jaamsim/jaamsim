@@ -3513,9 +3513,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	@Override
 	public void storeAndExecute(Command cmd) {
 		synchronized (undoList) {
-			if (!cmd.isChange())
-				return;
-
 			// Execute the command and catch an error if it occurs
 			cmd.execute();
 

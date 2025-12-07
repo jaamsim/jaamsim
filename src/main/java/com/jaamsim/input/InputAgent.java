@@ -88,6 +88,9 @@ public class InputAgent {
 	private static final int MAX_BRACE_DEPTH = 3;
 
 	public static void storeAndExecute(Command cmd) {
+		if (!cmd.isChange())
+			return;
+
 		GUIListener gui = cmd.getJaamSimModel().getGUIListener();
 		if (gui == null) {
 			cmd.execute();
