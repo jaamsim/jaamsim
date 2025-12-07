@@ -310,7 +310,12 @@ public class JaamSimModel implements EventTimeListener {
 	 * Deletes all the objects in the present model and prepares the JaamSimModel to load a new
 	 * input file using the autoLoad() and configure() methods.
 	 */
-	public void clear() {
+	public void close() {
+		closeLogFile();
+		pause();
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			each.close();
+		}
 		eventManager.clear();
 		hasStarted.set(false);
 		hasEnded.set(false);
@@ -499,15 +504,6 @@ public class JaamSimModel implements EventTimeListener {
 		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
 		resume();
 		return true;
-	}
-
-	/**
-	 * Performs the shut down procedure for each entity.
-	 */
-	public void close() {
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			each.close();
-		}
 	}
 
 	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);

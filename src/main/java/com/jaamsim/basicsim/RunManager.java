@@ -134,10 +134,7 @@ public class RunManager {
 			reportFile = null;
 		}
 		for (JaamSimModel sm : simModelList) {
-			sm.closeLogFile();
-			sm.pause();
 			sm.close();
-			sm.clear();
 		}
 	}
 
