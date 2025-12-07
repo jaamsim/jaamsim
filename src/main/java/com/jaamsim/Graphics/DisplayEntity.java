@@ -1161,7 +1161,7 @@ public class DisplayEntity extends Entity {
 				pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 			String posKey = positionInput.getKeyword();
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, posKey, pos, DistanceUnit.class);
-			InputAgent.storeAndExecute(new KeywordCommand(this, posKw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw));
 			return true;
 		}
 
@@ -1176,7 +1176,7 @@ public class DisplayEntity extends Entity {
 		String ptsKey = pointsInput.getKeyword();
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs(this, ptsKey, getPoints(), offset);
 
-		InputAgent.storeAndExecute(new KeywordCommand(this, ptsKw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, ptsKw));
 		return true;
 	}
 

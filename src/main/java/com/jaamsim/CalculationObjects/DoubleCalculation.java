@@ -217,7 +217,7 @@ implements SampleProvider {
 
 		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 		kwList.toArray(kws);
-		InputAgent.storeAndExecute(new KeywordCommand(nextCalc, kws));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(nextCalc, kws));
 	}
 
 }

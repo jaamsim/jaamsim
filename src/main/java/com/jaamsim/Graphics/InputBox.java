@@ -64,7 +64,7 @@ public class InputBox extends TextBasics {
 		}
 		try {
 			KeywordIndex kw = InputAgent.formatInput(target.getValue(), getText());
-			InputAgent.storeAndExecute(new KeywordCommand(target.getTargetEntity(), kw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(target.getTargetEntity(), kw));
 			super.acceptEdits();
 		}
 		catch (InputErrorException e) {

@@ -320,7 +320,7 @@ public class View extends Entity {
 
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, "ViewPosition", tempPos, DistanceUnit.class);
 			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, "ViewCenter", tempCent, DistanceUnit.class);
-			InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
 		}
 	}
 
@@ -359,7 +359,7 @@ public class View extends Entity {
 
 		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 		kwList.toArray(kws);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kws));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kws));
 	}
 
 	public IntegerVector getWindowPos() {
@@ -411,7 +411,7 @@ public class View extends Entity {
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), pos, DistanceUnit.class);
 			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, center.getKeyword(), viewCenter, DistanceUnit.class);
 
-			InputAgent.storeAndExecute(new KeywordCommand(this, kw, posKw, ctrKw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, ctrKw));
 		}
 	}
 

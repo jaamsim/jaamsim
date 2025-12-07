@@ -28,7 +28,6 @@ import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.InterfaceEntityInput;
@@ -219,7 +218,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

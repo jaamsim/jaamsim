@@ -25,7 +25,6 @@ import com.jaamsim.EntityProviders.EntityProvListInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
@@ -117,7 +116,7 @@ public abstract class AbstractCombine extends LinkedService {
 		waitQueueList.getValueTokens(toks);
 		toks.add(que.getName());
 		KeywordIndex kw = new KeywordIndex(waitQueueList.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

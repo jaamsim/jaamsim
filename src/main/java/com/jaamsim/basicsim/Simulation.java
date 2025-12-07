@@ -1172,7 +1172,7 @@ public class Simulation extends Entity {
 		kws[12] = InputAgent.formatArgs(eventViewerPos.getKeyword());
 		kws[13] = InputAgent.formatArgs(eventViewerSize.getKeyword());
 		kws[14] = InputAgent.formatArgs(controlPanelWidth.getKeyword());
-		InputAgent.storeAndExecute(new KeywordCommand(this, kws));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kws));
 	}
 
 	public IntegerVector getModelBuilderPos() {
@@ -1235,7 +1235,7 @@ public class Simulation extends Entity {
 		if (controlPanelWidth.getValue().get(0) == width)
 			return;
 		KeywordIndex kw = InputAgent.formatIntegers(controlPanelWidth.getKeyword(), width);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public int getControlPanelWidth() {

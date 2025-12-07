@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -102,7 +101,7 @@ public class Branch extends LinkedComponent {
 		nextComponentList.getValueTokens(toks);
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponentList.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 }

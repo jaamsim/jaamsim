@@ -100,7 +100,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 		try {
 			suppressUpdate = true;
 			KeywordIndex kw = InputAgent.formatInput(valInput.getKeyword(), getText());
-			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 			super.acceptEdits();
 		}
 		catch (InputErrorException e) {

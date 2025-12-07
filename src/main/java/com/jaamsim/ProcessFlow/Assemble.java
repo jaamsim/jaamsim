@@ -145,7 +145,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 	@Override
 	public void setPrototypeEntity(DisplayEntity proto) {
 		KeywordIndex kw = InputAgent.formatArgs(prototypeEntity.getKeyword(), proto.getName());
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

@@ -97,7 +97,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 	@Override
 	public void setPrototypeEntity(DisplayEntity proto) {
 		KeywordIndex kw = InputAgent.formatArgs(prototypeEntity.getKeyword(), proto.getName());
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

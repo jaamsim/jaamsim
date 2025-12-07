@@ -237,7 +237,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		editableText.acceptEdits();
 		KeywordIndex kw = InputAgent.formatArgs("Format", getText());
 		try {
-			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 		}
 		catch (Exception e) {
 			GUIListener gui = getJaamSimModel().getGUIListener();

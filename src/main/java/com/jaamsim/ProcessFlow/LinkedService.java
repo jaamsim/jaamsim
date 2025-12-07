@@ -29,7 +29,6 @@ import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
@@ -323,7 +322,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(que.getName());
 		KeywordIndex kw = new KeywordIndex(waitQueue.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public Queue getQueue(double simTime) {

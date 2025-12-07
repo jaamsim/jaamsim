@@ -25,7 +25,6 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.ProcessFlow.EntityGen;
 import com.jaamsim.ProcessFlow.Linkable;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 
@@ -83,7 +82,7 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

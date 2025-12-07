@@ -168,7 +168,7 @@ public class Text extends TextBasics {
 		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 		kwList.toArray(kws);
 		try {
-			InputAgent.storeAndExecute(new KeywordCommand(this, kws));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kws));
 		}
 		catch (Exception e) {
 			GUIListener gui = getJaamSimModel().getGUIListener();

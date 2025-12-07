@@ -114,7 +114,7 @@ public abstract class OverlayEntity extends DisplayEntity {
 		x = Math.max(0, x);
 		y = Math.max(0, y);
 		KeywordIndex kw = InputAgent.formatIntegers(screenPosition.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 		return true;
 	}
 

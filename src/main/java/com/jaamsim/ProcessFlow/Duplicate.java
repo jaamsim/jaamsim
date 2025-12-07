@@ -156,7 +156,7 @@ public class Duplicate extends LinkedComponent {
 		targetComponentList.getValueTokens(toks);
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(targetComponentList.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 }
