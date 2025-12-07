@@ -296,7 +296,7 @@ public class ContextMenu {
 					else {
 						kw = InputAgent.formatArgs("RelativeEntity", entName);
 					}
-					InputAgent.storeAndExecute(new CoordinateCommand(ent, kw));
+					ent.getJaamSimModel().storeAndExecute(new CoordinateCommand(ent, kw));
 				}
 			} );
 			setRelativeEntityMenu.add(item);
@@ -344,7 +344,7 @@ public class ContextMenu {
 					else {
 						kw = InputAgent.formatArgs("Region", regionName);
 					}
-					InputAgent.storeAndExecute(new CoordinateCommand(ent, kw));
+					ent.getJaamSimModel().storeAndExecute(new CoordinateCommand(ent, kw));
 				}
 			} );
 			setRegionMenu.add(item);
@@ -372,7 +372,7 @@ public class ContextMenu {
 				RenderManager.inst().setPOI(v, viewCenter);
 				KeywordIndex posKw = InputAgent.formatVec3dInput(v, "ViewPosition", viewPos, DistanceUnit.class);
 				KeywordIndex ctrKw = InputAgent.formatVec3dInput(v, "ViewCenter", viewCenter, DistanceUnit.class);
-				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
+				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
 			}
 		} );
 		if (RenderManager.getActiveView() == null) {
@@ -403,7 +403,7 @@ public class ContextMenu {
 				int ind = PolylineInfo.getInsertionIndex(pts, localPos);
 				pts.add(ind, localPos);
 				KeywordIndex ptsKw = InputAgent.formatPointsInputs(ent, "Points", pts, new Vec3d());
-				InputAgent.storeAndExecute(new KeywordCommand(ent, ind, ptsKw));
+				ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, ind, ptsKw));
 			}
 		} );
 		if (ent.isGenerated() || nodeIndex >= 0) {
@@ -420,7 +420,7 @@ public class ContextMenu {
 				ArrayList<Vec3d> pts = ent.getPoints();
 				pts.remove(nodeIndex);
 				KeywordIndex ptsKw = InputAgent.formatPointsInputs(ent, "Points", pts, new Vec3d());
-				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
+				ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
 			}
 		} );
 		if (ent.isGenerated() || nodeIndex == -1
@@ -437,7 +437,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel simModel = ent.getJaamSimModel();
 				String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Split");
-				InputAgent.storeAndExecute(new DefineCommand(simModel, ent.getClass(), name));
+				simModel.storeAndExecute(new DefineCommand(simModel, ent.getClass(), name));
 				DisplayEntity splitEnt = (DisplayEntity) simModel.getNamedEntity(name);
 
 				// Match all the inputs
@@ -465,7 +465,7 @@ public class ContextMenu {
 					pts0.add(pts.get(i));
 				}
 				KeywordIndex ptsKw0 = InputAgent.formatPointsInputs(ent, "Points", pts0, new Vec3d());
-				InputAgent.storeAndExecute(new KeywordCommand(ent, ind, ptsKw0));
+				simModel.storeAndExecute(new KeywordCommand(ent, ind, ptsKw0));
 
 				// New entity receives the remaining portion of the nodes
 				ArrayList<Vec3d> pts1 = new ArrayList<>(pts.size() - ind);
@@ -541,7 +541,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showComponentsMenuItem.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowComponents", bool);
-				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+				ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, kw));
 			}
 		});
 		menu.add( showComponentsMenuItem );

@@ -36,6 +36,7 @@ import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -100,8 +101,9 @@ public class FrameBox extends OSFixJFrame {
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-			InputAgent.storeAndExecute(new KeywordCommand(simulation, kw));
+			JaamSimModel simModel = GUIFrame.getJaamSimModel();
+			Simulation simulation = simModel.getSimulation();
+			simModel.storeAndExecute(new KeywordCommand(simulation, kw));
 		}
 	}
 
@@ -144,7 +146,8 @@ public class FrameBox extends OSFixJFrame {
 			Point pos = tool.getLocation();
 			pos = GUIFrame.getInstance().getRelativeLocation(pos.x, pos.y);
 
-			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+			JaamSimModel simModel = GUIFrame.getJaamSimModel();
+			Simulation simulation = simModel.getSimulation();
 			IntegerVector oldSize = (IntegerVector) simulation.getInput(sizeKeyword).getValue();
 			IntegerVector oldPos = (IntegerVector) simulation.getInput(posKeyword).getValue();
 			if (oldSize.get(0) == size.width && oldSize.get(1) == size.height
@@ -153,7 +156,7 @@ public class FrameBox extends OSFixJFrame {
 
 			KeywordIndex sizeKw = InputAgent.formatIntegers(sizeKeyword, size.width, size.height);
 			KeywordIndex posKw = InputAgent.formatIntegers(posKeyword, pos.x, pos.y);
-			InputAgent.storeAndExecute(new KeywordCommand(simulation, sizeKw, posKw));
+			simModel.storeAndExecute(new KeywordCommand(simulation, sizeKw, posKw));
 		}
 	}
 

@@ -453,7 +453,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		}
 		Entity ent = table.getEntity();
 		KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str, pc);
-		InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+		ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, kw));
 		input.setValid(true);
 	}
 
