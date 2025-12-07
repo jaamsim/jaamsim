@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.prefs.Preferences;
 
+import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
@@ -1852,6 +1853,10 @@ public class JaamSimModel implements EventTimeListener {
 			}
 		}
 		return ret;
+	}
+
+	public final void storeAndExecute(Command cmd) {
+		InputAgent.storeAndExecute(cmd);
 	}
 
 	public void showTemporaryLabels() {
