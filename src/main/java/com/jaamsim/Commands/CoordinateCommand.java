@@ -19,7 +19,6 @@ package com.jaamsim.Commands;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
@@ -54,11 +53,6 @@ public class CoordinateCommand extends KeywordCommand {
 	public void undo() {
 		super.undo();
 		resetPosition();
-	}
-
-	@Override
-	public JaamSimModel getJaamSimModel() {
-		return dispEnt.getJaamSimModel();
 	}
 
 	private void resetPosition() {

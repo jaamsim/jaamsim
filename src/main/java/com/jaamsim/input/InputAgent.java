@@ -41,7 +41,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
 
-import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.AbstractDirectedEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Statistics.SampleStatistics;
@@ -86,18 +85,6 @@ public class InputAgent {
 	private static final String COMMA_SEPARATOR = ", ";
 
 	private static final int MAX_BRACE_DEPTH = 3;
-
-	public static void storeAndExecute(Command cmd) {
-		if (!cmd.isChange())
-			return;
-
-		GUIListener gui = cmd.getJaamSimModel().getGUIListener();
-		if (gui == null) {
-			cmd.execute();
-			return;
-		}
-		gui.storeAndExecute(cmd);
-	}
 
 	private static int getBraceDepth(JaamSimModel simModel, ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
 		int braceDepth = startingBraceDepth;

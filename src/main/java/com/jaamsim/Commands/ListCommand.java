@@ -18,8 +18,6 @@ package com.jaamsim.Commands;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.JaamSimModel;
-
 public class ListCommand implements Command {
 
 	private final ArrayList<Command> list;
@@ -71,11 +69,6 @@ public class ListCommand implements Command {
 				return true;
 		}
 		return false;
-	}
-
-	@Override
-	public JaamSimModel getJaamSimModel() {
-		return list.get(0).getJaamSimModel();
 	}
 
 	@Override

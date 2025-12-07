@@ -17,7 +17,6 @@
 package com.jaamsim.Commands;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 
 public class DeleteCommand implements Command {
 
@@ -47,11 +46,6 @@ public class DeleteCommand implements Command {
 	@Override
 	public boolean isChange() {
 		return true;
-	}
-
-	@Override
-	public JaamSimModel getJaamSimModel() {
-		return entity.getJaamSimModel();
 	}
 
 	@Override

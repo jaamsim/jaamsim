@@ -19,7 +19,6 @@ package com.jaamsim.Commands;
 import java.util.Arrays;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -112,11 +111,6 @@ public class KeywordCommand implements Command {
 	@Override
 	public boolean isChange() {
 		return !Arrays.equals(newKws, oldKws);
-	}
-
-	@Override
-	public JaamSimModel getJaamSimModel() {
-		return entity.getJaamSimModel();
 	}
 
 	@Override

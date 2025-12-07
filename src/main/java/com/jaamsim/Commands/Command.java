@@ -16,8 +16,6 @@
  */
 package com.jaamsim.Commands;
 
-import com.jaamsim.basicsim.JaamSimModel;
-
 public interface Command {
 
 	/**
@@ -42,10 +40,4 @@ public interface Command {
 	 * @return true if one or more inputs are changed
 	 */
 	public boolean isChange();
-
-	/**
-	 * Returns the JaamSimModel to which to command applies.
-	 * @return target JaamSimModel
-	 */
-	public JaamSimModel getJaamSimModel();
 }

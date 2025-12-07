@@ -1856,7 +1856,15 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public final void storeAndExecute(Command cmd) {
-		InputAgent.storeAndExecute(cmd);
+		if (!cmd.isChange())
+			return;
+
+		GUIListener gui = getGUIListener();
+		if (gui == null)
+			cmd.execute();
+		else
+			gui.storeAndExecute(cmd);
+
 	}
 
 	public void showTemporaryLabels() {
