@@ -318,7 +318,7 @@ public class RenderManager implements DragSourceListener {
 		if (v.showWindow() && !GUIFrame.getInstance().isIconified() && !v.isDead()
 				&& GUIFrame.getJaamSimModel() == v.getJaamSimModel()) {
 			KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", false);
-			InputAgent.storeAndExecute(new KeywordCommand(v, kw));
+			v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, kw));
 		}
 
 		windowControls.remove(windowID);
@@ -1219,6 +1219,7 @@ public class RenderManager implements DragSourceListener {
 	// Moves an overlay entity to a new position in the windows
 	private boolean handleOverlayMove(WindowInteractionListener.DragInfo dragInfo, int windowWidth, int windowHeight) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
 		OverlayEntity olEnt = (OverlayEntity) selectedEntity;
 		IntegerVector lastPos = olEnt.getScreenPosition();
 
@@ -1257,7 +1258,7 @@ public class RenderManager implements DragSourceListener {
 			cmdList.add(new KeywordCommand(olEnt, kw));
 		}
 
-		InputAgent.storeAndExecute(new ListCommand(cmdList));
+		simModel.storeAndExecute(new ListCommand(cmdList));
 		return true;
 	}
 
@@ -1341,7 +1342,7 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		InputAgent.storeAndExecute(new ListCommand(cmdList));
+		simModel.storeAndExecute(new ListCommand(cmdList));
 		return true;
 	}
 
@@ -1349,6 +1350,8 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
 
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
@@ -1406,8 +1409,8 @@ public class RenderManager implements DragSourceListener {
 		scale.x = Math.max(0.0d, scale.x);
 		scale.y = Math.max(0.0d, scale.y);
 
-		if (selectedEntity.getSimulation().isSnapToGrid())
-			scale = selectedEntity.getSimulation().getSnapGridPosition(scale, dragEntitySize, false);
+		if (simulation.isSnapToGrid())
+			scale = simulation.getSnapGridPosition(scale, dragEntitySize, false);
 
 		// Determine the new position for the entity
 		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -1425,7 +1428,7 @@ public class RenderManager implements DragSourceListener {
 
 		KeywordIndex sizeKw = InputAgent.formatVec3dInput(selectedEntity, "Size", scale, DistanceUnit.class);
 		KeywordIndex posKw = InputAgent.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
+		simModel.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
 		return true;
 	}
 
@@ -1435,6 +1438,8 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1459,11 +1464,11 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d orient = new Vec3d(dragEntityOrientation);
 		orient.z += theta;
-		if (selectedEntity.getSimulation().isSnapToGrid())
+		if (simulation.isSnapToGrid())
 			orient = Simulation.getSnapGridPosition(orient, dragEntityOrientation, true, ANGLE_SPACING);
 
 		KeywordIndex kw = InputAgent.formatVec3dInput(selectedEntity, "Orientation", orient, AngleUnit.class);
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
+		simModel.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
 
@@ -1534,7 +1539,7 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		InputAgent.storeAndExecute(new ListCommand(cmdList));
+		selectedEntity.getJaamSimModel().storeAndExecute(new ListCommand(cmdList));
 		return true;
 	}
 
@@ -1542,6 +1547,9 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
+
 
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 
@@ -1567,7 +1575,7 @@ public class RenderManager implements DragSourceListener {
 		// Align the node to snap grid
 		if (selectedEntity.getSimulation().isSnapToGrid()) {
 			Vec3d oldPos = screenPoints.get(nodeIndex);
-			localPos = selectedEntity.getSimulation().getSnapGridPosition(localPos, oldPos, shift);
+			localPos = simulation.getSnapGridPosition(localPos, oldPos, shift);
 		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
@@ -1579,12 +1587,13 @@ public class RenderManager implements DragSourceListener {
 		newPoints.set(nodeIndex, localPos);
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", newPoints, new Vec3d());
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
+		simModel.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
 		return true;
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
 
 		Ray currentRay = getRayForMouse(windowID, x, y);
 
@@ -1621,11 +1630,12 @@ public class RenderManager implements DragSourceListener {
 		points.add(splitInd + 1, selectedEntity.getLocalPosition(nearPoint));
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
+		simModel.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
 
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null || points.size() <= 2)
@@ -1639,7 +1649,7 @@ public class RenderManager implements DragSourceListener {
 		points.remove(removeInd);
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
+		simModel.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 
 	public int getNodeIndex(int windowID, int x, int y) {
@@ -1831,6 +1841,8 @@ public class RenderManager implements DragSourceListener {
 	private void createDNDObject(DragAndDropable dndObjectType, int windowID, int x, int y) {
 		Entity proto = (Entity) dndObjectType;
 		JaamSimModel simModel = proto.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
+
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
 
@@ -1842,7 +1854,7 @@ public class RenderManager implements DragSourceListener {
 		// Set the sub-model for this location
 		Entity parent = null;
 		Region region = getRegion(windowID, x, y);
-		if (region != null && region.getParent() != simModel.getSimulation()) {
+		if (region != null && region.getParent() != simulation) {
 			parent = region.getParent();
 		}
 
@@ -1855,7 +1867,7 @@ public class RenderManager implements DragSourceListener {
 		name = InputAgent.getUniqueName(simModel, name, "");
 		if (proto instanceof ObjectType)
 			proto = null;
-		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, proto, name));
+		simModel.storeAndExecute(new DefineCommand(simModel, klass, proto, name));
 		Entity ent = simModel.getNamedEntity(name);
 		//System.out.format("%ncreateDNDObject - %s%n", ent);
 
@@ -1884,7 +1896,6 @@ public class RenderManager implements DragSourceListener {
 			// Set the location
 			Vec3d creationPoint = currentRay.getPointAtDist(dist);
 			creationPoint = dispEnt.getLocalPosition(creationPoint);
-			Simulation simulation = simModel.getSimulation();
 			if (simulation.isSnapToGrid()) {
 				creationPoint = simulation.getSnapGridPosition(creationPoint);
 			}
