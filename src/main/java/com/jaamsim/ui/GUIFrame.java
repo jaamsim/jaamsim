@@ -4338,7 +4338,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			if (minimize) {
 				gui.setExtendedState(JFrame.ICONIFIED);
 			}
-			gui.clearUndoRedo();
 			gui.setVisible(true);
 			if (!batch) {
 				RenderManager.initialize(SAFE_GRAPHICS);
