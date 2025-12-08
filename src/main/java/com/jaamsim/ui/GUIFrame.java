@@ -3543,41 +3543,37 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	public void undo() {
-		synchronized (undoList) {
-			if (undoList.isEmpty())
-				return;
-			Command cmd = undoList.remove(undoList.size() - 1);
-			redoList.add(cmd);
-			cmd.undo();
-		}
-		updateUI();
-	}
-
-	public void redo() {
-		synchronized (undoList) {
-			if (redoList.isEmpty())
-				return;
-			Command cmd = redoList.remove(redoList.size() - 1);
-			undoList.add(cmd);
-			cmd.execute();
-		}
-		updateUI();
+		undo(1);
 	}
 
 	public void undo(int n) {
 		synchronized (undoList) {
 			for (int i = 0; i < n; i++) {
-				undo();
+				if (undoList.isEmpty())
+					break;
+				Command cmd = undoList.remove(undoList.size() - 1);
+				redoList.add(cmd);
+				cmd.undo();
 			}
 		}
+		updateUI();
+	}
+
+	public void redo() {
+		redo(1);
 	}
 
 	public void redo(int n) {
 		synchronized (undoList) {
 			for (int i = 0; i < n; i++) {
-				redo();
+				if (redoList.isEmpty())
+					break;
+				Command cmd = redoList.remove(redoList.size() - 1);
+				undoList.add(cmd);
+				cmd.execute();
 			}
 		}
+		updateUI();
 	}
 
 	public void invokeUndo() {
