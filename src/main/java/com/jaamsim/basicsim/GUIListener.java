@@ -16,7 +16,6 @@
  */
 package com.jaamsim.basicsim;
 
-import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.math.Vec3d;
 
@@ -27,7 +26,6 @@ public interface GUIListener {
 	public void updateObjectSelector(Entity ent);
 	public void updateModelBuilder();
 	public void updateInputEditor(Entity ent);
-	public void storeAndExecute(Command cmd);
 	public void updateAll();
 	public void deleteEntity(Entity ent);
 	public void renameEntity(Entity ent, String newName);

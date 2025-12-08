@@ -208,8 +208,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	private JButton redo;
 	private JButton undoDropdown;
 	private JButton redoDropdown;
-	private final ArrayList<Command> undoList = new ArrayList<>();
-	private final ArrayList<Command> redoList = new ArrayList<>();
 
 	private JToggleButton showLabels;
 	private JToggleButton showSubModels;
@@ -447,7 +445,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		ObjectSelector.allowUpdate();
 		gui.resetViews();
 		gui.clearButtons();
-		gui.clearUndoRedo();
 
 		// Set the listeners for the new model
 		sm.setGUIListener(gui);
@@ -693,7 +690,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				undo();
+				getJaamSimModel().undo();
 			}
 		} );
 		editMenu.add( undoMenuItem );
@@ -709,7 +706,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				redo();
+				getJaamSimModel().redo();
 			}
 		} );
 		editMenu.add( redoMenuItem );
@@ -1527,12 +1524,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		undo.setFocusPainted(false);
 		undo.setRequestFocusEnabled(false);
 		undo.setToolTipText(formatToolTip("Undo (Ctrl+Z)", "Reverses the last change to the model."));
-		undo.setEnabled(!undoList.isEmpty());
+		undo.setEnabled(getJaamSimModel().canUndo());
 		undo.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				undo();
+				getJaamSimModel().undo();
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -1544,12 +1541,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		undoDropdown.setMargin(margin);
 		undoDropdown.setFocusPainted(false);
 		undoDropdown.setRequestFocusEnabled(false);
-		undoDropdown.setEnabled(!undoList.isEmpty());
+		undoDropdown.setEnabled(getJaamSimModel().canUndo());
 		undoDropdown.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ScrollablePopupMenu menu = new ScrollablePopupMenu("UndoMenu");
+				ArrayList<Command> undoList = getJaamSimModel().getUndoList();
 				synchronized (undoList) {
 					for (int i = 1; i <= undoList.size(); i++) {
 						Command cmd = undoList.get(undoList.size() - i);
@@ -1559,7 +1557,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 							@Override
 							public void actionPerformed( ActionEvent event ) {
-								undo(num);
+								getJaamSimModel().undo(num);
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -1578,12 +1576,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		redo.setFocusPainted(false);
 		redo.setRequestFocusEnabled(false);
 		redo.setToolTipText(formatToolTip("Redo (Ctrl+Y)", "Re-performs the last change to the model that was undone."));
-		redo.setEnabled(!redoList.isEmpty());
+		redo.setEnabled(getJaamSimModel().canRedo());
 		redo.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				redo();
+				getJaamSimModel().redo();
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -1595,12 +1593,14 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		redoDropdown.setMargin(margin);
 		redoDropdown.setFocusPainted(false);
 		redoDropdown.setRequestFocusEnabled(false);
-		redoDropdown.setEnabled(!redoList.isEmpty());
+		redoDropdown.setEnabled(getJaamSimModel().canRedo());
 		redoDropdown.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ScrollablePopupMenu menu = new ScrollablePopupMenu("RedoMenu");
+				ArrayList<Command> undoList = getJaamSimModel().getUndoList();
+				ArrayList<Command> redoList = getJaamSimModel().getRedoList();
 				synchronized (undoList) {
 					for (int i = 1; i <= redoList.size(); i++) {
 						Command cmd = redoList.get(redoList.size() - i);
@@ -1610,7 +1610,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 							@Override
 							public void actionPerformed( ActionEvent event ) {
-								redo(num);
+								getJaamSimModel().redo(num);
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -3510,77 +3510,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		sim.storeAndExecute(new DeleteCommand(ent));
 	}
 
-	@Override
-	public void storeAndExecute(Command cmd) {
-		synchronized (undoList) {
-			// Execute the command and catch an error if it occurs
-			cmd.execute();
-
-			// Attempt to merge the command with the previous one
-			Command mergedCmd = null;
-			if (!undoList.isEmpty()) {
-				Command lastCmd = undoList.get(undoList.size() - 1);
-				mergedCmd = lastCmd.tryMerge(cmd);
-			}
-
-			// If the new command can be combined, then change the entry for previous command
-			if (mergedCmd != null) {
-				if (mergedCmd.isChange())
-					undoList.set(undoList.size() - 1, mergedCmd);
-				else
-					undoList.remove(undoList.size() - 1);
-			}
-
-			// If the new command cannot be combined, then add it to the undo list
-			else {
-				undoList.add(cmd);
-			}
-
-			// Clear the re-do list
-			redoList.clear();
-		}
-		updateUI();
-	}
-
-	public void undo() {
-		undo(1);
-	}
-
-	public void undo(int n) {
-		synchronized (undoList) {
-			for (int i = 0; i < n; i++) {
-				if (undoList.isEmpty())
-					break;
-				Command cmd = undoList.remove(undoList.size() - 1);
-				redoList.add(cmd);
-				cmd.undo();
-			}
-		}
-		updateUI();
-	}
-
-	public void redo() {
-		redo(1);
-	}
-
-	public void redo(int n) {
-		synchronized (undoList) {
-			for (int i = 0; i < n; i++) {
-				if (redoList.isEmpty())
-					break;
-				Command cmd = redoList.remove(redoList.size() - 1);
-				undoList.add(cmd);
-				cmd.execute();
-			}
-		}
-		updateUI();
-	}
 
 	public void invokeUndo() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				undo();
+				getJaamSimModel().undo();
 			}
 		});
 	}
@@ -3589,29 +3524,22 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				redo();
+				getJaamSimModel().redo();
 			}
 		});
 	}
 
 	public void updateUndoButtons() {
-		synchronized (undoList) {
-			undo.setEnabled(!undoList.isEmpty());
-			undoDropdown.setEnabled(!undoList.isEmpty());
-			undoMenuItem.setEnabled(!undoList.isEmpty());
+		boolean canUndo = getJaamSimModel().canUndo();
+		boolean canRedo = getJaamSimModel().canRedo();
 
-			redo.setEnabled(!redoList.isEmpty());
-			redoDropdown.setEnabled(!redoList.isEmpty());
-			redoMenuItem.setEnabled(!redoList.isEmpty());
-		}
-	}
+		undo.setEnabled(canUndo);
+		undoDropdown.setEnabled(canUndo);
+		undoMenuItem.setEnabled(canUndo);
 
-	public void clearUndoRedo() {
-		synchronized (undoList) {
-			undoList.clear();
-			redoList.clear();
-		}
-		updateUI();
+		redo.setEnabled(canRedo);
+		redoDropdown.setEnabled(canRedo);
+		redoMenuItem.setEnabled(canRedo);
 	}
 
 	private void updateForSnapGridSpacing(String str) {

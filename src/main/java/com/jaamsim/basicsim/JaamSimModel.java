@@ -1855,16 +1855,100 @@ public class JaamSimModel implements EventTimeListener {
 		return ret;
 	}
 
+	private final ArrayList<Command> undoList = new ArrayList<>();
+	private final ArrayList<Command> redoList = new ArrayList<>();
 	public final void storeAndExecute(Command cmd) {
 		if (!cmd.isChange())
 			return;
 
-		GUIListener gui = getGUIListener();
-		if (gui == null)
+		synchronized (undoList) {
+			// Execute the command and catch an error if it occurs
 			cmd.execute();
-		else
-			gui.storeAndExecute(cmd);
 
+			// Attempt to merge the command with the previous one
+			Command mergedCmd = null;
+			if (!undoList.isEmpty()) {
+				Command lastCmd = undoList.get(undoList.size() - 1);
+				mergedCmd = lastCmd.tryMerge(cmd);
+			}
+
+			// If the new command can be combined, then change the entry for previous command
+			if (mergedCmd != null) {
+				if (mergedCmd.isChange())
+					undoList.set(undoList.size() - 1, mergedCmd);
+				else
+					undoList.remove(undoList.size() - 1);
+			}
+
+			// If the new command cannot be combined, then add it to the undo list
+			else {
+				undoList.add(cmd);
+			}
+
+			// Clear the re-do list
+			redoList.clear();
+		}
+		GUIListener gui = getGUIListener();
+		if (gui != null)
+			gui.updateAll();
+	}
+
+	public boolean canUndo() {
+		synchronized (undoList) {
+			return !undoList.isEmpty();
+		}
+	}
+
+	public ArrayList<Command> getUndoList() {
+		return undoList;
+	}
+
+	public void undo() {
+		undo(1);
+	}
+
+	public void undo(int n) {
+		synchronized (undoList) {
+			for (int i = 0; i < n; i++) {
+				if (undoList.isEmpty())
+					break;
+				Command cmd = undoList.remove(undoList.size() - 1);
+				redoList.add(cmd);
+				cmd.undo();
+			}
+		}
+		GUIListener gui = getGUIListener();
+		if (gui != null)
+			gui.updateAll();
+	}
+
+	public boolean canRedo() {
+		synchronized (undoList) {
+			return !redoList.isEmpty();
+		}
+	}
+
+	public ArrayList<Command> getRedoList() {
+		return redoList;
+	}
+
+	public void redo() {
+		redo(1);
+	}
+
+	public void redo(int n) {
+		synchronized (undoList) {
+			for (int i = 0; i < n; i++) {
+				if (redoList.isEmpty())
+					break;
+				Command cmd = redoList.remove(redoList.size() - 1);
+				undoList.add(cmd);
+				cmd.execute();
+			}
+		}
+		GUIListener gui = getGUIListener();
+		if (gui != null)
+			gui.updateAll();
 	}
 
 	public void showTemporaryLabels() {
