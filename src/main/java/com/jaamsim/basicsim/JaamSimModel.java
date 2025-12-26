@@ -344,9 +344,6 @@ public class JaamSimModel implements EventTimeListener {
 		// Clear the 'simulation' property
 		simulation = null;
 
-		// close warning/error trace file
-		closeLogFile();
-
 		// Reset the run number and run indices
 		scenarioNumber = 1;
 		replicationNumber = 1;
