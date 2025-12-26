@@ -321,11 +321,6 @@ public class JaamSimModel implements EventTimeListener {
 		hasStarted.set(false);
 		hasEnded.set(false);
 
-		// Reset the GUI inputs maintained by the Simulation entity
-		if (getSimulation() != null) {
-			getSimulation().clear();
-		}
-
 		EntityListNode listNode = entityList.next;
 		while(listNode != entityList) {
 			Entity curEnt = listNode.ent;

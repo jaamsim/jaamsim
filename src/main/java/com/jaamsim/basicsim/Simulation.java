@@ -880,17 +880,6 @@ public class Simulation extends Entity {
 		unitTypeList.reset();  // Delete an unnecessary input
 	}
 
-	/**
-	 * Clears the Simulation prior to loading a new model
-	 */
-	public void clear() {
-
-		// Reset all Simulation inputs to their default values
-		for (Input<?> inp : getEditableInputs()) {
-			InputAgent.applyArgs(this, inp.getKeyword());
-		}
-	}
-
 	@Override
 	public Entity getChild(String name) {
 		return getJaamSimModel().getNamedEntity(name);
