@@ -5041,11 +5041,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		// Create the copied children
 		for (Entity child : parent0.getChildren()) {
-			if (child.isGenerated() || child instanceof EntityLabel)
+			if (child.isGenerated())
 				continue;
 
 			// Construct the new child's name
 			String localName = child.getLocalName();
+			if (parent1.getChild(localName) != null)
+				continue;
 			String name = parent1.getName() + "." + localName;
 
 			// Create the new child
@@ -5057,6 +5059,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			for (Entity child : parent0.getChildren()) {
 				String localName = child.getLocalName();
 				Entity copiedChild = parent1.getChild(localName);
+				if (copiedChild == null)
+					continue;
 				copiedChild.copyInputs(child, seq);
 			}
 		}
