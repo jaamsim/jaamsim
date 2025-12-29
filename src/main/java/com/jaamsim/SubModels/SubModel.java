@@ -254,14 +254,21 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		//System.out.format("%n%s.createComponents%n", this);
 		SubModel proto = (SubModel) getPrototype();
 
-		// Delete any components that are not in the prototype
-		for (Entity comp : getChildren()) {
-			if (proto == null || proto.getChild(comp.getLocalName()) == null)
+		if (proto == null) {
+			for (Entity comp : getChildren()) {
 				comp.kill();
+			}
+			return;
 		}
 
-		if (proto == null)
-			return;
+		// Delete any components that are not in the prototype
+		for (Entity comp : getChildren()) {
+			Entity protoComp = proto.getChild(comp.getLocalName());
+			if (protoComp == null || comp.getClass() != protoComp.getClass()
+					|| comp.isAdded() || !comp.isGenerated()) {
+				comp.kill();
+			}
+		}
 
 		// Create the new components
 		for (Entity protoComp : proto.getChildren()) {
