@@ -5032,6 +5032,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		// Copy the children
 		copyChildren(ent, copiedEnt);
 
+		// If the entity has been copied to a SubModel, update its clones
+		if (copiedEnt.getParent() instanceof SubModel) {
+			SubModel sub = (SubModel) copiedEnt.getParent();
+			sub.updateClones();
+		}
+
 		// Select the new entity
 		FrameBox.setSelectedEntity(copiedEnt, false);
 	}
