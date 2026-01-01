@@ -117,7 +117,6 @@ import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DirectedEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EditableText;
-import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
@@ -3441,9 +3440,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		if (ent instanceof DisplayEntity && !((DisplayEntity) ent).isMovable())
 			throw new ErrorException("Cannot delete an entity that is not movable.");
-
-		if (ent instanceof SubModel && ((SubModel) ent).hasClone())
-			throw new ErrorException("Cannot delete a SubModel that has one or more clones.");
 
 		// Delete any clones
 		for (Entity clone : ent.getAllClones()) {
