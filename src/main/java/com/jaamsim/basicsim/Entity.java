@@ -378,10 +378,16 @@ public class Entity {
 	 * Reverses the actions taken by the kill method.
 	 */
 	public void restore() {
+		//System.out.format("%s.restore%n", this);
 
 		// Restore the children before the parent entity
 		for (Entity ent : getChildren()) {
 			ent.restore();
+		}
+
+		// Restore the clones before the parent entity
+		for (Entity clone : getCloneList()) {
+			clone.restore();
 		}
 
 		// Restore the entity to the model
