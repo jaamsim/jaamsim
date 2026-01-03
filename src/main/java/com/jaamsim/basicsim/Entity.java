@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2025 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -348,6 +348,7 @@ public class Entity {
 	public void setInputsForDragAndDrop() {}
 
 	public void kill() {
+		//System.out.format("%s.kill%n", this);
 
 		// Remove the entity from the model
 		if (!isDead()) {
@@ -357,7 +358,6 @@ public class Entity {
 
 		// Kill the entity's clones
 		for (Entity clone : getCloneList()) {
-			clone.prototype = null;
 			clone.kill();
 		}
 
@@ -1273,12 +1273,22 @@ public class Entity {
 	}
 
 	private synchronized void addClone(Entity ent) {
+		// If the entity is dead, then it already has a hashmap of its clones
+		if (isDead())
+			return;
+
 		if (cloneList == null)
 			cloneList = new ArrayList<>();
 		cloneList.add(ent);
 	}
 
 	private synchronized boolean removeClone(Entity ent) {
+		//System.out.format("%s.removeClone(%s) - isDead=%s, cloneList=%s%n",
+		//		this, ent, isDead(), cloneList);
+		// If the entity is dead, then retain its hashmap of clones
+		if (isDead())
+			return false;
+
 		if (cloneList == null)
 			return false;
 		return cloneList.remove(ent);
