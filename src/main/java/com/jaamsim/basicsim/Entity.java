@@ -94,6 +94,7 @@ public class Entity {
 
 	private HashMap<String, ValueHandle> userOutputMap;
 
+	// Input categories
 	public static final String KEY_INPUTS = "Key Inputs";
 	public static final String OPTIONS = "Options";
 	public static final String GRAPHICS = "Graphics";
@@ -107,6 +108,16 @@ public class Entity {
 	// Future event insertion rules
 	public static final boolean EVT_FIFO = true;
 	public static final boolean EVT_LIFO = false;
+
+	// Future event priorities
+	public static final int PRI_HIGHEST = 0;
+	public static final int PRI_HIGHER = 1;
+	public static final int PRI_HIGH = 2;
+	public static final int PRI_NORMAL = 5;
+	public static final int PRI_MED_LOW = 7;
+	public static final int PRI_LOW = 10;
+	public static final int PRI_LOWER = 11;
+	public static final int PRI_LOWEST = 99;
 
 	@Keyword(description = "Local name for the entity.",
 	         exampleList = {"Conveyor1"})
