@@ -28,6 +28,7 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -132,7 +133,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 		// Schedule the first update
 		if (getMaxUpdates(0.0d) > 0)
-			this.scheduleProcess(firstTime.getNextSample(this, 0.0d), PRI_NORMAL, doUpdate);
+			EventManager.scheduleSeconds(firstTime.getNextSample(this, 0.0d), PRI_NORMAL, EVT_LIFO, doUpdate, null);
 	}
 
 	private static class DoUpdateTarget extends EntityTarget<Controller> {
@@ -161,8 +162,10 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 		count++;
 
 		// Schedule the next update
-		if (count < getMaxUpdates(simTime))
-			this.scheduleProcess(interval.getNextSample(this, simTime), PRI_NORMAL, doUpdate);
+		if (count >= getMaxUpdates(simTime))
+			return;
+		double dur = interval.getNextSample(this, simTime);
+		EventManager.scheduleSeconds(dur, PRI_NORMAL, EVT_LIFO, doUpdate, null);
 	}
 
 	public int getCount() {

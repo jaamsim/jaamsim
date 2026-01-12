@@ -141,7 +141,7 @@ public class Resource extends AbstractResourceProvider {
 			TimeSeries ts = (TimeSeries)capacity.getValue();
 			long simTicks = getSimTicks();
 			long durTicks = ts.getNextChangeAfterTicks(simTicks) - simTicks;
-			this.scheduleProcessTicks(durTicks, PRI_LOW, EVT_FIFO, updateForCapacityChangeTarget, null);
+			EventManager.scheduleTicks(durTicks, PRI_LOW, EVT_FIFO, updateForCapacityChangeTarget, null);
 		}
 		else {
 			EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);

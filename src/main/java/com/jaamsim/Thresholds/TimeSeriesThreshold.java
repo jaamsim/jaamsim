@@ -191,7 +191,7 @@ public class TimeSeriesThreshold extends Threshold {
 		if (wait == Long.MAX_VALUE)
 			return;
 
-		this.scheduleProcessTicks(wait, PRI_HIGHER, doOpenClose);
+		EventManager.scheduleTicks(wait, PRI_HIGHER, EVT_LIFO, doOpenClose, null);
 	}
 
 	/**

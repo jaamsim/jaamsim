@@ -19,6 +19,7 @@ package com.jaamsim.Examples;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -104,7 +105,7 @@ public class DemoEntity extends DisplayEntity {
 		lastUpdateTime = simTime;
 
 		// Schedule the time at which the entity will reach the next node
-		this.scheduleProcess(duration, PRI_NORMAL, endTravelTarget, null);
+		EventManager.scheduleSeconds(duration, PRI_NORMAL, EVT_LIFO, endTravelTarget, null);
 	}
 
 	/**

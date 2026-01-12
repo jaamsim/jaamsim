@@ -211,7 +211,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		// Start log entries at fixed intervals
 		if (!interval.isDefault())
-			this.scheduleProcess(getStartTime(getSimTime()), PRI_NORMAL, endActionTarget);
+			EventManager.scheduleSeconds(getStartTime(getSimTime()), PRI_NORMAL, EVT_LIFO, endActionTarget, null);
 	}
 
 	@Override
@@ -277,7 +277,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		// Schedule the next time an entry in the log file will be written
 		double dur = interval.getNextSample(this, getSimTime());
-		scheduleProcess(dur, PRI_NORMAL, endActionTarget);
+		EventManager.scheduleSeconds(dur, PRI_NORMAL, EVT_LIFO, endActionTarget, null);
 	}
 
 	final void endAction() {
