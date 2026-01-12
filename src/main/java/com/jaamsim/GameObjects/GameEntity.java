@@ -80,7 +80,7 @@ public abstract class GameEntity extends DisplayEntity {
 		setState();
 		if (doActionHandle.isScheduled() || !getJaamSimModel().isRealTime())
 			return;
-		getJaamSimModel().getEventManager().scheduleProcessExternal(0L, PRI_HIGHEST, false, doActionTarget, doActionHandle);
+		getJaamSimModel().getEventManager().scheduleProcessExternal(0L, PRI_HIGHEST, EVT_LIFO, doActionTarget, doActionHandle);
 	}
 
 	/**

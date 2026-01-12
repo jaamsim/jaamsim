@@ -193,7 +193,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		stepCompleted = false;
 		endTicks = getSimTicks() + durTicks;
 		if (isTraceFlag()) traceLine(1, "remainingDuration=%.6f", remainingDuration);
-		EventManager.scheduleTicks(durTicks, PRI_NORMAL, true, endStepTarget, endStepHandle);  // FIFO order
+		EventManager.scheduleTicks(durTicks, PRI_NORMAL, EVT_FIFO, endStepTarget, endStepHandle);
 
 		// Notify other processes that are dependent on this one
 		if (this.isNewStepReqd(stepCompleted)) {
@@ -317,7 +317,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		if (endStepHandle.isScheduled()) {
 			if (isTraceFlag()) trace(0, "unscheduledUpdate - WORK IN PROGRESS");
 			EventManager.killEvent(endStepHandle);
-			EventManager.scheduleTicks(0L, PRI_NORMAL, true, endStepTarget, endStepHandle);  // FIFO order
+			EventManager.scheduleTicks(0L, PRI_NORMAL, EVT_FIFO, endStepTarget, endStepHandle);
 			return;
 		}
 
@@ -333,8 +333,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		if (isTraceFlag()) trace(0, "performUnscheduledUpdate");
 
 		if (!unscheduledUpdateHandle.isScheduled()) {
-			EventManager.scheduleTicks(0, PRI_LOW, true, unscheduledUpdateTarget,
-					unscheduledUpdateHandle);
+			EventManager.scheduleTicks(0, PRI_LOW, EVT_FIFO, unscheduledUpdateTarget, unscheduledUpdateHandle);
 		}
 	}
 
@@ -361,7 +360,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		// End the present process prematurely
 		if (endStepHandle.isScheduled()) {
 			EventManager.killEvent(endStepHandle);
-			EventManager.scheduleTicks(0L, PRI_NORMAL, true, endStepTarget, endStepHandle);  // FIFO order
+			EventManager.scheduleTicks(0L, PRI_NORMAL, EVT_FIFO, endStepTarget, endStepHandle);
 		}
 	}
 

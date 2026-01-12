@@ -99,7 +99,7 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 	public void observerUpdate(SubjectEntity subj) {
 		if (updateHandle.isScheduled())
 			return;
-		EventManager.scheduleTicks(0L, PRI_LOWER, false, updateTarget, updateHandle);
+		EventManager.scheduleTicks(0L, PRI_LOWER, EVT_LIFO, updateTarget, updateHandle);
 	}
 
 	private final EventHandle updateHandle = new EventHandle();
