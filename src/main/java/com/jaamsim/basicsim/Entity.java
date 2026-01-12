@@ -961,42 +961,52 @@ public class Entity {
 		}
 	}
 
+	@Deprecated
 	public final void startProcess(String methodName, Object... args) {
 		EventManager.startProcess(new ReflectionTarget(this, methodName, args));
 	}
 
+	@Deprecated
 	public final void startProcess(ProcessTarget t) {
 		EventManager.startProcess(t);
 	}
 
+	@Deprecated
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
 		EventManager.scheduleSeconds(secs, priority, false, t, null);
 	}
 
+	@Deprecated
 	public final void scheduleProcess(double secs, int priority, String methodName, Object... args) {
 		EventManager.scheduleSeconds(secs, priority, false, new ReflectionTarget(this, methodName, args), null);
 	}
 
+	@Deprecated
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
 		EventManager.scheduleSeconds(secs, priority, false, t, handle);
 	}
 
+	@Deprecated
 	public final void scheduleProcess(double secs, int priority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		EventManager.scheduleSeconds(secs, priority, fifo, t, handle);
 	}
 
+	@Deprecated
 	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
 		EventManager.scheduleTicks(ticks, priority, fifo, t, h);
 	}
 
+	@Deprecated
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
 		EventManager.scheduleTicks(ticks, priority, false, t, null);
 	}
 
+	@Deprecated
 	public final void scheduleProcessTicks(long ticks, int priority, String methodName, Object... args) {
 		EventManager.scheduleTicks(ticks, priority, false, new ReflectionTarget(this, methodName, args), null);
 	}
 
+	@Deprecated
 	public final void waitUntil(Conditional cond, EventHandle handle) {
 		// Don't actually wait if the condition is already true
 		if (cond.evaluate()) return;
@@ -1008,44 +1018,27 @@ public class Entity {
 	 * @param secs
 	 * @param priority
 	 */
+	@Deprecated
 	public final void simWait(double secs, int priority) {
 		EventManager.waitSeconds(secs, priority, false, null);
 	}
 
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
+	@Deprecated
 	public final void simWait(double secs, int priority, EventHandle handle) {
 		EventManager.waitSeconds(secs, priority, false, handle);
 	}
 
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
+	@Deprecated
 	public final void simWait(double secs, int priority, boolean fifo, EventHandle handle) {
 		EventManager.waitSeconds(secs, priority, fifo, handle);
 	}
 
-	/**
-	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param ticks
-	 * @param priority
-	 */
+	@Deprecated
 	public final void simWaitTicks(long ticks, int priority) {
 		EventManager.waitTicks(ticks, priority, false, null);
 	}
 
-	/**
-	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param ticks
-	 * @param priority
-	 * @param fifo
-	 * @param handle
-	 */
+	@Deprecated
 	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		EventManager.waitTicks(ticks, priority, fifo, handle);
 	}
