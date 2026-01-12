@@ -104,7 +104,7 @@ public class DemoEntity extends DisplayEntity {
 		lastUpdateTime = simTime;
 
 		// Schedule the time at which the entity will reach the next node
-		this.scheduleProcess(duration, 5, endTravelTarget, null);
+		this.scheduleProcess(duration, PRI_NORMAL, endTravelTarget, null);
 	}
 
 	/**

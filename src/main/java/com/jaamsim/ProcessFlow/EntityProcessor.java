@@ -143,7 +143,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	@Override
 	public void observerUpdate(SubjectEntity subj) {
 		if (!stateChangedHandle.isScheduled()) {
-			EventManager.scheduleTicks(0, 10, true, stateChangedTarget, stateChangedHandle);
+			EventManager.scheduleTicks(0, PRI_LOW, true, stateChangedTarget, stateChangedHandle);
 		}
 	}
 
@@ -352,7 +352,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			TimeSeries ts = (TimeSeries)capacity.getValue();
 			long simTicks = getSimTicks();
 			long durTicks = ts.getNextChangeAfterTicks(simTicks) - simTicks;
-			this.scheduleProcessTicks(durTicks, 10, true, updateForCapacityChangeTarget, null); // FIFO
+			this.scheduleProcessTicks(durTicks, PRI_LOW, true, updateForCapacityChangeTarget, null); // FIFO
 		}
 		else {
 			EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);

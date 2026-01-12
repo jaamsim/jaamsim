@@ -216,7 +216,7 @@ public class Graph extends AbstractGraph  {
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength / (getNumberOfPoints() - 1);
-		scheduleProcess(xInterval, 7, processGraph);
+		scheduleProcess(xInterval, PRI_MED_LOW, processGraph);
 	}
 
 	/**

@@ -65,7 +65,7 @@ public class Seize extends AbstractLinkedResourceUser {
 	@Override
 	public void observerUpdate(SubjectEntity subj) {
 		if (!stateChangedHandle.isScheduled()) {
-			EventManager.scheduleTicks(0, 10, true, stateChangedTarget, stateChangedHandle);
+			EventManager.scheduleTicks(0, PRI_LOW, true, stateChangedTarget, stateChangedHandle);
 		}
 	}
 

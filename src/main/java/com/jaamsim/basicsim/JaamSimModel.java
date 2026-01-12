@@ -514,7 +514,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		eventManager.setTickLength(getSimulation().getTickLength());
-		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
+		eventManager.scheduleProcessExternal(0, Entity.PRI_HIGHEST, false, new InitModelTarget(this), null);
 		resume();
 		return true;
 	}
@@ -609,15 +609,15 @@ public class JaamSimModel implements EventTimeListener {
 		for (Entity each : this.getClonesOfIterator(Entity.class)) {
 			if (!each.isActive())
 				continue;
-			EventManager.scheduleTicks(startTicks, 0, true, new StartUpTarget(each), null);
+			EventManager.scheduleTicks(startTicks, Entity.PRI_HIGHEST, true, new StartUpTarget(each), null);
 		}
 
 		// Schedule the statistics initialization if one has been set
 		if (initTicks > 0)
-			EventManager.scheduleTicks(startTicks + initTicks, 5, false, new ClearStatisticsTarget(this), null);
+			EventManager.scheduleTicks(startTicks + initTicks, Entity.PRI_NORMAL, false, new ClearStatisticsTarget(this), null);
 
 		// Schedule the end of the simulation run
-		EventManager.scheduleTicks(startTicks + initTicks + durationTicks, 5, false, new EndModelTarget(this), null);
+		EventManager.scheduleTicks(startTicks + initTicks + durationTicks, Entity.PRI_NORMAL, false, new EndModelTarget(this), null);
 
 		// Start checking the pause condition
 		if (simulation.isPauseConditionSet())
@@ -1352,7 +1352,7 @@ public class JaamSimModel implements EventTimeListener {
 				thresholdChangedTarget.users.add(user);
 		}
 		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
-			EventManager.scheduleTicks(0, 2, false, thresholdChangedTarget, thresholdChangedHandle);
+			EventManager.scheduleTicks(0, Entity.PRI_HIGH, false, thresholdChangedTarget, thresholdChangedHandle);
 	}
 
 	/**

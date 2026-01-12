@@ -52,8 +52,8 @@ public void startUp() {
 	if (entities.getValue().isEmpty() || startTime.getNextSample(this, 0.0d) == 0.0d)
 		return;
 
-	simWait(startTime.getNextSample(this, 0.0d), 0);
+	simWait(startTime.getNextSample(this, 0.0d), PRI_HIGHEST);
 	for (Entity each : entities.getValue())
 		each.setTraceFlag();
-}
+	}
 }

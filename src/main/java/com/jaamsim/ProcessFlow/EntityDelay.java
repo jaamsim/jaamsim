@@ -187,7 +187,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		}
 
 		RemoveDisplayEntityTarget target = new RemoveDisplayEntityTarget(this, ent);
-		scheduleProcessTicks(durTicks, 5, true, target, null); // FIFO
+		scheduleProcessTicks(durTicks, PRI_NORMAL, true, target, null); // FIFO
 
 		// Set the present state to Working
 		this.setPresentState();
