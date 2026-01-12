@@ -119,6 +119,10 @@ public class Entity {
 	public static final int PRI_LOWER = 11;
 	public static final int PRI_LOWEST = 99;
 
+	// Future event insertion rules
+	public static final boolean EVT_FIFO = true;
+	public static final boolean EVT_LIFO = false;
+
 	@Keyword(description = "Local name for the entity.",
 	         exampleList = {"Conveyor1"})
 	protected final EntityNameInput nameInput;
