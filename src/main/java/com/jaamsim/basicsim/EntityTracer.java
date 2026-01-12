@@ -20,6 +20,7 @@ package com.jaamsim.basicsim;
 import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
@@ -52,7 +53,7 @@ public void startUp() {
 	if (entities.getValue().isEmpty() || startTime.getNextSample(this, 0.0d) == 0.0d)
 		return;
 
-	simWait(startTime.getNextSample(this, 0.0d), PRI_HIGHEST);
+	EventManager.waitSeconds(startTime.getNextSample(this, 0.0d), PRI_HIGHEST, EVT_LIFO, null);
 	for (Entity each : entities.getValue())
 		each.setTraceFlag();
 	}
