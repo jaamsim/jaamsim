@@ -313,7 +313,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		// can change again.
 		if (!setOpenHandle.isScheduled()) {
 			if (isTraceFlag()) trace(0, "performSetOpen()");
-			EventManager.scheduleTicks(0L, 2, false, setOpenTarget, setOpenHandle);  // LIFO
+			EventManager.scheduleTicks(0L, 2, EVT_LIFO, setOpenTarget, setOpenHandle);
 		}
 	}
 
@@ -334,7 +334,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		if (observerUpdateHandle.isScheduled())
 			return;
 		// Priority set to 99 to ensure that this event executed just before the conditional events
-		EventManager.scheduleTicks(0L, 99, false, setOpenTarget, observerUpdateHandle);  // LIFO
+		EventManager.scheduleTicks(0L, 99, EVT_LIFO, setOpenTarget, observerUpdateHandle);
 	}
 
 	private final EventHandle observerUpdateHandle = new EventHandle();

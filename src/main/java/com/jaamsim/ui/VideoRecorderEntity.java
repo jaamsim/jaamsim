@@ -182,7 +182,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	void updateInputValue() {
 		// Start the capture if we are already running and we set the input to true
 		if (hasRunStartup && saveVideo.getValue())
-			EventManager.scheduleTicks(0, 10, false, new CaptureNetworkTarget(this), null);
+			EventManager.scheduleTicks(0, 10, EVT_LIFO, new CaptureNetworkTarget(this), null);
 	}
 
 	private static class CaptureNetworkTarget extends ProcessTarget {
@@ -212,7 +212,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		// If the capture network is already in progress, then stop the previous network
 		EventManager.killEvent(captureHandle);
-		EventManager.waitSeconds(startTime, 10, false, captureHandle);
+		EventManager.waitSeconds(startTime, 10, EVT_LIFO, captureHandle);
 
 		if (!RenderManager.isGood()) {
 			RenderManager.initialize(false);
@@ -249,7 +249,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 			// Wait until the next time to capture a frame
 			// (priority 10 is used to allow higher priority events to complete first)
 			double interval = captureInterval.getNextSample(this, simTime);
-			EventManager.waitSeconds(interval, 10, false, captureHandle);
+			EventManager.waitSeconds(interval, 10, EVT_LIFO, captureHandle);
 		}
 
 		recorder.freeResources();

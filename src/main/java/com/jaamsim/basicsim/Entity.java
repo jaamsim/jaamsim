@@ -104,6 +104,10 @@ public class Entity {
 	public static final String GUI = "GUI";
 	public static final String MULTIPLE_RUNS = "Multiple Runs";
 
+	// Future event insertion rules
+	public static final boolean EVT_FIFO = true;
+	public static final boolean EVT_LIFO = false;
+
 	@Keyword(description = "Local name for the entity.",
 	         exampleList = {"Conveyor1"})
 	protected final EntityNameInput nameInput;

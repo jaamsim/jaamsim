@@ -105,7 +105,7 @@ public class DemoEntity extends DisplayEntity {
 		lastUpdateTime = simTime;
 
 		// Schedule the time at which the entity will reach the next node
-		EventManager.scheduleSeconds(duration, 5, false, endTravelTarget, null);
+		EventManager.scheduleSeconds(duration, 5, EVT_LIFO, endTravelTarget, null);
 	}
 
 	/**

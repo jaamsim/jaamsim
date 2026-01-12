@@ -193,7 +193,7 @@ public abstract class Logger extends DisplayEntity {
 	public void scheduleLogEntry() {
 		if (recordLogEntryHandle.isScheduled())
 			return;
-		EventManager.scheduleTicks(0L, 99, true, recordLogEntryTarget, recordLogEntryHandle);
+		EventManager.scheduleTicks(0L, 99, EVT_FIFO, recordLogEntryTarget, recordLogEntryHandle);
 	}
 
 	private final EventHandle recordLogEntryHandle = new EventHandle();
