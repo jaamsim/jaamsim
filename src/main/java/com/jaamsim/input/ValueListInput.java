@@ -49,6 +49,11 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	}
 
 	@Override
+	public Class<?> getReturnType() {
+		return DoubleVector.class;
+	}
+
+	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
 	}
