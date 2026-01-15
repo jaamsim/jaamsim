@@ -352,7 +352,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			TimeSeries ts = (TimeSeries)capacity.getValue();
 			long simTicks = getSimTicks();
 			long durTicks = ts.getNextChangeAfterTicks(simTicks) - simTicks;
-			this.scheduleProcessTicks(durTicks, 10, true, updateForCapacityChangeTarget, null); // FIFO
+			EventManager.scheduleTicks(durTicks, 10, true, updateForCapacityChangeTarget, null); // FIFO
 		}
 		else {
 			EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);

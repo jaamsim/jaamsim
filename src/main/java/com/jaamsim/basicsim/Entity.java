@@ -955,14 +955,6 @@ public class Entity {
 		EventManager.scheduleSeconds(secs, priority, fifo, t, handle);
 	}
 
-	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
-		EventManager.scheduleTicks(ticks, priority, fifo, t, h);
-	}
-
-	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
-		EventManager.scheduleTicks(ticks, priority, false, t, null);
-	}
-
 	public void handleSelectionLost() {}
 
 	// ******************************************************************************************************

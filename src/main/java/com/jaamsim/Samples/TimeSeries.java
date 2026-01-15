@@ -188,7 +188,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 			trace(0, "waitForNextValue - dur=%.6f", EventManager.current().ticksToSeconds(durTicks));
 		if (durTicks == 0L)
 			return;
-		this.scheduleProcessTicks(durTicks, 0, waitForNextValueTarget);
+		EventManager.scheduleTicks(durTicks, 0, false, waitForNextValueTarget, null);
 
 		// Notify any observers
 		notifyObservers();
