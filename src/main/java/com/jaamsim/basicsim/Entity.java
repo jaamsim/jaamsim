@@ -964,33 +964,6 @@ public class Entity {
 	}
 
 	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
-	public final void simWait(double secs, int priority) {
-		EventManager.waitSeconds(secs, priority, false, null);
-	}
-
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
-	public final void simWait(double secs, int priority, EventHandle handle) {
-		EventManager.waitSeconds(secs, priority, false, handle);
-	}
-
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
-	public final void simWait(double secs, int priority, boolean fifo, EventHandle handle) {
-		EventManager.waitSeconds(secs, priority, fifo, handle);
-	}
-
-	/**
 	 * Wait a number of discrete simulation ticks and a given priority.
 	 * @param ticks
 	 * @param priority
