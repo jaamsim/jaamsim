@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Thresholds.SignalThreshold;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 
@@ -50,7 +51,7 @@ public class EntitySignal extends LinkedComponent {
 
 		// Signal the target threshold
 		SignalThreshold target = targetSignalThreshold.getValue();
-		boolean bool = getNewState(getSimTime());
+		boolean bool = getNewState(EventManager.simSeconds());
 		target.setOpen(bool);
 
 		// Send the entity to the next component

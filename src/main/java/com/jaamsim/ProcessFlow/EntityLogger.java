@@ -24,6 +24,7 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -74,7 +75,7 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 		receivedEntity = ent;
 
 		// Trace states for received entities
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (isTraceEntityStates(simTime) && ent instanceof StateEntity) {
 			((StateEntity) ent).addStateListener(this);
 			nextComponent.getValue().addEntity(ent);
@@ -82,7 +83,7 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 		}
 
 		// Record the entry in the log
-		this.recordLogEntry(getSimTime(), ent);
+		this.recordLogEntry(EventManager.simSeconds(), ent);
 
 		// Send the entity to the next element in the chain
 		nextComponent.getValue().addEntity(ent);
@@ -90,7 +91,7 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 
 	@Override
 	protected void printColumnTitles(FileEntity file) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (isTraceEntityStates(simTime)) {
 			file.format("\t%s\t%s", "Entity", "State");
 			return;
@@ -115,7 +116,7 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 
 	@Override
 	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next) {
-		recordLogEntry(getSimTime(), ent);
+		recordLogEntry(EventManager.simSeconds(), ent);
 	}
 
 	@Override

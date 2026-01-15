@@ -26,6 +26,7 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -153,7 +154,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Register the entity so that the outputs are updated before the expressions for priority
 		// and match value are evaluated
@@ -190,7 +191,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	public void stateChanged(StateRecord prev, StateRecord next) {
 		super.stateChanged(prev, next);
 
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (!isSetEntityState(simTime))
 			return;
 

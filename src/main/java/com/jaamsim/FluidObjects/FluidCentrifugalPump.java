@@ -18,6 +18,7 @@ package com.jaamsim.FluidObjects;
 
 import com.jaamsim.CalculationObjects.DoubleCalculation;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.PressureUnit;
@@ -73,7 +74,7 @@ public class FluidCentrifugalPump extends FluidComponent {
 	 */
 	@Override
 	public double calcOutletPressure( double inletPres, double flowAccel ) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		double speedFactor = speedControllerInput.getValue().getLastValue();
 		speedFactor = Math.max(speedFactor, 0.0);
 		speedFactor = Math.min(speedFactor, 1.0);

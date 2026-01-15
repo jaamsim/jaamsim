@@ -215,7 +215,7 @@ public class TimeSeriesThreshold extends Threshold {
 	private boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		ticks += evt.secondsToNearestTick(offset.getNextSample(this, simTime));
 		ticks = Math.max(ticks, 0);
@@ -266,7 +266,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		// Add offset from input
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		ticks += evt.secondsToNearestTick(offset.getNextSample(this, simTime));
 		ticks = Math.max(ticks, 0);
 
@@ -356,7 +356,7 @@ public class TimeSeriesThreshold extends Threshold {
 			return 0;
 
 		// Add offset from input
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		ticks += evt.secondsToNearestTick(offset.getNextSample(this, simTime));
 		ticks = Math.max(ticks, 0);

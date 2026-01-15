@@ -150,7 +150,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 	public void doUpdate() {
 
 		// Update the last value for each entity
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		for (Controllable ent : entityList) {
 			ent.update(simTime);
 		}

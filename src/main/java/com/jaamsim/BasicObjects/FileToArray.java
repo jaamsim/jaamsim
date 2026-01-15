@@ -23,6 +23,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -105,7 +106,7 @@ public abstract class FileToArray extends LinkedComponent {
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 		if (dataFile.getValue() != null)
-			setValueForURI(dataFile.getValue(), getSimTime());
+			setValueForURI(dataFile.getValue(), EventManager.simSeconds());
 		sendToNextComponent(ent);
 	}
 

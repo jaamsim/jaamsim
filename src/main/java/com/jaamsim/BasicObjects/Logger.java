@@ -201,7 +201,7 @@ public abstract class Logger extends DisplayEntity {
 	private final EntityTarget<Logger> recordLogEntryTarget = new EntityTarget<Logger>(this, "recordLogEntry") {
 		@Override
 		public void process() {
-			recordLogEntry(ent.getSimTime(), null);
+			recordLogEntry(EventManager.simSeconds(), null);
 		}
 	};
 
@@ -272,7 +272,7 @@ public abstract class Logger extends DisplayEntity {
 		// Write the last log entry if one is scheduled
 		if (recordLogEntryHandle.isScheduled()) {
 			EventManager.killEvent(recordLogEntryHandle);
-			recordLogEntry(getSimTime(), null);
+			recordLogEntry(EventManager.simSeconds(), null);
 		}
 
 		// Flush the log file's print buffer
@@ -281,7 +281,7 @@ public abstract class Logger extends DisplayEntity {
 		file.flush();
 
 		// Close the report file
-		if (getJaamSimModel().isLastRun() || isSeparateFiles(getSimTime())) {
+		if (getJaamSimModel().isLastRun() || isSeparateFiles(EventManager.simSeconds())) {
 			file.close();
 			file = null;
 		}

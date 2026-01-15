@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -57,7 +58,7 @@ public class Branch extends LinkedComponent {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Choose the next component for this entity
 		int i = (int) choice.getNextSample(this, simTime);

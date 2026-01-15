@@ -30,6 +30,7 @@ import com.jaamsim.JSON.JSONParser;
 import com.jaamsim.JSON.JSONValue;
 import com.jaamsim.JSON.JSONWriter;
 import com.jaamsim.basicsim.Log;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Keyword;
@@ -158,7 +159,7 @@ public class ExternalProgramServer extends AbstractExternalProgram {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Build the command to launch the external program
 		int n = dataSource.getListSize();

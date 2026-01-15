@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.EntityLabel;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
@@ -477,14 +476,6 @@ public class Entity {
 	 * time. For example, an entity may need to close a file that it opened.
 	 */
 	public void close() {}
-
-	/**
-	 * Get the current Simulation time.
-	 * @return the current time in seconds
-	 */
-	public final double getSimTime() {
-		return EventManager.simSeconds();
-	}
 
 	protected void clearInputs() {
 		inpList.clear();

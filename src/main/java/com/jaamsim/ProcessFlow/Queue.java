@@ -267,7 +267,7 @@ public class Queue extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Update the queue statistics
 		stats.addValue(simTime, storage.size() + 1);
@@ -300,7 +300,7 @@ public class Queue extends LinkedComponent {
 
 		// Schedule the time to check the renege condition
 		if (!renegeTime.isDefault()) {
-			double dur = renegeTime.getNextSample(this, getSimTime());
+			double dur = renegeTime.getNextSample(this, EventManager.simSeconds());
 			// Schedule the renege tests in FIFO order so that if two or more entities are added to
 			// the queue at the same time, the one nearest the front of the queue is tested first
 			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, entry), rh);
@@ -324,7 +324,7 @@ public class Queue extends LinkedComponent {
 	public void renegeAction(QueueEntry entry) {
 
 		// Temporarily set the obj entity to the one that might renege
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
 		this.setReceivedEntity(entry.entity);
 
@@ -349,7 +349,7 @@ public class Queue extends LinkedComponent {
 	 * Removes a specified entity from the queue
 	 */
 	private DisplayEntity remove(QueueEntry entry) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Update the queue statistics
 		stats.addValue(simTime, storage.size() - 1);
@@ -436,7 +436,7 @@ public class Queue extends LinkedComponent {
 	 */
 	public double getQueueTime() {
 		QueueEntry entry = (QueueEntry) storage.first();
-		return this.getSimTime() - entry.timeAdded;
+		return EventManager.simSeconds() - entry.timeAdded;
 	}
 
 	/**
@@ -653,7 +653,7 @@ public class Queue extends LinkedComponent {
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		stats.clear();
 		stats.addValue(simTime, storage.size());
 		freq.clear();

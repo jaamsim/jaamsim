@@ -235,7 +235,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		if (firstDowntime.isDefault())
 			secondsForNextFailure = getNextDowntimeIAT();
 		else
-			secondsForNextFailure = firstDowntime.getNextSample(this, getSimTime());
+			secondsForNextFailure = firstDowntime.getNextSample(this, EventManager.simSeconds());
 	}
 
 	public void registerDowntimeUser(DowntimeUser du) {
@@ -335,7 +335,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		StateEntity iatWorkingEnt = iatWorkingEntity.getValue();
 		if (!scheduleDowntimeHandle.isScheduled()) {
 			if (iatWorkingEnt == null || iatWorkingEnt.isWorkingState()) {
-				double workingSecs = getSimTime();
+				double workingSecs = EventManager.simSeconds();
 				if (iatWorkingEnt != null)
 					workingSecs = iatWorkingEnt.getWorkingTime();
 				double waitSecs = Math.max(secondsForNextFailure - workingSecs, 0.0d);
@@ -353,7 +353,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 
 		// Seize resources
 		if (isWaitingForResources()) {
-			double simTime = getSimTime();
+			double simTime = EventManager.simSeconds();
 			int[] nums = numberOfUnitsList.getNextIntegers(this, simTime, resUserDelegate.getListSize());
 			if (!resUserDelegate.canSeizeResources(simTime, nums, this))
 				return;
@@ -375,12 +375,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 			if (durWorkingEnt == null || durWorkingEnt.isWorkingState()) {
 				if (endDowntimeHandle.isScheduled())
 					return;
-				double workingSecs = this.getSimTime();
+				double workingSecs = EventManager.simSeconds();
 				if (durWorkingEnt != null)
 					workingSecs = durWorkingEnt.getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
 				EventManager.scheduleSeconds(waitSecs, 5, false, endDowntimeTarget, endDowntimeHandle);
-				endTime = getSimTime() + waitSecs;
+				endTime = EventManager.simSeconds() + waitSecs;
 				if (isTraceFlag()) traceLine(1, "downtime end event scheduled - waitSecs=%s", waitSecs);
 				return;
 			}
@@ -422,7 +422,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	}
 
 	public void scheduleDowntime() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (downtimePendings == getMaxDowntimesPending(simTime))
 			return;
 
@@ -468,14 +468,14 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		if (isTraceFlag()) trace(0, "startDowntime");
 		setDown(true);
 
-		startTime = this.getSimTime();
+		startTime = EventManager.simSeconds();
 		downtimePendings--;
 		numberStarted++;
 
 		// Determine the time when the downtime event will be over
 		downDuration = getDowntimeDuration();
 		StateEntity durWorkingEnt = durationWorkingEntity.getValue();
-		secondsForNextRepair = getSimTime() + downDuration;
+		secondsForNextRepair = EventManager.simSeconds() + downDuration;
 		if (durWorkingEnt != null)
 			secondsForNextRepair = durWorkingEnt.getWorkingTime() + downDuration;
 
@@ -514,9 +514,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		AbstractResourceProvider.notifyResourceUsers(resUserDelegate.getResourceList());
 
 		// If this event was late, increment counter
-		if(this.getSimTime() > targetCompletionTime ) {
+		if(EventManager.simSeconds() > targetCompletionTime ) {
 			numLateEvents++;
-			totalLateTime += (this.getSimTime() - targetCompletionTime);
+			totalLateTime += (EventManager.simSeconds() - targetCompletionTime);
 		}
 
 		this.checkProcessNetwork();
@@ -526,35 +526,35 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	 * Return the time in seconds of the next downtime IAT
 	 */
 	private double getNextDowntimeIAT() {
-		return downtimeIATDistribution.getNextSample(this, getSimTime());
+		return downtimeIATDistribution.getNextSample(this, EventManager.simSeconds());
 	}
 
 	/**
 	 * Return the expected time in seconds of the first downtime
 	 */
 	public double getExpectedFirstDowntime() {
-		return firstDowntime.getValue().getMeanValue( getSimTime() );
+		return firstDowntime.getValue().getMeanValue( EventManager.simSeconds() );
 	}
 
 	/**
 	 * Return the expected time in seconds of the downtime IAT
 	 */
 	public double getExpectedDowntimeIAT() {
-		return downtimeIATDistribution.getValue().getMeanValue( getSimTime() );
+		return downtimeIATDistribution.getValue().getMeanValue( EventManager.simSeconds() );
 	}
 
 	/**
 	 * Return the expected time in seconds of the downtime duration
 	 */
 	public double getExpectedDowntimeDuration() {
-		return downtimeDurationDistribution.getValue().getMeanValue( getSimTime() );
+		return downtimeDurationDistribution.getValue().getMeanValue( EventManager.simSeconds() );
 	}
 
 	/**
 	 * Return the time in seconds of the next downtime duration
 	 */
 	private double getDowntimeDuration() {
-		return downtimeDurationDistribution.getNextSample(this, getSimTime());
+		return downtimeDurationDistribution.getNextSample(this, EventManager.simSeconds());
 	}
 
 	public SampleProvider getDowntimeDurationDistribution() {
@@ -638,13 +638,13 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	public double getWaitTime() {
 		double ret = 0.0d;
 		if (isWaitingForResources())
-			ret = getSimTime() - startTime;
+			ret = EventManager.simSeconds() - startTime;
 		return ret;
 	}
 
 	@Override
 	public boolean isReadyToStart() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		int[] nums = numberOfUnitsList.getNextIntegers(this, simTime, resUserDelegate.getListSize());
 		return resUserDelegate.canSeizeResources(simTime, nums, this);
 	}

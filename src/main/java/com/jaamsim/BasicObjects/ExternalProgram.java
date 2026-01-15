@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Keyword;
@@ -51,7 +52,7 @@ public class ExternalProgram extends AbstractExternalProgram {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Build the command to launch the external program
 		int n = dataSource.getListSize();

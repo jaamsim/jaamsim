@@ -22,6 +22,7 @@ import java.util.Collections;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -104,7 +105,7 @@ public class ResourcePool extends AbstractResourceProvider {
 			list.get(i).unit.seize(ent);
 		}
 
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		collectStatistics(simTime, getUnitsInUse());
 	}
 
@@ -117,7 +118,7 @@ public class ResourcePool extends AbstractResourceProvider {
 			unit.release();
 		}
 
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		collectStatistics(simTime, getUnitsInUse());
 	}
 

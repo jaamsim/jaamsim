@@ -204,7 +204,7 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 		}
 
 		// Calculate the state from the StateExpression input
-		String state = stateExp.getNextResult(this, getSimTime()).stringVal;
+		String state = stateExp.getNextResult(this, EventManager.simSeconds()).stringVal;
 		setPresentState(state);
 		if (isTraceFlag()) trace(1, "setPresentState - %s", state);
 	}

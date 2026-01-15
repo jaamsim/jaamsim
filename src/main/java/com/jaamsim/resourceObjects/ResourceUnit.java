@@ -172,7 +172,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = ent;
 
 		// Evaluate the condition for the proposed user
-		boolean ret = assignmentCondition.getNextResult(this, getSimTime()).value != 0;
+		boolean ret = assignmentCondition.getNextResult(this, EventManager.simSeconds()).value != 0;
 
 		// Reset the original user
 		presentAssignment = oldAssignment;
@@ -187,7 +187,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public void seize(DisplayEntity ent) {
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (!canSeize(ent)) {
 			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
 		}
@@ -200,7 +200,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public void release() {
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		presentAssignment = null;
 		assignmentTicks = -1L;
 		lastReleaseTicks = EventManager.simTicks();
@@ -217,7 +217,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		unitsSeized = 0;
 		unitsReleased = 0;
 		stats.clear();
@@ -256,7 +256,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = ent;
 
 		// Evaluate the condition for the proposed user
-		int ret = (int) assignmentPriority.getNextResult(this, getSimTime()).value;
+		int ret = (int) assignmentPriority.getNextResult(this, EventManager.simSeconds()).value;
 
 		// Reset the original user
 		presentAssignment = oldAssignment;

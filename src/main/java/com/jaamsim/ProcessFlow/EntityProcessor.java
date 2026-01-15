@@ -157,13 +157,13 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	public boolean isReadyToStart() {
-		return super.isReadyToStart() && (getUnitsInUse() < getCapacity(getSimTime()));
+		return super.isReadyToStart() && (getUnitsInUse() < getCapacity(EventManager.simSeconds()));
 	}
 
 	@Override
 	public void startNextEntity() {
 		super.startNextEntity();
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		DisplayEntity ent = getReceivedEntity(simTime);
 
 		// Set the service duration
@@ -190,7 +190,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		stats.clear();
 		stats.addValue(simTime, getUnitsInUse());
 		freq.clear();
@@ -336,7 +336,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 * @return true if the capacity has changed
 	 */
 	boolean isCapacityChanged() {
-		return this.getCapacity(getSimTime()) != lastCapacity;
+		return this.getCapacity(EventManager.simSeconds()) != lastCapacity;
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	void waitForCapacityChange() {
 
 		// Set the present capacity
-		lastCapacity = this.getCapacity(getSimTime());
+		lastCapacity = this.getCapacity(EventManager.simSeconds());
 
 		// Wait until the state is ready to change
 		if (capacity.getValue() instanceof TimeSeries) {
@@ -366,7 +366,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		if (isTraceFlag()) trace(0, "updateForCapacityChange");
 
 		// Select the resource users to notify
-		if (getCapacity(getSimTime()) > lastCapacity) {
+		if (getCapacity(EventManager.simSeconds()) > lastCapacity) {
 			stateChanged();
 		}
 

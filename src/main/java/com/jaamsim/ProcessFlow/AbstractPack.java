@@ -21,6 +21,7 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -115,7 +116,7 @@ public abstract class AbstractPack extends LinkedService {
 
 	private void setContainerState() {
 		if (!containerStateAssignment.isDefault()) {
-			double simTime = getSimTime();
+			double simTime = EventManager.simSeconds();
 			String state = containerStateAssignment.getNextString(this, simTime);
 			container.setPresentState(state);
 		}
@@ -224,7 +225,7 @@ public abstract class AbstractPack extends LinkedService {
 		if (isImmediateReleaseThresholdClosure()) {
 			numberToInsert = 0;
 			if (!isBusy() && !isFinished()) {
-				processStep(getSimTime());
+				processStep(EventManager.simSeconds());
 				return;
 			}
 		}

@@ -231,7 +231,7 @@ public class Graph extends AbstractGraph  {
 			return;
 		}
 
-		double t = getSimTime() + xAxisEnd.getValue();
+		double t = EventManager.simSeconds() + xAxisEnd.getValue();
 		double presentValue = this.getCurrentValue(t, info);
 
 		info.indexOfLastEntry++;

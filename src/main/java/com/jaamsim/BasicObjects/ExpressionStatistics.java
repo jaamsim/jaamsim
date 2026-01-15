@@ -189,7 +189,7 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 	}
 
 	public void recordValue() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		double val = getValue(simTime);
 		timeStats.addValue(simTime, val);
@@ -199,7 +199,7 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 	}
 
 	final boolean isValueChanged() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		double value = getValue(simTime);
 		if (MathUtils.near(value, lastValue))
 			return false;

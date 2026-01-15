@@ -23,6 +23,7 @@ import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
@@ -87,7 +88,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	protected void calcFlowRate(FluidComponent source, FluidComponent destination, double dt) {
 
 		// Update the flow rate
-		this.setFlowRate( flowRateInput.getNextSample(this, getSimTime()) );
+		this.setFlowRate( flowRateInput.getNextSample(this, EventManager.simSeconds()) );
 	}
 
 	@Override

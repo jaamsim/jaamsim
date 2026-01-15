@@ -214,7 +214,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	 */
 	void doOpenClose() {
 		// Set the present state
-		setOpen(this.getOpenConditionValue(this.getSimTime()));
+		setOpen(this.getOpenConditionValue(EventManager.simSeconds()));
 
 		// Wait until the state is ready to change
 		EventManager.scheduleUntil(doOpenCloseTarget, openChangedConditional, null);
@@ -223,7 +223,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	private final Conditional openChangedConditional = new Conditional() {
 		@Override
 		public boolean evaluate() {
-			return getOpenConditionValue(getSimTime()) != ExpressionThreshold.super.isOpen();
+			return getOpenConditionValue(EventManager.simSeconds()) != ExpressionThreshold.super.isOpen();
 		}
 	};
 
@@ -298,7 +298,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		}
 
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
-		boolean ret = this.getOpenConditionValue(getSimTime());
+		boolean ret = this.getOpenConditionValue(EventManager.simSeconds());
 
 		// If necessary, schedule an event to change the saved state
 		if (ret != super.isOpen() && EventManager.canSchedule())
@@ -321,7 +321,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	private final ProcessTarget setOpenTarget = new EntityTarget<ExpressionThreshold>(this, "setOpen") {
 		@Override
 		public void process() {
-			boolean bool = getOpenConditionValue(getSimTime());
+			boolean bool = getOpenConditionValue(EventManager.simSeconds());
 			if (isTraceFlag()) trace(0, "setOpen(%s)", bool);
 			setOpen(bool);
 			useLastValue = true;

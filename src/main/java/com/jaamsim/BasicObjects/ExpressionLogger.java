@@ -200,7 +200,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		// Start tracing the expression values
 		if (valueTraceList.getListSize() > 0) {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getNextString(i, this, getSimTime());
+				String str = valueTraceList.getNextString(i, this, EventManager.simSeconds());
 				lastValueList.set(i, str);
 			}
 
@@ -211,7 +211,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		// Start log entries at fixed intervals
 		if (!interval.isDefault())
-			EventManager.scheduleSeconds(getStartTime(getSimTime()), 5, false, endActionTarget, null);
+			EventManager.scheduleSeconds(getStartTime(EventManager.simSeconds()), 5, false, endActionTarget, null);
 	}
 
 	@Override
@@ -247,7 +247,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		watchedEntity = ent;
 
 		// Evaluate the open condition (0 = false, non-zero = true)
-		boolean ret = watchListCondition.getNextResult(this, getSimTime()).value != 0;
+		boolean ret = watchListCondition.getNextResult(this, EventManager.simSeconds()).value != 0;
 
 		// Reset the original watched entity
 		watchedEntity = lastEnt;
@@ -276,14 +276,14 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	private void startAction() {
 
 		// Schedule the next time an entry in the log file will be written
-		double dur = interval.getNextSample(this, getSimTime());
+		double dur = interval.getNextSample(this, EventManager.simSeconds());
 		EventManager.scheduleSeconds(dur, 5, false, endActionTarget, null);
 	}
 
 	final void endAction() {
 
 		// Stop the log if the end time has been reached
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (simTime > getEndTime(simTime))
 			return;
 
@@ -340,7 +340,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	 */
 	final boolean isValueChanged() {
 		boolean ret = false;
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		try {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
 				String str = valueTraceList.getNextString(i, this, simTime);
@@ -362,7 +362,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	void doValueTrace() {
 
 		// Stop tracing if the end time has been reached
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (simTime > getEndTime(simTime))
 			return;
 
@@ -391,7 +391,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 			new EntityTarget<ExpressionLogger>(this, "doValueTrace") {
 		@Override
 		public void process() {
-			double simTime = ent.getSimTime();
+			double simTime = EventManager.simSeconds();
 			if (isVerifyWatchList(simTime))
 				ent.error(ERR_WATCHLIST);
 			ent.doValueTrace();

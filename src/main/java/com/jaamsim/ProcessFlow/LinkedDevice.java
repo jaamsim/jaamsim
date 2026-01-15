@@ -22,6 +22,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
@@ -132,7 +133,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
-		releaseEntity(getSimTime());
+		releaseEntity(EventManager.simSeconds());
 		if (getNextComponent() != null )
 			getNextComponent().addEntity(ent);
 	}
@@ -140,7 +141,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	protected void setEntityState(DisplayEntity ent) {
 		if (stateAssignment.isDefault() || !(ent instanceof StateEntity))
 			return;
-		String state = stateAssignment.getNextString(this, getSimTime());
+		String state = stateAssignment.getNextString(this, EventManager.simSeconds());
 		((StateEntity) ent).setPresentState(state);
 	}
 

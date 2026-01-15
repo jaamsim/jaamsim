@@ -25,6 +25,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
@@ -196,7 +197,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
 
 		// If there is no queue, then process the entity immediately
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		Queue queue = getQueue(simTime);
 		if (queue == null) {
 			super.addEntity(ent);
@@ -219,7 +220,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return next entity for processing.
 	 */
 	protected DisplayEntity removeNextEntity(String m) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		Queue queue = getQueue(simTime);
 
 		if (selectionCondition.isDefault() && nextEntity.isDefault())
@@ -238,7 +239,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	}
 
 	protected DisplayEntity getNextEntity(String m) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		Queue queue = getQueue(simTime);
 
 		if (selectionCondition.isDefault() && nextEntity.isDefault())

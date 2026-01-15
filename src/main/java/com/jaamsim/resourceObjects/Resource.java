@@ -103,7 +103,7 @@ public class Resource extends AbstractResourceProvider {
 	@Override
 	public void seize(int n, DisplayEntity ent) {
 		super.seize(n, ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (getAvailableUnits(simTime) < n)
 			error(ERR_CAPACITY, getAvailableUnits(simTime), n);
 
@@ -116,7 +116,7 @@ public class Resource extends AbstractResourceProvider {
 		int n = Math.min(m, unitsInUse);
 		super.release(n, ent);
 		unitsInUse -= n;
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		collectStatistics(simTime, unitsInUse);
 	}
 
@@ -125,7 +125,7 @@ public class Resource extends AbstractResourceProvider {
 	 * @return true if the capacity has changed
 	 */
 	boolean isCapacityChanged() {
-		return this.getCapacity(getSimTime()) != lastCapacity;
+		return this.getCapacity(EventManager.simSeconds()) != lastCapacity;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class Resource extends AbstractResourceProvider {
 	void waitForCapacityChange() {
 
 		// Set the present capacity
-		lastCapacity = this.getCapacity(getSimTime());
+		lastCapacity = this.getCapacity(EventManager.simSeconds());
 
 		// Wait until the state is ready to change
 		if (capacity.getValue() instanceof TimeSeries) {
@@ -155,7 +155,7 @@ public class Resource extends AbstractResourceProvider {
 		if (isTraceFlag()) trace(0, "updateForCapacityChange");
 
 		// Select the resource users to notify
-		if (this.getCapacity(getSimTime()) > lastCapacity) {
+		if (this.getCapacity(EventManager.simSeconds()) > lastCapacity) {
 			ArrayList<ResourceProvider> resList = new ArrayList<>(1);
 			resList.add(this);
 			Resource.notifyResourceUsers(resList);

@@ -20,6 +20,7 @@ package com.jaamsim.FluidObjects;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
@@ -106,7 +107,7 @@ public class FluidTank extends FluidComponent {
 
 	@Override
 	public double getTargetInletPressure() {
-		double h = inletHeightInput.getNextSample(this, getSimTime());
+		double h = inletHeightInput.getNextSample(this, EventManager.simSeconds());
 		return getFluidPressure(h);
 	}
 
@@ -114,7 +115,7 @@ public class FluidTank extends FluidComponent {
 	 * Return the pressure in the tank at the given height above the outlet.
 	 */
 	private double getFluidPressure( double h ) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		double pres = ambientPressureInput.getNextSample(this, simTime);
 		if( h < fluidLevel ) {
 			pres += (fluidLevel - h) * getFluid().getDensityxGravity(simTime);

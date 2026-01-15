@@ -18,6 +18,7 @@
 package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.events.EventManager;
 
 /**
  * EntitySink kills the DisplayEntities sent to it.
@@ -41,7 +42,7 @@ public class EntitySink extends LinkedComponent {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Increment the number processed
 		releaseEntity(simTime);

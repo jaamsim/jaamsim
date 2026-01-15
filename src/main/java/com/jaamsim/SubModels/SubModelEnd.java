@@ -25,6 +25,7 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.ProcessFlow.EntityGen;
 import com.jaamsim.ProcessFlow.Linkable;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 
@@ -62,7 +63,7 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 		}
 
 		// If NextComponent is specified, send the entity to that object
-		DisplayEntity nextComp = nextComponent.getNextEntity(this, getSimTime());
+		DisplayEntity nextComp = nextComponent.getNextEntity(this, EventManager.simSeconds());
 		if (!(nextComp instanceof Linkable)) {
 			error("Object '%s' returned by NextComponent does not accept an entity.", nextComp);
 		}

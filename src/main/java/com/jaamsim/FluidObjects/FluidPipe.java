@@ -23,6 +23,7 @@ import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -117,7 +118,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 
 	@Override
 	public double calcOutletPressure( double inletPres, double flowAccel ) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		double dyn = getDynamicPressure(simTime);  // Note that dynamic pressure is negative for negative velocities
 		double pres = inletPres;

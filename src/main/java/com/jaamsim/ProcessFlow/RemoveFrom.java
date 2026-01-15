@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -58,7 +59,7 @@ public class RemoveFrom extends AbstractUnpack {
 
 	@Override
 	protected int getNumberToRemove() {
-		return (int) numberOfEntities.getNextSample(this, getSimTime());
+		return (int) numberOfEntities.getNextSample(this, EventManager.simSeconds());
 	}
 
 	// LinkDisplayable
