@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -412,10 +412,10 @@ public class ExpCollections {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
-				sb.append(vector.get(i+1)/factor);
+				sb.append(vector.get(i)/factor);
 				sb.append(" ");
 				sb.append(unitStr);
-				if (i < vector.size()) {
+				if (i < vector.size() - 1) {
 					sb.append(", ");
 				}
 			}
@@ -500,10 +500,10 @@ public class ExpCollections {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
-				sb.append(vector.get(i+1)/factor);
+				sb.append(vector.get(i)/factor);
 				sb.append(" ");
 				sb.append(unitStr);
-				if (i < vector.size()) {
+				if (i < vector.size() - 1) {
 					sb.append(", ");
 				}
 			}
