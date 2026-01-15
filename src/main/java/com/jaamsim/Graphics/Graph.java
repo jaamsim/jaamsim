@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -216,7 +217,7 @@ public class Graph extends AbstractGraph  {
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength / (getNumberOfPoints() - 1);
-		scheduleProcess(xInterval, 7, processGraph);
+		EventManager.scheduleSeconds(xInterval, 7, false, processGraph, null);
 	}
 
 	/**

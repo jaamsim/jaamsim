@@ -339,7 +339,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 				if (iatWorkingEnt != null)
 					workingSecs = iatWorkingEnt.getWorkingTime();
 				double waitSecs = Math.max(secondsForNextFailure - workingSecs, 0.0d);
-				scheduleProcess(waitSecs, 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
+				EventManager.scheduleSeconds(waitSecs, 5, false, scheduleDowntimeTarget, scheduleDowntimeHandle);
 				if (isTraceFlag()) traceLine(1, "downtime event scheduled - waitSecs=%s", waitSecs);
 			}
 		}
@@ -379,7 +379,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 				if (durWorkingEnt != null)
 					workingSecs = durWorkingEnt.getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
+				EventManager.scheduleSeconds(waitSecs, 5, false, endDowntimeTarget, endDowntimeHandle);
 				endTime = getSimTime() + waitSecs;
 				if (isTraceFlag()) traceLine(1, "downtime end event scheduled - waitSecs=%s", waitSecs);
 				return;
