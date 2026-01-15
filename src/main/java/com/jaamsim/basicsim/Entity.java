@@ -963,26 +963,6 @@ public class Entity {
 		EventManager.scheduleTicks(ticks, priority, false, t, null);
 	}
 
-	/**
-	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param ticks
-	 * @param priority
-	 */
-	public final void simWaitTicks(long ticks, int priority) {
-		EventManager.waitTicks(ticks, priority, false, null);
-	}
-
-	/**
-	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param ticks
-	 * @param priority
-	 * @param fifo
-	 * @param handle
-	 */
-	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
-		EventManager.waitTicks(ticks, priority, fifo, handle);
-	}
-
 	public void handleSelectionLost() {}
 
 	// ******************************************************************************************************
