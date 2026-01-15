@@ -174,7 +174,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		if (!isAllowOvertaking(simTime)) {
 			double sep = minSeparation.getNextSample(this, simTime);
 			long sepTicks = EventManager.current().secondsToNearestTick(sep);
-			long simTicks = getSimTicks();
+			long simTicks = EventManager.simTicks();
 			durTicks = Math.max(durTicks, exitTicks - simTicks + sepTicks);
 			exitTicks = simTicks + durTicks;
 		}

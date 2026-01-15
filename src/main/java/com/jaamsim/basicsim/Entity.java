@@ -479,14 +479,6 @@ public class Entity {
 	public void close() {}
 
 	/**
-	 * Get the current Simulation ticks value.
-	 * @return the current simulation tick
-	 */
-	public final long getSimTicks() {
-		return EventManager.simTicks();
-	}
-
-	/**
 	 * Get the current Simulation time.
 	 * @return the current time in seconds
 	 */

@@ -119,7 +119,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		// Start work
 		if (isTraceFlag()) trace(0, "restart - START WORK");
 		processing = true;
-		startUpTicks = getSimTicks();
+		startUpTicks = EventManager.simTicks();
 		lastUpdateTime = getSimTime();
 		startStep();
 	}
@@ -191,7 +191,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 		// Schedule the completion of the time step
 		stepCompleted = false;
-		endTicks = getSimTicks() + durTicks;
+		endTicks = EventManager.simTicks() + durTicks;
 		if (isTraceFlag()) traceLine(1, "remainingDuration=%.6f", remainingDuration);
 		EventManager.scheduleTicks(durTicks, 5, true, endStepTarget, endStepHandle);  // FIFO order
 
@@ -232,7 +232,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 		// If the full step was completed or if there was an immediate release type threshold
 		// closure, then determine whether to change state and/or to continue to the next step
-		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
+		if (EventManager.simTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
 			stepCompleted = true;
 			duration = 0.0d;
 			this.processStep(simTime);
