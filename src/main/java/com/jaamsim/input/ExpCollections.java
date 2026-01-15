@@ -409,11 +409,13 @@ public class ExpCollections {
 				factor = simModel.getDisplayedUnitFactor(unitType);
 				unitStr = simModel.getDisplayedUnit(unitType);
 			}
+			if (!unitStr.isEmpty()) {
+				unitStr = "[" + unitStr + "]";
+			}
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
 				sb.append(vector.get(i)/factor);
-				sb.append(" ");
 				sb.append(unitStr);
 				if (i < vector.size() - 1) {
 					sb.append(", ");
@@ -497,11 +499,13 @@ public class ExpCollections {
 				factor = simModel.getDisplayedUnitFactor(unitType);
 				unitStr = simModel.getDisplayedUnit(unitType);
 			}
+			if (!unitStr.isEmpty()) {
+				unitStr = "[" + unitStr + "]";
+			}
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
 				sb.append(vector.get(i)/factor);
-				sb.append(" ");
 				sb.append(unitStr);
 				if (i < vector.size() - 1) {
 					sb.append(", ");
