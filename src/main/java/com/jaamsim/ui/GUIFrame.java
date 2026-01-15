@@ -117,6 +117,7 @@ import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DirectedEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EditableText;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
@@ -3440,6 +3441,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		if (ent instanceof DisplayEntity && !((DisplayEntity) ent).isMovable())
 			throw new ErrorException("Cannot delete an entity that is not movable.");
+
+		if (ent instanceof EntityLabel && showLabels.isSelected())
+			throw new ErrorException("Cannot delete an EntityLabel when the 'Show Labels' button is activated.");
 
 		// Region
 		if (ent instanceof Region) {
