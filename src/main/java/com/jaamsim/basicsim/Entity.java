@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.EntityLabel;
-import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -962,12 +961,6 @@ public class Entity {
 
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
 		EventManager.scheduleTicks(ticks, priority, false, t, null);
-	}
-
-	public final void waitUntil(Conditional cond, EventHandle handle) {
-		// Don't actually wait if the condition is already true
-		if (cond.evaluate()) return;
-		EventManager.waitUntil(cond, handle);
 	}
 
 	/**
