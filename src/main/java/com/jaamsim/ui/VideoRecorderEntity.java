@@ -167,7 +167,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 		super.startUp();
 
 		if (saveVideo.getValue() || saveImages.getValue())
-			startProcess(new CaptureNetworkTarget(this));
+			EventManager.startProcess(new CaptureNetworkTarget(this));
 
 		this.hasRunStartup = true;
 	}

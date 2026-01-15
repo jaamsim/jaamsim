@@ -26,9 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.EntityLabel;
-import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
@@ -937,10 +935,6 @@ public class Entity {
 			InOutHandle ioh = new InOutHandle(this, in, in.getKeyword(), in.getReturnType(), in.getUnitType());
 			addUserOutputHandle(ioh.getName(), ioh);
 		}
-	}
-
-	public final void startProcess(ProcessTarget t) {
-		EventManager.startProcess(t);
 	}
 
 	public void handleSelectionLost() {}
