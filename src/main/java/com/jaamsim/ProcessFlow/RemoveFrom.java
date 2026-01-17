@@ -40,7 +40,6 @@ public class RemoveFrom extends AbstractUnpack {
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setIntegerValue(true);
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
-		numberOfEntities.setOutput(true);
 		this.addInput(numberOfEntities);
 
 		nextForContainers = new InterfaceEntityInput<>(Linkable.class, "NextForContainers", KEY_INPUTS, null);

@@ -44,7 +44,6 @@ public class WeibullDistribution extends Distribution {
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
 		shapeInput.setValidRange(1.0e-10d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType(DimensionlessUnit.class);
-		shapeInput.setOutput(true);
 		this.addInput(shapeInput);
 	}
 

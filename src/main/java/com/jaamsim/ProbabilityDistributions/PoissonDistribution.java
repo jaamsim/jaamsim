@@ -43,7 +43,6 @@ public class PoissonDistribution extends Distribution {
 		meanInput = new SampleInput("Mean", KEY_INPUTS, 1.0d);
 		meanInput.setUnitType(DimensionlessUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		meanInput.setOutput(true);
 		this.addInput(meanInput);
 	}
 

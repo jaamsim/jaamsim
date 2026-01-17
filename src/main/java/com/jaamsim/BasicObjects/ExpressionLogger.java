@@ -126,7 +126,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		interval = new SampleInput("Interval", KEY_INPUTS, Double.NaN);
 		interval.setUnitType(TimeUnit.class);
 		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
-		interval.setOutput(true);
 		this.addInput(interval);
 
 		stateTraceList = new EntityListInput<>(StateEntity.class, "StateTraceList", KEY_INPUTS,

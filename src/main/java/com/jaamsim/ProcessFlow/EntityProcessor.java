@@ -68,13 +68,11 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setIntegerValue(true);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
-		capacity.setOutput(true);
 		this.addInput(capacity);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 	}
 

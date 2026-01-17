@@ -54,7 +54,6 @@ public class InputValue extends TextBasics implements SampleProvider {
 		valInput = new SampleInput("Value", KEY_INPUTS, 0.0d);
 		valInput.setUnitType(UserSpecifiedUnit.class);
 		valInput.setCallback(valInputCallback);
-		valInput.setOutput(true);
 		this.addInput(valInput);
 	}
 

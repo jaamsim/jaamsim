@@ -43,14 +43,12 @@ public class EntityGate extends LinkedService {
 		releaseDelay = new SampleInput("ReleaseDelay", KEY_INPUTS, 0.0);
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		releaseDelay.setOutput(true);
 		this.addInput(releaseDelay);
 
 		numberToRelease = new SampleInput("NumberToRelease", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		numberToRelease.setUnitType(DimensionlessUnit.class);
 		numberToRelease.setIntegerValue(true);
 		numberToRelease.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		numberToRelease.setOutput(true);
 		this.addInput(numberToRelease);
 	}
 

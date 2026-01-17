@@ -87,20 +87,17 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, 0.0d);
 		firstArrivalTime.setUnitType(TimeUnit.class);
 		firstArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		firstArrivalTime.setOutput(true);
 		this.addInput(firstArrivalTime);
 
 		interArrivalTime = new SampleInput("InterArrivalTime", KEY_INPUTS, 1.0d);
 		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		interArrivalTime.setOutput(true);
 		this.addInput(interArrivalTime);
 
 		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, 1);
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
 		entitiesPerArrival.setIntegerValue(true);
 		entitiesPerArrival.setValidRange(0, Double.POSITIVE_INFINITY);
-		entitiesPerArrival.setOutput(true);
 		this.addInput(entitiesPerArrival);
 
 		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
@@ -118,14 +115,12 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		maxNumber.setIntegerValue(true);
 		maxNumber.setValidRange(0, Double.POSITIVE_INFINITY);
 		maxNumber.setDefaultText(Input.POSITIVE_INFINITY);
-		maxNumber.setOutput(true);
 		this.addInput(maxNumber);
 
 		initialNumber = new SampleInput("InitialNumber", KEY_INPUTS, 0);
 		initialNumber.setUnitType(DimensionlessUnit.class);
 		initialNumber.setIntegerValue(true);
 		initialNumber.setValidRange(0, Double.POSITIVE_INFINITY);
-		initialNumber.setOutput(true);
 		this.addInput(initialNumber);
 	}
 

@@ -40,7 +40,6 @@ public class Server extends LinkedService {
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 	}
 

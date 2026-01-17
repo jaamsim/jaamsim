@@ -47,13 +47,11 @@ public class BinomialDistribution extends Distribution {
 		numberOfTrials = new SampleInput("NumberOfTrials", KEY_INPUTS, 1.0d);
 		numberOfTrials.setUnitType(DimensionlessUnit.class);
 		numberOfTrials.setValidRange(1.0d, Double.POSITIVE_INFINITY);
-		numberOfTrials.setOutput(true);
 		this.addInput(numberOfTrials);
 
 		probability = new SampleInput("Probability", KEY_INPUTS, 1.0d);
 		probability.setUnitType(DimensionlessUnit.class);
 		probability.setValidRange(0.0d, 1.0d);
-		probability.setOutput(true);
 		this.addInput(probability);
 	}
 

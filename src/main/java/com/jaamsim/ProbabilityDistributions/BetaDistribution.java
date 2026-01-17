@@ -43,13 +43,11 @@ public class BetaDistribution extends Distribution {
 		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, 1.0d);
 		alphaInput.setUnitType(DimensionlessUnit.class);
 		alphaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		alphaInput.setOutput(true);
 		this.addInput(alphaInput);
 
 		betaInput = new SampleInput("BetaParam", KEY_INPUTS, 1.0d);
 		betaInput.setUnitType(DimensionlessUnit.class);
 		betaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		betaInput.setOutput(true);
 		this.addInput(betaInput);
 	}
 

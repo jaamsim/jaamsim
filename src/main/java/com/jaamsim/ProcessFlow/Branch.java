@@ -51,7 +51,6 @@ public class Branch extends LinkedComponent {
 		choice.setIntegerValue(true);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
 		choice.setRequired(true);
-		choice.setOutput(true);
 		this.addInput(choice);
 	}
 

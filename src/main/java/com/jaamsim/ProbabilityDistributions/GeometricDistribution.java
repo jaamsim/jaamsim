@@ -44,7 +44,6 @@ public class GeometricDistribution extends Distribution {
 		probability = new SampleInput("Probability", KEY_INPUTS, 1.0d);
 		probability.setUnitType(DimensionlessUnit.class);
 		probability.setValidRange(0.0d, 1.0d);
-		probability.setOutput(true);
 		this.addInput(probability);
 	}
 

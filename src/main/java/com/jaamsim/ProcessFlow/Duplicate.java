@@ -60,7 +60,6 @@ public class Duplicate extends LinkedComponent {
 		numberOfDuplicates.setDimensionless(true);
 		numberOfDuplicates.setUnitType(DimensionlessUnit.class);
 		numberOfDuplicates.setIntegerValue(true);
-		numberOfDuplicates.setOutput(true);
 		this.addInput(numberOfDuplicates);
 
 		baseName = new StringInput("BaseName", KEY_INPUTS, null);

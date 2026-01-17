@@ -429,14 +429,12 @@ public class Simulation extends Entity {
 		runDuration = new SampleInput("RunDuration", KEY_INPUTS, 31536000.0d);
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
-		runDuration.setOutput(true);
 		runDuration.setReportable(true);
 		this.addInput(runDuration);
 
 		initializationTime = new SampleInput("InitializationDuration", KEY_INPUTS, 0.0);
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		initializationTime.setOutput(true);
 		initializationTime.setReportable(true);
 		this.addInput(initializationTime);
 
@@ -528,7 +526,6 @@ public class Simulation extends Entity {
 		numberOfReplications.setUnitType(DimensionlessUnit.class);
 		numberOfReplications.setIntegerValue(true);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
-		numberOfReplications.setOutput(true);
 		this.addInput(numberOfReplications);
 
 		numberOfThreads = new IntegerInput("NumberOfThreads", MULTIPLE_RUNS, 1);
