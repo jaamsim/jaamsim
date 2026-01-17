@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021-2022 JaamSim Software Inc.
+ * Copyright (C) 2021-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
 
-public class StringChoiceInput extends IntegerInput {
+public class StringChoiceInput extends Input<Integer> {
 	private ArrayList<String> choices;
 
 	{
@@ -72,5 +72,18 @@ public class StringChoiceInput extends IntegerInput {
 			return "";
 
 		return String.format("%s", getDefaultChoice());
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		if (isDef())
+			return (V) getDefaultChoice();
+		return (V) getChoice();
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return String.class;
 	}
 }
