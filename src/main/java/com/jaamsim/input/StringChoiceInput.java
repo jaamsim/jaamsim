@@ -35,6 +35,11 @@ public class StringChoiceInput extends Input<Integer> {
 	}
 
 	@Override
+	public String applyConditioning(String str) {
+		return Parser.addQuotesIfNeeded(str);
+	}
+
+	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
