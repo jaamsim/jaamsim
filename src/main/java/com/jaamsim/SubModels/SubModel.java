@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		prototypeSubModel = new EntityInput<>(SubModel.class, "Prototype", KEY_INPUTS, null);
 		prototypeSubModel.setHidden(true);
 		prototypeSubModel.setCallback(prototypeKeywordCallback);
+		prototypeSubModel.setOutput(false);
 		this.addInput(prototypeSubModel);
 
 		keywordListInput = new PassThroughListInput("KeywordList", OPTIONS, new ArrayList<PassThroughData>());

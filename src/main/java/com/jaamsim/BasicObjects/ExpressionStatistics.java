@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2023-2024 JaamSim Software Inc.
+ * Copyright (C) 2023-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -338,18 +338,6 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 			return new double[0];
 		}
 		return freq.getBinCumulativeFractions(simTime);
-	}
-
-	@Output(name = "TargetPercentiles",
-	 description = "The percentiles specified by the 'TargetPercentiles' input.",
-	  reportable = true,
-	    sequence = 10)
-	public double[] getTargetPercentiles(double simTime) {
-		double[] ret = new double[targetPercentiles.getListSize()];
-		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
-			ret[i] = targetPercentiles.getNextSample(i, this, simTime);
-		}
-		return ret;
 	}
 
 	@Output(name = "PercentileValues",

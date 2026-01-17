@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -327,18 +327,6 @@ public class Statistics extends LinkedComponent {
 			return new double[0];
 		}
 		return freq.getBinCumulativeFractions();
-	}
-
-	@Output(name = "TargetPercentiles",
-	 description = "The percentiles specified by the 'TargetPercentiles' input.",
-	  reportable = true,
-	    sequence = 11)
-	public double[] getTargetPercentiles(double simTime) {
-		double[] ret = new double[targetPercentiles.getListSize()];
-		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
-			ret[i] = targetPercentiles.getNextSample(i, this, simTime);
-		}
-		return ret;
 	}
 
 	@Output(name = "PercentileValues",

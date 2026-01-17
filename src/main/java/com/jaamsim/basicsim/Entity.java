@@ -157,6 +157,7 @@ public class Entity {
 	{
 		nameInput = new EntityNameInput("Name", KEY_INPUTS, "");
 		nameInput.setCallback(nameInputCallback);
+		nameInput.setOutput(false);
 		this.addInput(nameInput);
 
 		desc = new StringInput("Description", KEY_INPUTS, "");

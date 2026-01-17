@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2025 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -194,6 +194,7 @@ public class DisplayEntity extends Entity {
 
 		regionInput = new RegionInput("Region", GRAPHICS, null);
 		regionInput.setCallback(regionCallback);
+		regionInput.setOutput(false);
 		this.addInput(regionInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", GRAPHICS, null);
