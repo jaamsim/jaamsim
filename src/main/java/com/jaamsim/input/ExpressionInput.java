@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,6 +153,19 @@ public class ExpressionInput extends Input<Expression> {
 		catch (ExpError e) {
 			throw new ErrorException(thisEnt, getKeyword(), e);
 		}
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		if (getValue() == null)
+			return null;
+		return (V) getNextResult(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return ExpResult.class;
 	}
 
 }
