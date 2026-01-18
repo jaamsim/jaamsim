@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2023 JaamSim Software Inc.
+ * Copyright (C) 2023-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class ColourProvInput extends Input<ColourProvider> {
 
@@ -118,6 +120,27 @@ public class ColourProvInput extends Input<ColourProvider> {
 
 	public boolean isConstant() {
 		return (value instanceof ColourProvConstant);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		Color4d col = getNextColour(thisEnt, simTime);
+		int r = (int) Math.round(255d * col.r);
+		int g = (int) Math.round(255d * col.g);
+		int b = (int) Math.round(255d * col.b);
+		int a = (int) Math.round(255d * col.a);
+		return (V) new int[]{r, g, b, a};
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return int[].class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
 	}
 
 }
