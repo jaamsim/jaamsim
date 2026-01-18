@@ -211,6 +211,7 @@ public class DisplayEntity extends Entity {
 
 		showInput = new BooleanProvInput("Show", GRAPHICS, true);
 		showInput.setCallback(showCallback);
+		showInput.setOutput(false);
 		this.addInput(showInput);
 
 		movable = new BooleanProvInput("Movable", GRAPHICS, true);
