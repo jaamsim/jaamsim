@@ -1689,10 +1689,11 @@ public class InputAgent {
 		// Vec3d outputs
 		if (ret instanceof Vec3d) {
 			Vec3d vec = (Vec3d) ret;
-			sb.append(vec.x/factor);
-			sb.append(Input.SEPARATOR).append(vec.y/factor);
-			sb.append(Input.SEPARATOR).append(vec.z/factor);
-			sb.append(Input.SEPARATOR).append(unitString);
+			sb.append("{");
+			sb.append(vec.x/factor).append(unitString).append(COMMA_SEPARATOR);
+			sb.append(vec.y/factor).append(unitString).append(COMMA_SEPARATOR);
+			sb.append(vec.z/factor).append(unitString);
+			sb.append("}");
 			return sb.toString();
 		}
 
