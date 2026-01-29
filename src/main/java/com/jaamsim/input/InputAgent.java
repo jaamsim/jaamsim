@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1668,6 +1668,19 @@ public class InputAgent {
 					sb.append(COMMA_SEPARATOR);
 				String str = String.format("%s", val[i]);
 				sb.append(str);
+			}
+			sb.append("}");
+			return sb.toString();
+		}
+
+		// String[] outputs
+		if (ret instanceof String[]) {
+			String[] val = (String[]) ret;
+			sb.append("{");
+			for (int i = 0; i < val.length; i++) {
+				if (i > 0)
+					sb.append(COMMA_SEPARATOR);
+				sb.append("\"").append(val[i]).append("\"");
 			}
 			sb.append("}");
 			return sb.toString();
