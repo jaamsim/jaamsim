@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2022 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,16 @@ public class Vec3dListInput extends ArrayListInput<Vec3d> {
 			tmp.append("}");
 		}
 		return tmp.toString();
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return ArrayList.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 
 }
