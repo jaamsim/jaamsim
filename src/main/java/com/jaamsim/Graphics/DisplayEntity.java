@@ -164,21 +164,25 @@ public class DisplayEntity extends Entity {
 		positionInput = new Vec3dInput("Position", GRAPHICS, new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
 		positionInput.setCallback(positionCallback);
+		positionInput.setOutput(false);
 		this.addInput(positionInput);
 
 		alignmentInput = new Vec3dInput("Alignment", GRAPHICS, new Vec3d());
 		alignmentInput.setCallback(alignmentCallback);
+		alignmentInput.setOutput(false);
 		this.addInput(alignmentInput);
 
 		sizeInput = new Vec3dInput("Size", GRAPHICS, new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
 		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sizeInput.setCallback(sizeCallback);
+		sizeInput.setOutput(false);
 		this.addInput(sizeInput);
 
 		orientationInput = new Vec3dInput("Orientation", GRAPHICS, new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
 		orientationInput.setCallback(orientationCallback);
+		orientationInput.setOutput(false);
 		this.addInput(orientationInput);
 
 		pointsInput = new Vec3dListInput("Points", GRAPHICS, defPoints);
