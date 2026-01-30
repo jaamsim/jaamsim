@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class CumulativeProbInput extends Input<DoubleVector>{
 	public CumulativeProbInput(String key, String cat, DoubleVector def) {
@@ -45,4 +47,15 @@ public class CumulativeProbInput extends Input<DoubleVector>{
 
 		value = temp;
 	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return DoubleVector.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
+	}
+
 }
