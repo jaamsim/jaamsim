@@ -1588,16 +1588,17 @@ public class InputAgent {
 	 */
 	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor, String unitString) {
 
+		if (!unitString.isEmpty())
+			unitString = "[" + unitString +"]";
+
 		// Numeric outputs
 		if (out.isNumericValue()) {
 			double val = out.getValueAsDouble(simTime, Double.NaN);
-			return String.format(floatFmt, val/factor) + Input.SEPARATOR + unitString;
+			return String.format(floatFmt, val/factor) + unitString;
 		}
 
 		Class<?> retType = out.getReturnType();
 		Object ret = out.getValue(simTime, retType);
-		if (!unitString.isEmpty())
-			unitString = "[" + unitString +"]";
 		return getOutputString(simModel, ret, floatFmt, factor, unitString);
 	}
 
