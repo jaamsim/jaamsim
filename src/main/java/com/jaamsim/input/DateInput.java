@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.SimDate;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class DateInput extends Input<SimDate> {
 
@@ -40,6 +42,22 @@ public class DateInput extends Input<SimDate> {
 	@Override
 	public String getValidInputDesc() {
 		return Input.VALID_DATE;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		return (V) getValue().toArray();
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return int[].class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
 	}
 
 }
