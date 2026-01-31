@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,6 +131,24 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 			return ((TimeSeriesConstantDouble) defValue).getValueString(simModel);
 		}
 		return super.getDefaultString(simModel);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		if (getValue() == null)
+			return null;
+		return (V) (Double) getValue().getNextSample(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return double.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 
 }
