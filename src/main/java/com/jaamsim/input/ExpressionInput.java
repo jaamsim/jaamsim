@@ -142,7 +142,7 @@ public class ExpressionInput extends Input<Expression> {
 	public ExpResult getNextResult(Entity thisEnt, double simTime) {
 		try {
 			ExpResult ret = ExpEvaluator.evaluateExpression(getValue(), thisEnt, simTime);
-			if (ret.type != resType)
+			if (resType != null && ret.type != resType)
 				throw new ExpError(parseContext.getUpdatedSource(), 0, EXP_ERR_RESULT_TYPE,
 						ret.type, resType);
 			if (ret.type == ExpResType.NUMBER && ret.unitType != unitType)
