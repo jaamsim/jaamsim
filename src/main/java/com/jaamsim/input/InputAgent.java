@@ -960,6 +960,9 @@ public class InputAgent {
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
+			if (ent.getParent() != simModel.getSimulation() && ent.getPrototype() != null
+					&& ent.getParent().getPrototype() == ent.getPrototype().getParent())
+				continue;
 			newEntities.add(ent);
 		}
 		Collections.sort(newEntities, uiEntitySortOrder);
