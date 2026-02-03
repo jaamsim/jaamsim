@@ -31,6 +31,7 @@ import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityNameInput;
+import com.jaamsim.input.ParentEntityInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
@@ -124,6 +125,10 @@ public class Entity {
 	         exampleList = {"Conveyor1"})
 	protected final EntityNameInput nameInput;
 
+	@Keyword(description = "Parent entity for this entity.",
+	         exampleList = {"SimEntity1"})
+	protected final ParentEntityInput parentInput;
+
 	@Keyword(description = "A free-form string describing the object.",
 	         exampleList = {"'A very useful entity'"})
 	protected final StringInput desc;
@@ -156,6 +161,11 @@ public class Entity {
 		nameInput.setCallback(nameInputCallback);
 		nameInput.setOutput(false);
 		this.addInput(nameInput);
+
+		parentInput = new ParentEntityInput("Parent", KEY_INPUTS, null);
+		parentInput.setCallback(parentInputCallback);
+		parentInput.setOutput(false);
+		this.addInput(parentInput);
 
 		desc = new StringInput("Description", KEY_INPUTS, "");
 		this.addInput(desc);
@@ -222,6 +232,29 @@ public class Entity {
 	public void resetNameInput() {
 		nameInput.reset();
 		setLocalName(nameInput.getValue());
+	}
+
+	static final InputCallback parentInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			Entity newParent = (Entity) inp.getValue();
+			if (newParent == ent.parent)
+				return;
+			JaamSimModel simModel = ent.getJaamSimModel();
+			simModel.removeNamedEntity(ent);
+			ent.parent = newParent;
+			simModel.addNamedEntity(ent);
+		}
+	};
+
+	public void setParentInput(Entity newParent) throws InputErrorException {
+		if (parentInput.isDef()) {
+			parentInput.setInitialValue(newParent);
+			this.parent = newParent;
+			parentInput.setLocked(isGenerated());
+			return;
+		}
+		InputAgent.applyArgs(this, parentInput.getKeyword(), newParent.getName());
 	}
 
 	public boolean isCopyOf(Entity ent) {
