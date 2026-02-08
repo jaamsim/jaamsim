@@ -264,6 +264,10 @@ public abstract class Input<T> {
 		callback = back;
 	}
 
+	public void reset(Entity ent) {
+		reset();
+	}
+
 	/**
 	 * Sets the input to its default value.
 	 */

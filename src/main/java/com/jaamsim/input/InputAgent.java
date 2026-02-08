@@ -616,7 +616,7 @@ public class InputAgent {
 				&& Arrays.equals(in.getInheritedValueArray(), kw.getArgArray()))) {
 			if (in.isDef())
 				changed = false;
-			in.reset();
+			in.reset(ent);
 
 			// Set the inherited value if the input value is blank
 			if (ent.isClone() && kw.numArgs() == 0
