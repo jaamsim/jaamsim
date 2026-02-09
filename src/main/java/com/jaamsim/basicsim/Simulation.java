@@ -775,6 +775,18 @@ public class Simulation extends Entity {
 		getJaamSimModel().setSimulation(this);
 	}
 
+	@Override
+	public void setNameInput(String localName) throws InputErrorException {
+		super.setNameInput(localName);
+		nameInput.setLocked(true);
+	}
+
+	@Override
+	public void setParentInput(Entity newParent) throws InputErrorException {
+		super.setParentInput(newParent);
+		parentInput.setLocked(true);
+	}
+
 	static final InputCallback calendarCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
