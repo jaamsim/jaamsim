@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 		value = ent;
 	}
 
-	private boolean isCircular(Entity thisEnt, DisplayEntity e) {
+	private static boolean isCircular(Entity thisEnt, DisplayEntity e) {
 		DisplayEntity ent = e;
 		while (ent != null) {
 			if (ent == thisEnt)
