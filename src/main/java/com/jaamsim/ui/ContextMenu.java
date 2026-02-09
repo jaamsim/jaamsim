@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
+import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.CoordinateCommand;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Commands.ListCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EditableText;
 import com.jaamsim.Graphics.EntityLabel;
@@ -258,7 +260,62 @@ public class ContextMenu {
 		showLabelMenuItem.setEnabled(EntityLabel.canLabel(ent));
 		menu.add( showLabelMenuItem );
 
-		// 3) Set RelativeEntity
+		// 3) Set Parent and RelativeEntity
+		ScrollableMenu setParentMenu = new ScrollableMenu( "Set Parent and RelativeEntity" ) {
+
+			@Override
+			public void setPopupMenuVisible(boolean bool) {
+				super.setPopupMenuVisible(bool);
+				Entity presentParent = ent.getParent();
+				if (!bool || presentParent == null)
+					return;
+				int index = ent.getParentOptions().indexOf(presentParent.getName());
+				if (index != -1) {
+					ensureIndexIsVisible(index + 1);  // Allows for the option <None>
+				}
+			}
+		};
+		ArrayList<String> parentNameList = new ArrayList<>();
+		parentNameList.addAll(ent.getParentOptions());
+		parentNameList.retainAll(ent.getRelativeEntityOptions());
+
+		JaamSimModel simModel = ent.getJaamSimModel();
+		if (ent.getParent() == null || simModel.getEntity(ent.getLocalName()) == null)
+			parentNameList.add(0, "<None>");
+
+		String presentParentName = "<None>";
+		if (ent.getParent() != null) {
+			presentParentName = ent.getParent().getName();
+		}
+		for (final String parentName : parentNameList) {
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(parentName);
+			if (parentName.equals(presentParentName)) {
+				item.setSelected(true);
+			}
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					ArrayList<Command> cmdList = new ArrayList<>();
+					if (parentName.equals("<None>")) {
+						cmdList.add(new KeywordCommand(ent, InputAgent.formatArgs("Parent")));
+						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity")));
+					}
+					else {
+						cmdList.add(new KeywordCommand(ent, InputAgent.formatArgs("Parent", parentName)));
+						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity", parentName)));
+					}
+					InputAgent.storeAndExecute(new ListCommand(cmdList));
+				}
+			} );
+			setParentMenu.add(item);
+		}
+		if (ent instanceof EntityLabel	|| ent.isGenerated()) {
+			setParentMenu.setEnabled(false);
+		}
+		menu.add( setParentMenu );
+
+		// 4) Set RelativeEntity
 		ScrollableMenu setRelativeEntityMenu = new ScrollableMenu( "Set RelativeEntity" ) {
 
 			@Override
@@ -306,7 +363,7 @@ public class ContextMenu {
 		}
 		menu.add( setRelativeEntityMenu );
 
-		// 4) Set Region
+		// 5) Set Region
 		ScrollableMenu setRegionMenu = new ScrollableMenu( "Set Region" ) {
 
 			@Override
@@ -354,7 +411,7 @@ public class ContextMenu {
 		}
 		menu.add( setRegionMenu );
 
-		// 5) Centre in View
+		// 6) Centre in View
 		JMenuItem centerInViewMenuItem = new JMenuItem( "Center in View" );
 		centerInViewMenuItem.addActionListener( new ActionListener() {
 
@@ -385,7 +442,7 @@ public class ContextMenu {
 			return;
 		menu.addSeparator();
 
-		// 6) Add Node
+		// 7) Add Node
 		JMenuItem addNodeItem = new JMenuItem( "Add Node" );
 		addNodeItem.addActionListener( new ActionListener() {
 
@@ -411,7 +468,7 @@ public class ContextMenu {
 		}
 		menu.add( addNodeItem );
 
-		// 7) Delete Node
+		// 8) Delete Node
 		JMenuItem deleteNodeItem = new JMenuItem( "Delete Node" );
 		deleteNodeItem.addActionListener( new ActionListener() {
 
@@ -429,7 +486,7 @@ public class ContextMenu {
 		}
 		menu.add( deleteNodeItem );
 
-		// 8) Split
+		// 9) Split
 		JMenuItem spitMenuItem = new JMenuItem( "Split" );
 		spitMenuItem.addActionListener( new ActionListener() {
 

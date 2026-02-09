@@ -709,6 +709,10 @@ public class DisplayEntity extends Entity {
 		return visibleViews.getValue();
 	}
 
+	public ArrayList<String> getParentOptions() {
+		return parentInput.getValidOptions(this);
+	}
+
 	/**
 	 * Sets the orientation to the specified value relative its its normal orientation.
 	 * @param relOrient - Euler angles for relative orientation
