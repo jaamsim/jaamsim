@@ -50,9 +50,8 @@ public class ParentEntityInput extends EntityInput<Entity> {
 	}
 
 	private static boolean isCircular(Entity thisEnt, Entity e) {
-		Entity simulation = thisEnt.getJaamSimModel().getSimulation();
 		Entity ent = e;
-		while (ent != null && ent != simulation) {
+		while (ent != null) {
 			if (ent == thisEnt)
 				return true;
 			ent = ent.getParent();

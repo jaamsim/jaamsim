@@ -865,9 +865,7 @@ public class Entity {
 	 * Returns the parent entity for this entity
 	 */
 	public Entity getParent() {
-		if (parent != null)
-			return parent;
-		return simModel.getSimulation();
+		return parent;
 	}
 
 	/**

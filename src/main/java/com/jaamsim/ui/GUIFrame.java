@@ -4974,7 +4974,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				sep = "";
 			}
 		}
-		if (region != null && region.getParent() != sim.getSimulation())
+		if (region != null && region.getParent() != null)
 			copyName = region.getParent().getName() + "." + copyName;
 		copyName = InputAgent.getUniqueName(sim, copyName, sep);
 		InputAgent.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));
