@@ -120,7 +120,7 @@ public class ScriptEntity extends Entity {
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = EventManager.current().secondsToNearestTick(scriptTime.getValue()) - EventManager.simTicks();
 			if (delayTicks > 0) {
-				EventManager.scheduleTicks(delayTicks, 0, EVT_LIFO, targ, null);
+				EventManager.scheduleTicks(delayTicks, PRI_HIGHEST, EVT_LIFO, targ, null);
 				break;
 			}
 		}

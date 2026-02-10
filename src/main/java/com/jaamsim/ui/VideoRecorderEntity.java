@@ -182,7 +182,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	void updateInputValue() {
 		// Start the capture if we are already running and we set the input to true
 		if (hasRunStartup && saveVideo.getValue())
-			EventManager.scheduleTicks(0, 10, EVT_LIFO, new CaptureNetworkTarget(this), null);
+			EventManager.scheduleTicks(0, PRI_LOW, EVT_LIFO, new CaptureNetworkTarget(this), null);
 	}
 
 	private static class CaptureNetworkTarget extends ProcessTarget {

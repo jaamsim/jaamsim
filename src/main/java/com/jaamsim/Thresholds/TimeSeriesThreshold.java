@@ -191,7 +191,7 @@ public class TimeSeriesThreshold extends Threshold {
 		if (wait == Long.MAX_VALUE)
 			return;
 
-		EventManager.scheduleTicks(wait, 1, EVT_LIFO, doOpenClose, null);
+		EventManager.scheduleTicks(wait, PRI_HIGHER, EVT_LIFO, doOpenClose, null);
 	}
 
 	/**

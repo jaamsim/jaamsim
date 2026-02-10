@@ -217,7 +217,7 @@ public class Graph extends AbstractGraph  {
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength / (getNumberOfPoints() - 1);
-		EventManager.scheduleSeconds(xInterval, 7, EVT_LIFO, processGraph, null);
+		EventManager.scheduleSeconds(xInterval, PRI_MED_LOW, EVT_LIFO, processGraph, null);
 	}
 
 	/**
