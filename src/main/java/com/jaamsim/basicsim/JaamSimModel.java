@@ -494,7 +494,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		eventManager.setTickLength(getSimulation().getTickLength());
-		eventManager.scheduleProcessExternal(0, 0, Entity.EVT_LIFO, new InitModelTarget(this), null);
+		eventManager.scheduleProcessExternal(0, Entity.PRI_HIGHEST, Entity.EVT_LIFO, new InitModelTarget(this), null);
 		resume();
 		return true;
 	}
