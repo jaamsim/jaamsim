@@ -98,30 +98,25 @@ implements SampleProvider, RandomStreamUser {
 		randomSeedInput.setIntegerValue(true);
 		randomSeedInput.setRequired(true);
 		randomSeedInput.setDefaultText("None");
-		randomSeedInput.setOutput(true);
 		this.addInput(randomSeedInput);
 
 		minValueInput = new SampleInput("MinValue", KEY_INPUTS, Double.NEGATIVE_INFINITY);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
-		minValueInput.setOutput(true);
 		this.addInput(minValueInput);
 
 		maxValueInput = new SampleInput("MaxValue", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
-		maxValueInput.setOutput(true);
 		this.addInput(maxValueInput);
 
 		locationInput = new SampleInput("Location", KEY_INPUTS, 0.0d);
 		locationInput.setUnitType(UserSpecifiedUnit.class);
 		locationInput.setHidden(true);
-		locationInput.setOutput(true);
 		this.addInput(locationInput);
 
 		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
 		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		scaleInput.setHidden(true);
-		scaleInput.setOutput(true);
 		this.addInput(scaleInput);
 	}
 

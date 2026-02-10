@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2025 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,21 +164,25 @@ public class DisplayEntity extends Entity {
 		positionInput = new Vec3dInput("Position", GRAPHICS, new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
 		positionInput.setCallback(positionCallback);
+		positionInput.setOutput(false);
 		this.addInput(positionInput);
 
 		alignmentInput = new Vec3dInput("Alignment", GRAPHICS, new Vec3d());
 		alignmentInput.setCallback(alignmentCallback);
+		alignmentInput.setOutput(false);
 		this.addInput(alignmentInput);
 
 		sizeInput = new Vec3dInput("Size", GRAPHICS, new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
 		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sizeInput.setCallback(sizeCallback);
+		sizeInput.setOutput(false);
 		this.addInput(sizeInput);
 
 		orientationInput = new Vec3dInput("Orientation", GRAPHICS, new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
 		orientationInput.setCallback(orientationCallback);
+		orientationInput.setOutput(false);
 		this.addInput(orientationInput);
 
 		pointsInput = new Vec3dListInput("Points", GRAPHICS, defPoints);
@@ -194,6 +198,7 @@ public class DisplayEntity extends Entity {
 
 		regionInput = new RegionInput("Region", GRAPHICS, null);
 		regionInput.setCallback(regionCallback);
+		regionInput.setOutput(false);
 		this.addInput(regionInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", GRAPHICS, null);
@@ -210,6 +215,7 @@ public class DisplayEntity extends Entity {
 
 		showInput = new BooleanProvInput("Show", GRAPHICS, true);
 		showInput.setCallback(showCallback);
+		showInput.setOutput(false);
 		this.addInput(showInput);
 
 		movable = new BooleanProvInput("Movable", GRAPHICS, true);
@@ -665,7 +671,10 @@ public class DisplayEntity extends Entity {
 
 		if (getParent() instanceof CompoundEntity) {
 			CompoundEntity sub = (CompoundEntity) getParent();
-			ret = ret && (sub.isShowComponents(simTime) || getSimulation().isShowSubModels());
+			Region region = sub.getSubModelRegion();
+			if (this == region || getCurrentRegion() == region) {
+				ret = ret && (sub.isShowComponents(simTime) || getSimulation().isShowSubModels());
+			}
 		}
 		return ret;
 	}
@@ -698,6 +707,10 @@ public class DisplayEntity extends Entity {
 
 	public ArrayList<View> getVisibleViews() {
 		return visibleViews.getValue();
+	}
+
+	public ArrayList<String> getParentOptions() {
+		return parentInput.getValidOptions(this);
 	}
 
 	/**

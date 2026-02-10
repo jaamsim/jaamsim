@@ -43,7 +43,6 @@ public class ExternalProgram extends AbstractExternalProgram {
 		timeOut = new SampleInput("TimeOut", KEY_INPUTS, 1000);
 		timeOut.setValidRange(1, Double.POSITIVE_INFINITY);
 		timeOut.setIntegerValue(true);
-		timeOut.setOutput(true);
 		this.addInput(timeOut);
 	}
 

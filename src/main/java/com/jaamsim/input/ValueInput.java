@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2023 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,5 +90,15 @@ public class ValueInput extends Input<Double> {
 		}
 
 		return tmp.toString();
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return double.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 }

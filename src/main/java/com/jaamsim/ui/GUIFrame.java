@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2025 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3442,16 +3442,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (ent instanceof DisplayEntity && !((DisplayEntity) ent).isMovable())
 			throw new ErrorException("Cannot delete an entity that is not movable.");
 
-		if (ent instanceof SubModel && ((SubModel) ent).hasClone())
-			throw new ErrorException("Cannot delete a SubModel that has one or more clones.");
-
-		// Delete any clones
-		for (Entity clone : ent.getAllClones()) {
-			if (clone.isGenerated() || clone instanceof EntityLabel)
-				clone.kill();
-			else
-				deleteEntity(clone);
-		}
+		if (ent instanceof EntityLabel && showLabels.isSelected())
+			throw new ErrorException("Cannot delete an EntityLabel when the 'Show Labels' button is activated.");
 
 		// Region
 		if (ent instanceof Region) {
@@ -4899,7 +4891,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				sep = "";
 			}
 		}
-		if (region != null && region.getParent() != sim.getSimulation())
+		if (region != null && region.getParent() != null)
 			copyName = region.getParent().getName() + "." + copyName;
 		copyName = InputAgent.getUniqueName(sim, copyName, sep);
 		sim.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));
@@ -4949,6 +4941,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		// Copy the children
 		copyChildren(ent, copiedEnt);
 
+		// If the entity has been copied to a SubModel, update its clones
+		if (copiedEnt.getParent() instanceof SubModel) {
+			SubModel sub = (SubModel) copiedEnt.getParent();
+			sub.updateClones();
+		}
+
 		// Select the new entity
 		FrameBox.setSelectedEntity(copiedEnt, false);
 	}
@@ -4958,11 +4956,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		// Create the copied children
 		for (Entity child : parent0.getChildren()) {
-			if (child.isGenerated() || child instanceof EntityLabel)
+			if (child.isGenerated())
 				continue;
 
 			// Construct the new child's name
 			String localName = child.getLocalName();
+			if (parent1.getChild(localName) != null)
+				continue;
 			String name = parent1.getName() + "." + localName;
 
 			// Create the new child
@@ -4974,6 +4974,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			for (Entity child : parent0.getChildren()) {
 				String localName = child.getLocalName();
 				Entity copiedChild = parent1.getChild(localName);
+				if (copiedChild == null)
+					continue;
 				copiedChild.copyInputs(child, seq);
 			}
 		}

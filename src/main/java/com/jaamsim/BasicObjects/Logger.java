@@ -99,13 +99,11 @@ public abstract class Logger extends DisplayEntity {
 		startTime = new SampleInput("StartTime", KEY_INPUTS, 0.0d);
 		startTime.setUnitType(TimeUnit.class);
 		startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		startTime.setOutput(true);
 		this.addInput(startTime);
 
 		endTime = new SampleInput("EndTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		endTime.setUnitType(TimeUnit.class);
 		endTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		endTime.setOutput(true);
 		this.addInput(endTime);
 	}
 

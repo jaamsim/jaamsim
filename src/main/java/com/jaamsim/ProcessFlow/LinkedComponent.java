@@ -81,7 +81,6 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 
 		stateAssignment = new StringProvInput("StateAssignment", OPTIONS, "");
 		stateAssignment.setUnitType(DimensionlessUnit.class);
-		stateAssignment.setOutput(true);
 		this.addInput(stateAssignment);
 	}
 

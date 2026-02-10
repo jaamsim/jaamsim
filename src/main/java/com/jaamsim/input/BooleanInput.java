@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2021 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 
 public class BooleanInput extends Input<Boolean> {
@@ -84,5 +86,15 @@ public class BooleanInput extends Input<Boolean> {
 			return TRUE;
 
 		return FALSE;
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return Boolean.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
 	}
 }

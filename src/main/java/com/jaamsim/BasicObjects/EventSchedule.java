@@ -60,7 +60,6 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 		cycleTime.setUnitType(TimeUnit.class);
 		cycleTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		cycleTime.setRequired(true);
-		cycleTime.setOutput(true);
 		this.addInput(cycleTime);
 	}
 

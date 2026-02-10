@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2022 JaamSim Software Inc.
+ * Copyright (C) 2022-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,13 +211,11 @@ public class IntegerVector {
 		StringBuilder out = new StringBuilder("{");
 
 		for (int i = 0; i < size(); i++) {
-			if (i == 0)
-				out.append(" ");
-			else
+			if (i > 0)
 				out.append(", ");
 			out.append(get(i));
 		}
-		out.append(" }");
+		out.append("}");
 
 		return out.toString();
 	}

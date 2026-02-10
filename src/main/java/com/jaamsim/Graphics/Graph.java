@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,14 +87,14 @@ public class Graph extends AbstractGraph  {
 
 	@Override
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
-		super.setYAxisUnit(unitType);
 		dataSource.setUnitType(unitType);
+		super.setYAxisUnit(unitType);
 	}
 
 	@Override
 	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
-		super.setSecondaryYAxisUnit(unitType);
 		secondaryDataSource.setUnitType(unitType);
+		super.setSecondaryYAxisUnit(unitType);
 	}
 
 	@Override

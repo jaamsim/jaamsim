@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -606,7 +606,7 @@ public class InputAgent {
 				&& Arrays.equals(in.getInheritedValueArray(), kw.getArgArray()))) {
 			if (in.isDef())
 				changed = false;
-			in.reset();
+			in.reset(ent);
 
 			// Set the inherited value if the input value is blank
 			if (ent.isClone() && kw.numArgs() == 0
@@ -949,6 +949,9 @@ public class InputAgent {
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
+				continue;
+			if (ent.getParent() != null && ent.getPrototype() != null
+					&& ent.getParent().getPrototype() == ent.getPrototype().getParent())
 				continue;
 			newEntities.add(ent);
 		}
@@ -1578,16 +1581,17 @@ public class InputAgent {
 	 */
 	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor, String unitString) {
 
+		if (!unitString.isEmpty())
+			unitString = "[" + unitString +"]";
+
 		// Numeric outputs
 		if (out.isNumericValue()) {
 			double val = out.getValueAsDouble(simTime, Double.NaN);
-			return String.format(floatFmt, val/factor) + Input.SEPARATOR + unitString;
+			return String.format(floatFmt, val/factor) + unitString;
 		}
 
 		Class<?> retType = out.getReturnType();
 		Object ret = out.getValue(simTime, retType);
-		if (!unitString.isEmpty())
-			unitString = "[" + unitString +"]";
 		return getOutputString(simModel, ret, floatFmt, factor, unitString);
 	}
 
@@ -1663,13 +1667,27 @@ public class InputAgent {
 			return sb.toString();
 		}
 
+		// String[] outputs
+		if (ret instanceof String[]) {
+			String[] val = (String[]) ret;
+			sb.append("{");
+			for (int i = 0; i < val.length; i++) {
+				if (i > 0)
+					sb.append(COMMA_SEPARATOR);
+				sb.append("\"").append(val[i]).append("\"");
+			}
+			sb.append("}");
+			return sb.toString();
+		}
+
 		// Vec3d outputs
 		if (ret instanceof Vec3d) {
 			Vec3d vec = (Vec3d) ret;
-			sb.append(vec.x/factor);
-			sb.append(Input.SEPARATOR).append(vec.y/factor);
-			sb.append(Input.SEPARATOR).append(vec.z/factor);
-			sb.append(Input.SEPARATOR).append(unitString);
+			sb.append("{");
+			sb.append(vec.x/factor).append(unitString).append(COMMA_SEPARATOR);
+			sb.append(vec.y/factor).append(unitString).append(COMMA_SEPARATOR);
+			sb.append(vec.z/factor).append(unitString);
+			sb.append("}");
 			return sb.toString();
 		}
 

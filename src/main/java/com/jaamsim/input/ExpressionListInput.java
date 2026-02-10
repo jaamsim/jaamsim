@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2023-2025 JaamSim Software Inc.
+ * Copyright (C) 2023-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,6 +174,27 @@ public class ExpressionListInput extends ArrayListInput<Expression> {
 		catch (ExpError e) {
 			throw new ErrorException(thisEnt, getKeyword(), i + 1, e);
 		}
+	}
+
+	public ArrayList<ExpResult> getNextResults(Entity thisEnt, double simTime) {
+		ArrayList<ExpResult> ret = new ArrayList<>(getValue().size());
+		for (int i = 0; i < getValue().size(); i++) {
+			ret.add(getNextResult(i, thisEnt, simTime));
+		}
+		return ret;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		if (getValue() == null)
+			return null;
+		return (V) getNextResults(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return ArrayList.class;
 	}
 
 }

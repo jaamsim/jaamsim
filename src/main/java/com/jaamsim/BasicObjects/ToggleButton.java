@@ -91,7 +91,6 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		lineWidth.setValidRange(0, Double.POSITIVE_INFINITY);
 		lineWidth.setIntegerValue(true);
 		lineWidth.setDefaultText("ShapeModel value");
-		lineWidth.setOutput(true);
 		this.addInput(lineWidth);
 	}
 

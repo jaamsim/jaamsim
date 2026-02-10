@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2024 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 /**
  * EntitySink kills the DisplayEntities sent to it.
@@ -26,6 +28,7 @@ import com.jaamsim.events.EventManager;
 public class EntitySink extends LinkedComponent {
 
 	DisplayEntity lastEnt;
+	private int numberDestroyed = 0;  // Number of entities destroyed so far
 
 	{
 		nextComponent.setHidden(true);
@@ -37,6 +40,7 @@ public class EntitySink extends LinkedComponent {
 	public void earlyInit() {
 		super.earlyInit();
 		lastEnt = null;
+		numberDestroyed = 0;
 	}
 
 	@Override
@@ -46,6 +50,7 @@ public class EntitySink extends LinkedComponent {
 
 		// Increment the number processed
 		releaseEntity(simTime);
+		numberDestroyed++;
 
 		// Save the new entity and kill the previous one
 		if (lastEnt != null) {
@@ -63,6 +68,14 @@ public class EntitySink extends LinkedComponent {
 		if (lastEnt == null)
 			return;
 		lastEnt.setGlobalPosition(getGlobalPosition());
+	}
+
+	@Output(name = "NumberDestroyed",
+	 description = "Total number of entities that have been destroyed, including the initialization period.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public int getNumberDestroyed(double simTime) {
+		return numberDestroyed;
 	}
 
 }

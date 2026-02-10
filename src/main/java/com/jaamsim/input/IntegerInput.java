@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class IntegerInput extends Input<Integer> {
 	private int minValue = Integer.MIN_VALUE;
@@ -59,5 +61,20 @@ public class IntegerInput extends Input<Integer> {
 		StringBuilder tmp = new StringBuilder(defValue.toString());
 
 		return tmp.toString();
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return int.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
+	}
+
+	@Override
+	public boolean isIntegerValue() {
+		return true;
 	}
 }

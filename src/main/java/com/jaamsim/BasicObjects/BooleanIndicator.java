@@ -54,7 +54,6 @@ public class BooleanIndicator extends DisplayEntity {
 		expInput = new SampleInput("DataSource", KEY_INPUTS, Double.NaN);
 		expInput.setUnitType(DimensionlessUnit.class);
 		expInput.setRequired(true);
-		expInput.setOutput(true);
 		this.addInput(expInput);
 		this.addSynonym(expInput, "OutputName");
 

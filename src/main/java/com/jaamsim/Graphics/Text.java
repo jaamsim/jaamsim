@@ -93,7 +93,6 @@ public class Text extends TextBasics {
 	{
 		formatText = new StringInput("Format", KEY_INPUTS, "%s");
 		formatText.setCallback(formattextCallback);
-		formatText.setOutput(true);
 		this.addInput(formatText);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
@@ -106,12 +105,10 @@ public class Text extends TextBasics {
 
 		dataSource = new StringProvInput("DataSource", KEY_INPUTS, "");
 		dataSource.setUnitType(DimensionlessUnit.class);
-		dataSource.setOutput(true);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
 
 		failText = new StringInput("FailText", KEY_INPUTS, "Input Error");
-		failText.setOutput(true);
 		this.addInput(failText);
 
 		autoSize = new BooleanProvInput("AutoSize", OPTIONS, true);

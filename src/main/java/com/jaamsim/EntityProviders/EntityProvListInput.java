@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2023-2025 JaamSim Software Inc.
+ * Copyright (C) 2023-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -219,6 +219,17 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		return (V) getNextEntityList(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return ArrayList.class;
 	}
 
 }

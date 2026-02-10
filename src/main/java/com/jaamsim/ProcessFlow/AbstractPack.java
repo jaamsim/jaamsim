@@ -68,18 +68,15 @@ public abstract class AbstractPack extends LinkedService {
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setIntegerValue(true);
 		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
-		numberOfEntities.setOutput(true);
 		this.addInput(numberOfEntities);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, "");
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
-		containerStateAssignment.setOutput(true);
 		this.addInput(containerStateAssignment);
 
 		numberToStart = new SampleInput("NumberToStart", OPTIONS, Double.NaN);
@@ -87,7 +84,6 @@ public abstract class AbstractPack extends LinkedService {
 		numberToStart.setIntegerValue(true);
 		numberToStart.setDefaultText("NumberOfEntities Input");
 		numberToStart.setValidRange(0, Double.POSITIVE_INFINITY);
-		numberToStart.setOutput(true);
 		this.addInput(numberToStart);
 
 		waitForEntities = new BooleanProvInput("WaitForEntities", OPTIONS, false);

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 		flowRateInput = new SampleInput("FlowRate", KEY_INPUTS, 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
+		flowRateInput.setOutput(false);
 		this.addInput( flowRateInput);
 
 		polylineWidth = new SampleInput("PolylineWidth", FORMAT, 0.0d);

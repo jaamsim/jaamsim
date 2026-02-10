@@ -333,8 +333,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		if (isTraceFlag()) trace(0, "performUnscheduledUpdate");
 
 		if (!unscheduledUpdateHandle.isScheduled()) {
-			EventManager.scheduleTicks(0, PRI_LOW, EVT_FIFO, unscheduledUpdateTarget,
-					unscheduledUpdateHandle);
+			EventManager.scheduleTicks(0, PRI_LOW, EVT_FIFO, unscheduledUpdateTarget, unscheduledUpdateHandle);
 		}
 	}
 

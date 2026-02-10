@@ -969,7 +969,7 @@ public class JaamSimModel implements EventTimeListener {
 		if (retain)
 			ent.setFlag(Entity.FLAG_RETAINED);
 
-		ent.parent = parent;
+		ent.setParentInput(parent);
 		ent.setNameInput(name);
 		ent.setPrototype(proto);
 

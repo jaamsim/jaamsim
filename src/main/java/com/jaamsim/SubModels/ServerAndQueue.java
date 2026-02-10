@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.jaamsim.Thresholds.ExpressionThreshold;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -98,13 +97,6 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyVec3d(threshold, "Position", new Vec3d( 0.5d,  0.4d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(server,    "Position", new Vec3d( 0.0d, -0.4d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(end,       "Position", new Vec3d( 1.0d, -0.4d, 0.0d), DistanceUnit.class);
-	}
-
-	@Output(name = "MaxQueueLength",
-	 description = "The queue length at which the Threshold output closes.",
-	    sequence = 0)
-	public int getMaxQueueLength(double simTime) {
-		return (int) maxQueueLength.getNextSample(this, simTime);
 	}
 
 }

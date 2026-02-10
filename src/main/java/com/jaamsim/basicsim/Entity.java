@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2025 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import com.jaamsim.input.NamedExpression;
 import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.ParentEntityInput;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
@@ -123,6 +124,10 @@ public class Entity {
 	         exampleList = {"Conveyor1"})
 	protected final EntityNameInput nameInput;
 
+	@Keyword(description = "Parent entity for this entity.",
+	         exampleList = {"SimEntity1"})
+	protected final ParentEntityInput parentInput;
+
 	@Keyword(description = "A free-form string describing the object.",
 	         exampleList = {"'A very useful entity'"})
 	protected final StringInput desc;
@@ -153,7 +158,13 @@ public class Entity {
 	{
 		nameInput = new EntityNameInput("Name", KEY_INPUTS, "");
 		nameInput.setCallback(nameInputCallback);
+		nameInput.setOutput(false);
 		this.addInput(nameInput);
+
+		parentInput = new ParentEntityInput("Parent", KEY_INPUTS, null);
+		parentInput.setCallback(parentInputCallback);
+		parentInput.setOutput(false);
+		this.addInput(parentInput);
 
 		desc = new StringInput("Description", KEY_INPUTS, "");
 		this.addInput(desc);
@@ -220,6 +231,29 @@ public class Entity {
 	public void resetNameInput() {
 		nameInput.reset();
 		setLocalName(nameInput.getValue());
+	}
+
+	static final InputCallback parentInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			Entity newParent = (Entity) inp.getValue();
+			if (newParent == ent.parent)
+				return;
+			JaamSimModel simModel = ent.getJaamSimModel();
+			simModel.removeNamedEntity(ent);
+			ent.parent = newParent;
+			simModel.addNamedEntity(ent);
+		}
+	};
+
+	public void setParentInput(Entity newParent) throws InputErrorException {
+		if (parentInput.isDef()) {
+			parentInput.setInitialValue(newParent);
+			this.parent = newParent;
+			parentInput.setLocked(isGenerated());
+			return;
+		}
+		InputAgent.applyArgs(this, parentInput.getKeyword(), newParent.getName());
 	}
 
 	public boolean isCopyOf(Entity ent) {
@@ -359,6 +393,7 @@ public class Entity {
 	public void setInputsForDragAndDrop() {}
 
 	public void kill() {
+		//System.out.format("%s.kill%n", this);
 
 		// Remove the entity from the model
 		if (!isDead()) {
@@ -368,7 +403,6 @@ public class Entity {
 
 		// Kill the entity's clones
 		for (Entity clone : getCloneList()) {
-			clone.prototype = null;
 			clone.kill();
 		}
 
@@ -389,10 +423,16 @@ public class Entity {
 	 * Reverses the actions taken by the kill method.
 	 */
 	public void restore() {
+		//System.out.format("%s.restore%n", this);
 
 		// Restore the children before the parent entity
 		for (Entity ent : getChildren()) {
 			ent.restore();
+		}
+
+		// Restore the clones before the parent entity
+		for (Entity clone : getCloneList()) {
+			clone.restore();
 		}
 
 		// Restore the entity to the model
@@ -567,7 +607,8 @@ public class Entity {
 		// Apply the inputs based on the source entity
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq
-					|| sourceInput instanceof EntityNameInput)
+					|| sourceInput instanceof EntityNameInput
+					|| sourceInput instanceof ParentEntityInput)
 				continue;
 			String key = sourceInput.getKeyword();
 			try {
@@ -808,9 +849,7 @@ public class Entity {
 	 * Returns the parent entity for this entity
 	 */
 	public Entity getParent() {
-		if (parent != null)
-			return parent;
-		return simModel.getSimulation();
+		return parent;
 	}
 
 	/**
@@ -1179,12 +1218,22 @@ public class Entity {
 	}
 
 	private synchronized void addClone(Entity ent) {
+		// If the entity is dead, then it already has a hashmap of its clones
+		if (isDead())
+			return;
+
 		if (cloneList == null)
 			cloneList = new ArrayList<>();
 		cloneList.add(ent);
 	}
 
 	private synchronized boolean removeClone(Entity ent) {
+		//System.out.format("%s.removeClone(%s) - isDead=%s, cloneList=%s%n",
+		//		this, ent, isDead(), cloneList);
+		// If the entity is dead, then retain its hashmap of clones
+		if (isDead())
+			return false;
+
 		if (cloneList == null)
 			return false;
 		return cloneList.remove(ent);

@@ -62,7 +62,6 @@ public class NonStatExponentialDist extends Distribution {
 
 		scaleFactor = new SampleInput("ScaleFactor", KEY_INPUTS, 1.0d);
 		scaleFactor.setUnitType(DimensionlessUnit.class);
-		scaleFactor.setOutput(true);
 		this.addInput(scaleFactor);
 	}
 

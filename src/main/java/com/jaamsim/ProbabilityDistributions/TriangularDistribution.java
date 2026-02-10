@@ -42,7 +42,6 @@ public class TriangularDistribution extends Distribution {
 
 		modeInput = new SampleInput("Mode", KEY_INPUTS, 1.0d);
 		modeInput.setUnitType(UserSpecifiedUnit.class);
-		modeInput.setOutput(true);
 		this.addInput(modeInput);
 	}
 

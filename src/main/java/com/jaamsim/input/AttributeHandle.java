@@ -38,6 +38,15 @@ public class AttributeHandle extends ValueHandle {
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
+		if (value == null) {
+			try {
+				ExpResult res = ExpEvaluator.evaluateExpression(expression, ent, 0.0d);
+				return res.unitType;
+			}
+			catch (ExpError e) {
+				throw new ErrorException(ent, e);
+			}
+		}
 		return unitType;
 	}
 

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,6 +136,11 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		if (value == null || list.contains(value))
 			return;
 		list.add(value);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return Entity.class;
 	}
 
 }

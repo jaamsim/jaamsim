@@ -138,7 +138,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 
 		firstDowntime = new SampleInput("FirstDowntime", KEY_INPUTS, Double.NaN);
 		firstDowntime.setUnitType(TimeUnit.class);
-		firstDowntime.setOutput(true);
 		this.addInput(firstDowntime);
 
 		iatWorkingEntity = new EntityInput<>(StateEntity.class, "IntervalWorkingEntity", KEY_INPUTS, null);
@@ -152,7 +151,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		downtimeIATDistribution.setUnitType(TimeUnit.class);
 		downtimeIATDistribution.setRequired(true);
 		downtimeIATDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		downtimeIATDistribution.setOutput(true);
 		this.addInput(downtimeIATDistribution);
 		this.addSynonym(downtimeIATDistribution, "IAT");
 		this.addSynonym(downtimeIATDistribution, "TimeBetweenFailures");
@@ -161,7 +159,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		downtimeDurationDistribution.setUnitType(TimeUnit.class);
 		downtimeDurationDistribution.setRequired(true);
 		downtimeDurationDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		downtimeDurationDistribution.setOutput(true);
 		this.addInput(downtimeDurationDistribution);
 		this.addSynonym(downtimeDurationDistribution, "TimeToRepair");
 
@@ -171,12 +168,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		maxDowntimesPending = new SampleInput("MaxDowntimesPending", "Key Inputs", Double.POSITIVE_INFINITY);
 		maxDowntimesPending.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxDowntimesPending.setIntegerValue(true);
-		maxDowntimesPending.setOutput(true);
 		this.addInput(maxDowntimesPending);
 
 		completionTimeLimit = new SampleInput("CompletionTimeLimit", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		completionTimeLimit.setUnitType(TimeUnit.class);
-		completionTimeLimit.setOutput(true);
 		this.addInput(completionTimeLimit);
 
 		ArrayList<ResourceProvider> resDef = new ArrayList<>();

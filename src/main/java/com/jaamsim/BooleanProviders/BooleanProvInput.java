@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2022-2023 JaamSim Software Inc.
+ * Copyright (C) 2022-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class BooleanProvInput extends Input<BooleanProvider> {
 
@@ -111,6 +113,22 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 
 	public boolean isConstant() {
 		return (value instanceof BooleanProvConstant);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		return (V) (Boolean) getNextBoolean(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return Boolean.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
 	}
 
 }

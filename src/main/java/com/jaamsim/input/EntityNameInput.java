@@ -42,7 +42,7 @@ public class EntityNameInput extends Input<String> {
 
 			// Get the new absolute name
 			String name = localName;
-			if (thisEnt.getParent() != thisEnt.getSimulation())
+			if (thisEnt.getParent() != null)
 				name = thisEnt.getParent().getName() + "." + localName;
 
 			// Check that the new absolute name does not conflict with another entity

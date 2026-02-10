@@ -57,18 +57,15 @@ public abstract class AbstractUnpack extends LinkedService {
 	{
 		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, "");
 		matchForEntities.setUnitType(DimensionlessUnit.class);
-		matchForEntities.setOutput(true);
 		this.addInput(matchForEntities);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, "");
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
-		containerStateAssignment.setOutput(true);
 		this.addInput(containerStateAssignment);
 	}
 

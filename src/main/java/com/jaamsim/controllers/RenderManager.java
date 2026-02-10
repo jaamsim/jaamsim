@@ -1854,7 +1854,7 @@ public class RenderManager implements DragSourceListener {
 		// Set the sub-model for this location
 		Entity parent = null;
 		Region region = getRegion(windowID, x, y);
-		if (region != null && region.getParent() != simulation) {
+		if (region != null && region.getParent() != null) {
 			parent = region.getParent();
 		}
 

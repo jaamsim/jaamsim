@@ -98,12 +98,10 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setIntegerValue(true);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		priority.setOutput(true);
 		this.addInput(priority);
 
 		match = new StringProvInput("Match", KEY_INPUTS, "");
 		match.setUnitType(DimensionlessUnit.class);
-		match.setOutput(true);
 		this.addInput(match);
 
 		fifo = new BooleanProvInput("FIFO", KEY_INPUTS, true);
@@ -118,19 +116,16 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 		spacingInput = new SampleInput("Spacing", FORMAT, 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
-		spacingInput.setOutput(true);
 		this.addInput(spacingInput);
 
 		maxPerLineInput = new SampleInput("MaxPerLine", FORMAT, Double.POSITIVE_INFINITY);
 		maxPerLineInput.setValidRange( 1, Double.POSITIVE_INFINITY);
 		maxPerLineInput.setIntegerValue(true);
-		maxPerLineInput.setOutput(true);
 		this.addInput(maxPerLineInput);
 
 		maxRows = new SampleInput("MaxRows", FORMAT, Double.POSITIVE_INFINITY);
 		maxRows.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxRows.setIntegerValue(true);
-		maxRows.setOutput(true);
 		this.addInput(maxRows);
 
 		showEntities = new BooleanProvInput("ShowEntities", FORMAT, true);

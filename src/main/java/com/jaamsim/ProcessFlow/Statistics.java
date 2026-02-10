@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,12 +97,10 @@ public class Statistics extends LinkedComponent {
 
 		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, Double.NaN);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
-		sampleValue.setOutput(true);
 		this.addInput(sampleValue);
 
 		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, Double.NaN);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
-		histogramBinWidth.setOutput(true);
 		this.addInput(histogramBinWidth);
 
 		targetPercentiles = new SampleListInput("TargetPercentiles", KEY_INPUTS, null);
@@ -327,18 +325,6 @@ public class Statistics extends LinkedComponent {
 			return new double[0];
 		}
 		return freq.getBinCumulativeFractions();
-	}
-
-	@Output(name = "TargetPercentiles",
-	 description = "The percentiles specified by the 'TargetPercentiles' input.",
-	  reportable = true,
-	    sequence = 11)
-	public double[] getTargetPercentiles(double simTime) {
-		double[] ret = new double[targetPercentiles.getListSize()];
-		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
-			ret[i] = targetPercentiles.getNextSample(i, this, simTime);
-		}
-		return ret;
 	}
 
 	@Output(name = "PercentileValues",

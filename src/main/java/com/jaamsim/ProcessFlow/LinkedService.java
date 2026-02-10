@@ -135,7 +135,6 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 		match = new StringProvInput("Match", KEY_INPUTS, "");
 		match.setUnitType(DimensionlessUnit.class);
-		match.setOutput(true);
 		this.addInput(match);
 
 		selectionCondition = new ExpressionInput("SelectionCondition", KEY_INPUTS, null);

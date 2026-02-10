@@ -47,13 +47,11 @@ public class NegativeBinomialDistribution extends Distribution {
 		successfulTrials = new SampleInput("SuccessfulTrials", KEY_INPUTS, 1.0d);
 		successfulTrials.setUnitType(DimensionlessUnit.class);
 		successfulTrials.setValidRange(1.0d, Double.POSITIVE_INFINITY);
-		successfulTrials.setOutput(true);
 		this.addInput(successfulTrials);
 
 		probability = new SampleInput("Probability", KEY_INPUTS, 1.0d);
 		probability.setUnitType(DimensionlessUnit.class);
 		probability.setValidRange(0.0d, 1.0d);
-		probability.setOutput(true);
 		this.addInput(probability);
 	}
 
