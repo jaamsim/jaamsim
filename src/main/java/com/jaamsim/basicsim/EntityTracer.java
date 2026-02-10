@@ -53,7 +53,7 @@ public void startUp() {
 	if (entities.getValue().isEmpty() || startTime.getNextSample(this, 0.0d) == 0.0d)
 		return;
 
-	EventManager.waitSeconds(startTime.getNextSample(this, 0.0d), 0, EVT_LIFO, null);
+	EventManager.waitSeconds(startTime.getNextSample(this, 0.0d), PRI_HIGHEST, EVT_LIFO, null);
 	for (Entity each : entities.getValue())
 		each.setTraceFlag();
 }
