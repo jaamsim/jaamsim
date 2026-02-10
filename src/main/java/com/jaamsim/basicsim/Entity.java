@@ -624,7 +624,8 @@ public class Entity {
 		// Apply the inputs based on the source entity
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq
-					|| sourceInput instanceof EntityNameInput)
+					|| sourceInput instanceof EntityNameInput
+					|| sourceInput instanceof ParentEntityInput)
 				continue;
 			String key = sourceInput.getKeyword();
 			try {
