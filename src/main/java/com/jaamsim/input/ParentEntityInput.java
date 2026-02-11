@@ -99,7 +99,7 @@ public class ParentEntityInput extends EntityInput<Entity> {
 	@Override
 	public void reset(Entity ent) {
 		String localName = ent.getLocalName();
-		if (ent.getJaamSimModel().getEntity(localName) != null)
+		if (ent.getParent() != null && ent.getJaamSimModel().getEntity(localName) != null)
 			throw new InputErrorException("Entity named %s already exists.%n"
 					+ "Change the entity's name before deleting its 'Parent' input.",
 					localName);

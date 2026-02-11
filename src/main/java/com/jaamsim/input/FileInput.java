@@ -240,6 +240,8 @@ public class FileInput extends Input<URI> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		if (getValue() == null)
+			return (V) "";
 		File file = new File(getValue());
 		return (V) file.getPath();
 	}

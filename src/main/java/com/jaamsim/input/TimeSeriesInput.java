@@ -143,7 +143,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 
 	@Override
 	public Class<?> getReturnType() {
-		return double.class;
+		return Double.class;
 	}
 
 	@Override

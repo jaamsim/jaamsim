@@ -69,6 +69,7 @@ public class TestSimulation {
 			for (Input<?> inp : ent.getEditableInputs()) {
 				// This is a hack to make the in non-default so we hit updateForInput()
 				inp.setTokens(kw);
+				inp.setLocked(false);
 				InputAgent.apply(ent, inp, kw);
 			}
 
