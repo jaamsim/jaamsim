@@ -17,6 +17,7 @@
  */
 package com.jaamsim.Graphics;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -60,6 +61,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
@@ -71,7 +73,7 @@ import com.jogamp.newt.event.KeyEvent;
  * Extends the basic functionality of entity in order to have access to the basic system
  * components like the eventManager.
  */
-public class DisplayEntity extends Entity {
+public class DisplayEntity extends Entity implements DragAndDropable {
 
 	@Keyword(description = "The location of the object in {x, y, z} coordinates.",
 	         exampleList = {"-3.922 -1.830 0.000 m"})
@@ -159,6 +161,8 @@ public class DisplayEntity extends Entity {
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 	}
+
+	public static final String LIBRARY_NAME = "User-Defined Objects";
 
 	{
 		positionInput = new Vec3dInput("Position", GRAPHICS, new Vec3d());
@@ -1541,6 +1545,28 @@ public class DisplayEntity extends Entity {
 			ent = ent.getParent();
 		}
 		return null;
+	}
+
+	// DragAndDropable interface
+
+	@Override
+	public Class<? extends Entity> getJavaClass() {
+		return getClass();
+	}
+
+	@Override
+	public boolean isDragAndDrop() {
+		return !isClone();
+	}
+
+	@Override
+	public String getPaletteName() {
+		return LIBRARY_NAME;
+	}
+
+	@Override
+	public BufferedImage getIconImage() {
+		return getObjectType().getIconImage();
 	}
 
 	////////////////////////////////////////////////////////////////////////

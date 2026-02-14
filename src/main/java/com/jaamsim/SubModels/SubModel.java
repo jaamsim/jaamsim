@@ -16,7 +16,6 @@
  */
 package com.jaamsim.SubModels;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
@@ -27,9 +26,8 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.ui.DragAndDropable;
 
-public class SubModel extends CompoundEntity implements DragAndDropable {
+public class SubModel extends CompoundEntity {
 
 	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.")
 	protected final EntityInput<SubModel> prototypeSubModel;
@@ -43,8 +41,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 	protected ArrayList<PassThroughData> keywordList;
 	private ArrayList<ExpressionInput> newInputList;
-
-	public static final String PALETTE_NAME = "Pre-built SubModels";
 
 	{
 		prototypeSubModel = new EntityInput<>(SubModel.class, "Prototype", KEY_INPUTS, null);
@@ -232,26 +228,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 					protoComp.getClass(), protoComp, name, this, true, true);
 			//System.out.format("protoComp=%s, comp=%s%n", protoComp, comp);
 		}
-	}
-
-	@Override
-	public Class<? extends Entity> getJavaClass() {
-		return SubModel.class;
-	}
-
-	@Override
-	public boolean isDragAndDrop() {
-		return !isClone();
-	}
-
-	@Override
-	public String getPaletteName() {
-		return PALETTE_NAME;
-	}
-
-	@Override
-	public BufferedImage getIconImage() {
-		return getObjectType().getIconImage();
 	}
 
 }
