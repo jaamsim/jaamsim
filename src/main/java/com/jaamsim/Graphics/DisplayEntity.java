@@ -694,7 +694,11 @@ public class DisplayEntity extends Entity {
 	}
 
 	public DisplayEntity getRelativeEntity() {
-		return relativeEntity.getValue();
+		return getRelativeEntity(0.0d);
+	}
+
+	public DisplayEntity getRelativeEntity(double simTime) {
+		return relativeEntity.getNextEntity(this, simTime);
 	}
 
 	public ArrayList<String> getRelativeEntityOptions() {

@@ -20,6 +20,9 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.EntityProviders.EntityProvConstant;
+import com.jaamsim.EntityProviders.EntityProvInput;
+import com.jaamsim.EntityProviders.EntityProvider;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
@@ -27,18 +30,22 @@ import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
-public class RelativeEntityInput extends EntityInput<DisplayEntity> {
-	public RelativeEntityInput(String key, String cat, DisplayEntity def) {
+public class RelativeEntityInput extends EntityProvInput<DisplayEntity> {
+	public RelativeEntityInput(String key, String cat, EntityProvider<DisplayEntity> def) {
 		super(DisplayEntity.class, key, cat, def);
 	}
 
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
-		Input.assertCount(kw, 1);
-		DisplayEntity ent = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), DisplayEntity.class);
-		if (isCircular(thisEnt, ent))
-			throw new InputErrorException("The assignment of %s to RelativeEntity would create a circular loop.", ent);
-		value = ent;
+		EntityProvider<DisplayEntity> temp = Input.parseEntityProvider(kw, thisEnt, DisplayEntity.class);
+		if (temp instanceof EntityProvConstant) {
+			DisplayEntity ent = temp.getNextEntity(thisEnt, 0.0d);
+			if (isCircular(thisEnt, ent)) {
+				throw new InputErrorException("The assignment of %s to RelativeEntity would create a circular loop.", ent);
+			}
+		}
+		setValid(true);
+		value = temp;
 	}
 
 	private static boolean isCircular(Entity thisEnt, DisplayEntity e) {
