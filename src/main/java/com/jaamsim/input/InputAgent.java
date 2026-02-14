@@ -726,7 +726,7 @@ public class InputAgent {
 				}
 
 				// Sort the rest alphabetically by palette name
-				return a.getPaletteName().compareTo(b.getPaletteName());
+				return a.getLibraryName().compareTo(b.getLibraryName());
 			}
 		});
 
@@ -1187,7 +1187,7 @@ public class InputAgent {
 	}
 
 	public static boolean isGraphicsEntity(Entity ent) {
-		String pal = ent.getObjectType().getPaletteName();
+		String pal = ent.getObjectType().getLibraryName();
 		return Arrays.asList(GRAPHICS_PALETTES).contains(pal);
 	}
 
@@ -1536,8 +1536,8 @@ public class InputAgent {
 			Class<? extends Entity> class1 = ent1.getClass();
 			ObjectType ot0 = ent0.getJaamSimModel().getObjectTypeForClass(class0);
 			ObjectType ot1 = ent1.getJaamSimModel().getObjectTypeForClass(class1);
-			String pal0 = ot0.getPaletteName();
-			String pal1 = ot1.getPaletteName();
+			String pal0 = ot0.getLibraryName();
+			String pal1 = ot1.getLibraryName();
 
 			// If the levels are the same, then sort by graphics vs non-graphics palettes
 			boolean isGraf0 = Arrays.asList(GRAPHICS_PALETTES).contains(pal0);

@@ -131,7 +131,7 @@ public class ObjectType extends Entity implements DragAndDropable {
 	}
 
 	@Override
-	public String getPaletteName() {
+	public String getLibraryName() {
 		String s = palette.getValue();
 		if (s != null)
 			return s;

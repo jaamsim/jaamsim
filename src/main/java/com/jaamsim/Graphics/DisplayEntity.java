@@ -1560,7 +1560,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 	}
 
 	@Override
-	public String getPaletteName() {
+	public String getLibraryName() {
 		return LIBRARY_NAME;
 	}
 

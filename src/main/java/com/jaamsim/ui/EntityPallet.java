@@ -188,7 +188,7 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 			if (!type.isDragAndDrop())
 				continue;
 
-			String pName = type.getPaletteName();
+			String pName = type.getLibraryName();
 			DefaultMutableTreeNode palNode = paletteNodes.get(pName);
 			if (palNode == null) {
 				palNode = new DefaultMutableTreeNode(pName, true);

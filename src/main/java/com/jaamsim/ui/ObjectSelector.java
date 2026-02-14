@@ -247,7 +247,7 @@ public class ObjectSelector extends FrameBox {
 				final ObjectType type = simModel.getObjectTypes().get(i);
 				if (type == null)
 					continue;
-				String paletteName = type.getPaletteName();
+				String paletteName = type.getLibraryName();
 				String typeName = type.getName();
 
 				// Find or create the node for the palette
@@ -306,7 +306,7 @@ public class ObjectSelector extends FrameBox {
 				final ObjectType type = ent.getObjectType();
 				if (type == null)
 					continue;
-				String paletteName = type.getPaletteName();
+				String paletteName = type.getLibraryName();
 				String typeName = type.getName();
 
 				// Find the palette node for this entity
@@ -447,7 +447,7 @@ public class ObjectSelector extends FrameBox {
 		final ObjectType type = ent.getObjectType();
 		if (type == null)
 			return null;
-		DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), root);
+		DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getLibraryName(), root);
 		if (paletteNode == null)
 			return null;
 		DefaultMutableTreeNode typeNode = getNodeFor_In(type.getName(), paletteNode);
