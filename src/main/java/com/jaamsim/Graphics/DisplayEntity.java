@@ -590,6 +590,8 @@ public class DisplayEntity extends Entity {
 
 	public Region getCurrentRegion() {
 		synchronized (position) {
+			if (currentRegion == null && getParent() instanceof DisplayEntity)
+				return ((DisplayEntity) getParent()).getCurrentRegion();
 			return currentRegion;
 		}
 	}
