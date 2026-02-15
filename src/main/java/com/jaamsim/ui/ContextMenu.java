@@ -43,6 +43,7 @@ import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Log;
 import com.jaamsim.basicsim.Simulation;
@@ -306,6 +307,9 @@ public class ContextMenu {
 						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity", "parent")));
 					}
 					ent.getJaamSimModel().storeAndExecute(new ListCommand(cmdList));
+					GUIListener gui = simModel.getGUIListener();
+					if (gui != null)
+						gui.updateModelBuilder();
 				}
 			} );
 			setParentMenu.add(item);
