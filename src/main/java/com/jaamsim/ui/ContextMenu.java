@@ -185,7 +185,23 @@ public class ContextMenu {
 		}
 		menu.add( pasteMenuItem );
 
-		// 5) Delete
+		// 5) Paste Clone
+		JMenuItem pasteCloneMenuItem = new JMenuItem( "Paste Clone" );
+		pasteCloneMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().pasteCloneAction(ent);
+				GUIFrame.getInstance().updateModelBuilder();
+			}
+		} );
+		if (!(ent instanceof EditableText && ((EditableText) ent).isEditMode())
+				&& GUIFrame.getInstance().getEntityFromClipboard() == null) {
+			pasteCloneMenuItem.setEnabled(false);
+		}
+		menu.add( pasteCloneMenuItem );
+
+		// 6) Delete
 		JMenuItem deleteMenuItem = new JMenuItem( "Delete" );
 		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_DELETE, 0));

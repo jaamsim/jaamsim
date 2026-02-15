@@ -4814,7 +4814,14 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			updateUI();
 			return;
 		}
-		pasteEntityFromClipboard();
+		pasteEntityFromClipboard(false);
+	}
+
+	public void pasteCloneAction(Entity ent) {
+		if (ent instanceof EditableText && ((EditableText) ent).isEditMode()) {
+			return;
+		}
+		pasteEntityFromClipboard(true);
 	}
 
 	public void deleteAction(Entity ent) {
@@ -4862,11 +4869,15 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		return getJaamSimModel().getNamedEntity(name);
 	}
 
-	private void pasteEntityFromClipboard() {
+	private void pasteEntityFromClipboard(boolean isClone) {
 		Entity ent = getEntityFromClipboard();
 		JaamSimModel sim = getJaamSimModel();
 		if (ent == null || ent == sim.getSimulation())
 			return;
+
+		Entity proto = null;
+		if (isClone)
+			proto = ent;
 
 		// Identify the region for the new entity
 		Region region = null;
@@ -4883,22 +4894,26 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		int length = otName.length();
 		String localName = ent.getLocalName();
 		String copyName = localName;
-		String sep = "_Copy";
-		if (localName.length() >= length && localName.substring(0, length).equals(otName)) {
-			String str = localName.substring(length);
-			if (str.isEmpty() || Input.isInteger(str)) {
-				copyName = otName;
-				sep = "";
+		String sep = "";
+		if (!isClone) {
+			sep = "_Copy";
+			if (localName.length() >= length && localName.substring(0, length).equals(otName)) {
+				String str = localName.substring(length);
+				if (str.isEmpty() || Input.isInteger(str)) {
+					copyName = otName;
+					sep = "";
+				}
 			}
 		}
 		if (region != null && region.getParent() != null)
 			copyName = region.getParent().getName() + "." + copyName;
 		copyName = InputAgent.getUniqueName(sim, copyName, sep);
-		sim.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));
+		sim.storeAndExecute(new DefineCommand(sim, ent.getClass(), proto, copyName));
 
 		// Copy the inputs
 		Entity copiedEnt = sim.getNamedEntity(copyName);
-		copiedEnt.copyInputs(ent);
+		if (!isClone)
+			copiedEnt.copyInputs(ent);
 
 		// Set the region
 		if (region != null)
@@ -4939,7 +4954,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 
 		// Copy the children
-		copyChildren(ent, copiedEnt);
+		if (!isClone)
+			copyChildren(ent, copiedEnt);
 
 		// If the entity has been copied to a SubModel, update its clones
 		if (copiedEnt.getParent() instanceof SubModel) {
