@@ -1556,7 +1556,22 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 	@Override
 	public boolean isDragAndDrop() {
-		return !isClone();
+
+		// Cannot be a clone or a child
+		if (isClone() || getParent() != null)
+			return false;
+
+		// Already has one or more clones
+		if (hasClone())
+			return true;
+
+		// Has at least one child that is not an EntityLabel
+		for (Entity child : getChildren()) {
+			if (child instanceof EntityLabel)
+				continue;
+			return true;
+		}
+		return false;
 	}
 
 	@Override
