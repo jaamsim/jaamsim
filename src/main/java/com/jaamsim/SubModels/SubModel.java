@@ -97,22 +97,6 @@ public class SubModel extends CompoundEntity {
 		update();
 	}
 
-	@Override
-	public void kill() {
-		super.kill();
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui != null)
-			gui.updateModelBuilder();
-	}
-
-	@Override
-	public void restore() {
-		super.restore();
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui != null)
-			gui.updateModelBuilder();
-	}
-
 	/**
 	 * Updates the added keywords to match the specified list.
 	 * @param newDataList - data for the new list of added keywords

@@ -436,6 +436,28 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		resetGraphics();
 	}
 
+	@Override
+	public void kill() {
+		super.kill();
+		if (isDragAndDrop()) {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null) {
+				gui.updateModelBuilder();
+			}
+		}
+	}
+
+	@Override
+	public void restore() {
+		super.restore();
+		if (isDragAndDrop()) {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null) {
+				gui.updateModelBuilder();
+			}
+		}
+	}
+
 	public void updateForPointsInput(ArrayList<Vec3d> pts) {
 		setPoints(pts);
 
