@@ -303,7 +303,7 @@ public class ContextMenu {
 					}
 					else {
 						cmdList.add(new KeywordCommand(ent, InputAgent.formatArgs("Parent", parentName)));
-						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity", parentName)));
+						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity", "parent")));
 					}
 					ent.getJaamSimModel().storeAndExecute(new ListCommand(cmdList));
 				}
