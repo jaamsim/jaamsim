@@ -1,5 +1,6 @@
 Define ObjectType {
 	SimEntity
+	SimShape
 	EntityLauncher
 	EntityGenerator
 	EntitySink
@@ -77,6 +78,7 @@ StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png'   }  Trans
 Define PolylineModel { EntityDelayModel  EntityConveyorModel }
 
 SimEntity               JavaClass { com.jaamsim.ProcessFlow.SimEntity             }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png'       } DefaultSize { 0.5 0.5 0.5 m }
+SimShape                JavaClass { com.jaamsim.ProcessFlow.SimShape              }  Palette { 'Process Flow' }  DefaultDisplayModel { Circle                   } IconFile { '<res>/images/SimShape-24.png'        } DefaultSize { 0.5 0.5 0.5 m }
 EntityLauncher          JavaClass { com.jaamsim.ProcessFlow.EntityLauncher        }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLauncherIconModel  } IconFile { '<res>/images/EntityLauncher-24.png'  }
 EntityGenerator         JavaClass { com.jaamsim.ProcessFlow.EntityGenerator       }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
 EntitySink              JavaClass { com.jaamsim.ProcessFlow.EntitySink            }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            } IconFile { '<res>/images/Sink-24.png'            }
@@ -104,7 +106,8 @@ RemoveFrom              JavaClass { com.jaamsim.ProcessFlow.RemoveFrom          
 EntityLogger            JavaClass { com.jaamsim.ProcessFlow.EntityLogger          }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLoggerIconModel    } IconFile { '<res>/images/EntityLogger-24.png'    }
 Statistics              JavaClass { com.jaamsim.ProcessFlow.Statistics            }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      } IconFile { '<res>/images/Statistics-24.png'      }
 
-SimEntity          Description { 'The basic entity for use in a process flow type model.' }
+SimEntity          Description { 'Basic 3D entity for use in a process flow type model.' }
+SimShape           Description { 'Basic 2D entity for use in a process flow type model.' }
 EntityLauncher     Description { 'Creates a clone of a prototype entity when clicked by the user.' }
 EntityGenerator    Description { 'Creates clones of a prototype entity at specified intervals.' }
 EntitySink         Description { 'Destroys any entity it receives.' }
