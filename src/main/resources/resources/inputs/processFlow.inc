@@ -105,8 +105,8 @@ EntityLogger            JavaClass { com.jaamsim.ProcessFlow.EntityLogger        
 Statistics              JavaClass { com.jaamsim.ProcessFlow.Statistics            }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      } IconFile { '<res>/images/Statistics-24.png'      }
 
 SimEntity          Description { 'The basic entity for use in a process flow type model.' }
-EntityLauncher     Description { 'Create a copy of a prototype entity when clicked by the user.' }
-EntityGenerator    Description { 'Creates copies of a prototype entity at specified intervals.' }
+EntityLauncher     Description { 'Creates a clone of a prototype entity when clicked by the user.' }
+EntityGenerator    Description { 'Creates clones of a prototype entity at specified intervals.' }
 EntitySink         Description { 'Destroys any entity it receives.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
 Queue              Description { 'Stores received entities until they are needed.' }
