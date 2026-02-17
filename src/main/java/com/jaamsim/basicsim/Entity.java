@@ -87,7 +87,7 @@ public class Entity {
 	Entity parent;
 
 	Entity prototype;
-	ArrayList<Entity> cloneList;  // registered clones
+	ArrayList<Entity> cloneList;  // all registered, unregistered, and pooled clones
 	ArrayList<Entity> clonePool;  // generated clones available for re-use
 	private static final int MAX_POOL = 100;
 
@@ -410,7 +410,7 @@ public class Entity {
 		clonePool = null;
 
 		// If the entity is a clone, remove it from its prototype's list
-		if (prototype != null && isRegistered())
+		if (prototype != null)
 			prototype.removeClone(this);
 
 		// Kill the entity's children
@@ -439,7 +439,7 @@ public class Entity {
 		simModel.restoreInstance(this);
 		this.clearFlag(Entity.FLAG_DEAD);
 
-		if (prototype != null && isRegistered())
+		if (prototype != null)
 			prototype.addClone(this);
 	}
 
@@ -1180,8 +1180,7 @@ public class Entity {
 
 		// Record the clone with its prototype
 		prototype = proto;
-		if (isRegistered())
-			prototype.addClone(this);
+		prototype.addClone(this);
 
 		// Loop through the inputs for this entity
 		for (int i = 0; i < inpList.size(); i++) {
@@ -1246,15 +1245,11 @@ public class Entity {
 	}
 
 	public ArrayList<Entity> getAllClones() {
-		ArrayList<Entity> ret = getCloneList();
-
-		// Include the generated entities that have not been registered
-		if (simModel.isStarted()) {
-			for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-				if (ent.getPrototype() != this || ent.isRegistered() || ent.isPooled())
-					continue;
-				ret.add(ent);
-			}
+		ArrayList<Entity> ret = new ArrayList<>(getCloneList().size());
+		for (Entity ent : getCloneList()) {
+			if (ent.isPooled())
+				continue;
+			ret.add(ent);
 		}
 		return ret;
 	}
