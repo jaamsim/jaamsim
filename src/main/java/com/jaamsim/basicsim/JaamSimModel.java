@@ -1011,6 +1011,9 @@ public class JaamSimModel implements EventTimeListener {
 			return;
 		}
 
+		if (!ent.isRegistered())
+			return;
+
 		synchronized (namedEntities) {
 			if (namedEntities.get(ent.entityName) != null)
 				throw new ErrorException("Entity name: %s is already in use.", ent.entityName);
@@ -1024,6 +1027,9 @@ public class JaamSimModel implements EventTimeListener {
 			return;
 		}
 
+		if (!ent.isRegistered())
+			return;
+
 		synchronized (namedEntities) {
 			if (namedEntities.remove(ent.entityName) != ent)
 				throw new ErrorException("Named Entities Internal Consistency error");
@@ -1036,15 +1042,10 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param newName - new local name for the entity
 	 */
 	final void renameEntity(Entity ent, String newName) {
-		if (!ent.isRegistered()) {
-			ent.entityName = newName;
-		}
-		else {
-			if (ent.entityName != null)
-				removeNamedEntity(ent);
-			ent.entityName = newName;
-			addNamedEntity(ent);
-		}
+		if (ent.entityName != null)
+			removeNamedEntity(ent);
+		ent.entityName = newName;
+		addNamedEntity(ent);
 
 		if (gui != null) {
 			gui.updateObjectSelector(ent);
@@ -1168,8 +1169,7 @@ public class JaamSimModel implements EventTimeListener {
 		synchronized (namedEntities) {
 			validateEntList();
 			numLiveEnts++;
-			if (e.isRegistered())
-				addNamedEntity(e);
+			addNamedEntity(e);
 
 			// Scan through the linked list to find the place to insert this entity
 			// This is slow, but should only happen due to user actions
@@ -1201,8 +1201,7 @@ public class JaamSimModel implements EventTimeListener {
 		synchronized (namedEntities) {
 			validateEntList();
 			numLiveEnts--;
-			if (e.isRegistered())
-				removeNamedEntity(e);
+			removeNamedEntity(e);
 
 			EntityListNode listNode = e.listNode;
 
