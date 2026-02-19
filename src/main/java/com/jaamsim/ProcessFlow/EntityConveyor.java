@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2025 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +84,12 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	                     + "the path.")
 	private final BooleanProvInput rotateEntities;
 
+	@Keyword(description = "If TRUE, the entities are aligned with their back-end at their "
+	                     + "position on the conveyor. "
+	                     + "This input should be set to TRUE for an accumulating conveyor that "
+	                     + "carries entities of differing lengths.")
+	private final BooleanProvInput alignEntities;
+
 	@Keyword(description = "The width of the conveyor in pixels.",
 	         exampleList = {"1"})
 	private final SampleInput widthInput;
@@ -145,6 +151,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		rotateEntities = new BooleanProvInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
 
+		alignEntities = new BooleanProvInput("AlignEntities", FORMAT, false);
+		this.addInput(alignEntities);
+
 		widthInput = new SampleInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Double.POSITIVE_INFINITY);
 		widthInput.setIntegerValue(true);
@@ -191,6 +200,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	public boolean isRotateEntities(double simTime) {
 		return rotateEntities.getNextBoolean(this, simTime);
+	}
+
+	public boolean isAlignEntities(double simTime) {
+		return alignEntities.getNextBoolean(this, simTime);
 	}
 
 	private static class ConveyorEntry {
@@ -512,7 +525,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 			convPos = Math.max(convPos, 0.0d);
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), convPos);
-			if (isAccumulating()) {
+			if (isAlignEntities(simTime)) {
 				Vec3d alignment = entry.entity.getAlignment();
 				alignment.x = -0.5d;
 				entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
