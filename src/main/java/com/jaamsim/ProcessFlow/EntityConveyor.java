@@ -27,6 +27,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.InputErrorException;
@@ -43,7 +44,11 @@ import com.jaamsim.units.TimeUnit;
  */
 public class EntityConveyor extends LinkedService implements LineEntity {
 
-	@Keyword(description = "The travel time for the conveyor.",
+	@Keyword(description = "The travel time for the conveyor. "
+	                     + "If value returned by an expression input changes during the "
+	                     + "simulation run, the new value will not be used until an entity "
+	                     + "arrives or departs from the conveyor, or when an update is triggered "
+	                     + "by an object in the 'WatchList' input.",
 	         exampleList = {"10.0 s"})
 	private final SampleInput travelTimeInput;
 
@@ -113,7 +118,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);
 		match.setHidden(true);
-		watchList.setHidden(true);
 		processPosition.setHidden(true);
 		forcedMaintenanceList.setHidden(true);
 		forcedBreakdownList.setHidden(true);
@@ -192,6 +196,13 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	public void startUp() {
 		super.startUp();
 		presentTravelTime = travelTimeInput.getNextSample(this, 0.0);
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		double simTime = EventManager.simSeconds();
+		updateProgress();
+		updateTravelTime(simTime);
 	}
 
 	public boolean isAccumulating() {
