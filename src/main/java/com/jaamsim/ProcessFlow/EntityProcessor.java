@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2025 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	public void startUp() {
 		super.startUp();
 
-		if (capacity.getValue() instanceof SampleConstant)
+		if (!getWatchList().isEmpty() || capacity.getValue() instanceof SampleConstant)
 			return;
 
 		// Track any changes in capacity
