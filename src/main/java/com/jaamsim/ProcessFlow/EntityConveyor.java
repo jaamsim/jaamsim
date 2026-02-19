@@ -560,6 +560,17 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		return readyForNext;
 	}
 
+	@Output(name = "PresentTravelTime",
+	 description = "Returns the travel time that is being used at present for the conveyor. "
+	             + "This time can differ from the value for the TravelTime input if the conveyor "
+	             + "has not been updated by the arrival or exit of an entity, or been triggered "
+	             + "by an entry in its WatchList.",
+	    unitType = TimeUnit.class,
+	    sequence = 3)
+	public double getPresentTravelTime(double simTime) {
+		return presentTravelTime;
+	}
+
 	@Override
 	// Delete 'MatchValue' output
 	public String getMatchValue(double simTime) {
