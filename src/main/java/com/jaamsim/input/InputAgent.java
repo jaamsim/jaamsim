@@ -947,12 +947,14 @@ public class InputAgent {
 				continue;
 			if (ent instanceof ObjectType || ent.getObjectType() == null)
 				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
-					&& ((EntityLabel) ent).isDefault())
-				continue;
-			if (ent.getParent() != null && ent.getPrototype() != null
-					&& ent.getParent().getPrototype() == ent.getPrototype().getParent())
-				continue;
+			if (ent instanceof EntityLabel) {
+				EntityLabel label = (EntityLabel) ent;
+				if (!label.getShowInput() && label.isDefault())
+					continue;
+				if (label.getParent() != null && label.getPrototype() != null
+					&& label.getParent().getPrototype() == label.getPrototype().getParent())
+					continue;
+			}
 			newEntities.add(ent);
 		}
 		Collections.sort(newEntities, uiEntitySortOrder);
