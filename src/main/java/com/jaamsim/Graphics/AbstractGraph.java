@@ -630,4 +630,9 @@ public abstract class AbstractGraph extends DisplayEntity {
 		secondarySeries.get(i).lineWidth = width;
 	}
 
+	@Override
+	public boolean canLabel() {
+		return false;
+	}
+
 }

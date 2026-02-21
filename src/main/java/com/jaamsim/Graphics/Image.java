@@ -34,4 +34,9 @@ public class Image extends AbstractShape {
 
 	public Image() {}
 
+	@Override
+	public boolean canLabel() {
+		return false;
+	}
+
 }

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,6 +155,11 @@ public class Region extends DisplayEntity {
 		Transform trans = new Transform();
 		this.getRegionTransForVectors().inverse(trans);
 		return trans;
+	}
+
+	@Override
+	public boolean canLabel() {
+		return false;
 	}
 
 }

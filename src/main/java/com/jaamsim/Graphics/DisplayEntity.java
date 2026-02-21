@@ -508,6 +508,14 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 	}
 
 	/**
+	 * Returns whether the object is eligible for automatic labeling, when activated.
+	 * @return true if eligible for labeling
+	 */
+	public boolean canLabel() {
+		return isRegistered() && !getName().equals("XY-Grid") && !getName().equals("XYZ-Axis");
+	}
+
+	/**
 	 * Restores the initial appearance of this entity.
 	 */
 	public void resetGraphics() {
