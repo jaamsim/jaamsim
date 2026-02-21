@@ -408,7 +408,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 		// Add a label if required
 		if (getSimulation() != null && getSimulation().isShowLabels()
-				&& EntityLabel.canLabel(this)) {
+				&& canLabel()) {
 			EntityLabel.showTemporaryLabel(this);
 		}
 	}

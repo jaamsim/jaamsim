@@ -1944,7 +1944,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	public void showTemporaryLabels() {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
-			if (!EntityLabel.canLabel(ent))
+			if (!ent.canLabel())
 				continue;
 			EntityLabel.showTemporaryLabel(ent);
 		}

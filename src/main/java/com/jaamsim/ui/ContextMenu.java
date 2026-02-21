@@ -274,7 +274,7 @@ public class ContextMenu {
 				EntityLabel.showLabel(ent, showLabelMenuItem.isSelected());
 			}
 		} );
-		showLabelMenuItem.setEnabled(EntityLabel.canLabel(ent));
+		showLabelMenuItem.setEnabled(ent.canLabel());
 		menu.add( showLabelMenuItem );
 
 		// 3) Set Parent and RelativeEntity

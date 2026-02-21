@@ -234,10 +234,6 @@ public class EntityLabel extends TextBasics {
 		}
 	}
 
-	public static boolean canLabel(DisplayEntity ent) {
-		return ent.canLabel();
-	}
-
 	@Override
 	public boolean isDefault() {
 		if (getTarget() == null)
