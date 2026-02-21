@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.Image;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
@@ -193,14 +194,14 @@ public class DisplayEntityFactory extends Entity {
 			InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 
 			// Create the DisplayEntity
-			simModel.storeAndExecute(new DefineCommand(simModel, DisplayEntity.class, entityName));
-			DisplayEntity de = (DisplayEntity) simModel.getNamedEntity(entityName);
+			simModel.storeAndExecute(new DefineCommand(simModel, Image.class, entityName));
+			Image de = (Image) simModel.getNamedEntity(entityName);
 
 			// Assign the ImageModel to the new DisplayEntity
 			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
 
 			// Set the x-dimension of the image to maintain its aspect ratio
-			Vec3d size = new Vec3d(1.0, 1.0, 0.0);
+			Vec3d size = new Vec3d(1.0, 1.0, 1.0);
 			Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
 			if (imageDims != null)
 				size.x = imageDims.x / imageDims.y;
