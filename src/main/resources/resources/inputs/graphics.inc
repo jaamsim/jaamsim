@@ -4,6 +4,7 @@ Define ObjectType {
                     Shape
                     Polyline
                     Arrow
+                    Image
                     Text
                     Graph
                     XYGraph
@@ -26,6 +27,7 @@ DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity            
 Shape                 JavaClass { com.jaamsim.Graphics.Shape                         } Palette { 'Graphics Objects' } DefaultDisplayModel { Rectangle                } IconFile { '<res>/images/Shape-24.png' }
 Polyline              JavaClass { com.jaamsim.Graphics.Polyline                      } Palette { 'Graphics Objects' } DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Polyline-24.png' }
 Arrow                 JavaClass { com.jaamsim.Graphics.Arrow                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        } IconFile { '<res>/images/Arrow-24.png' }
+Image                 JavaClass { com.jaamsim.Graphics.Image                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ImageModelDefault        } IconFile { '<res>/images/ImageDefault-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 Graph                 JavaClass { com.jaamsim.Graphics.Graph                         } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/Graph-24.png' } DefaultSize { 5.0 3.0 1.0 m }
 XYGraph               JavaClass { com.jaamsim.Graphics.XYGraph                       } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/XYGraph-24.png' } DefaultSize { 5.0 3.0 1.0 m }
@@ -44,6 +46,7 @@ DisplayEntity Description { 'Graphical object displaying either a 3D shape or a 
 Shape         Description { 'Two dimensional graphical object whose shape and colour can be selected.' }
 Polyline      Description { 'Straight or curved line segments.' }
 Arrow         Description { 'Line that terminates in an arrow head.' }
+Image         Description { 'Two dimensional picture that can be sized, positioned, and rotated.' }
 Text          Description { 'Text that appears in the 3D model universe.' }
 Graph         Description { 'Chart that shows the values of model outputs as they change in time.' }
 XYGraph       Description { 'Chart that shows the values of model outputs plotted on the x- and y-axes.' }
