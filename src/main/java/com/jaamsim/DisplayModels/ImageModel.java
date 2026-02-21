@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
+import com.jaamsim.Graphics.AbstractShape;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayImage;
 import com.jaamsim.basicsim.Entity;
@@ -29,18 +30,21 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.CachedTexLoader;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.ImageProxy;
 import com.jaamsim.render.OverlayLineProxy;
 import com.jaamsim.render.OverlayTextureProxy;
+import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.VisibilityInfo;
 
-public class ImageModel extends DisplayModel {
+public class ImageModel extends AbstractShapeModel {
 
 	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
 	         exampleList = {"../images/CompanyIcon.png"})
@@ -114,6 +118,7 @@ public class ImageModel extends DisplayModel {
 		private ArrayList<RenderProxy> cachedProxies;
 
 		private final DisplayEntity dispEnt;
+		private AbstractShape shapeEnt;
 
 		private Transform transCache;
 		private Vec3d scaleCache;
@@ -121,10 +126,20 @@ public class ImageModel extends DisplayModel {
 		private boolean compressedCache;
 		private boolean transparentCache;
 		private VisibilityInfo viCache;
+		private boolean filledCache;
+		private boolean outlinedCache;
+		private Color4d fillColorCache;
+		private Color4d outlineColorCache;
+		private int outlineWidthCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
-			dispEnt = (DisplayEntity)observee;
+			dispEnt = (DisplayEntity) observee;
+			try {
+				shapeEnt = (AbstractShape) observee;
+			} catch (ClassCastException e) {
+				shapeEnt = null;
+			}
 		}
 
 		private void updateCache(double simTime) {
@@ -146,6 +161,12 @@ public class ImageModel extends DisplayModel {
 			Boolean transp = transparent.getNextBoolean(ImageModel.this, simTime);
 			Boolean compressed = compressedTexture.getNextBoolean(ImageModel.this, simTime);
 
+			boolean filled = (shapeEnt == null) ? isFilled(simTime) : shapeEnt.isFilled(simTime);
+			boolean outlined = (shapeEnt == null) ? isOutlined(simTime) : shapeEnt.isOutlined(simTime);
+			Color4d fillColor = (shapeEnt == null) ? getFillColour(simTime) : shapeEnt.getFillColour(simTime);
+			Color4d outlineColor = (shapeEnt == null) ? getLineColour(simTime) : shapeEnt.getLineColour(simTime);
+			int outlineWidth = (shapeEnt == null) ? getLineWidth(simTime) : shapeEnt.getLineWidth(simTime);
+
 			VisibilityInfo vi = getVisibilityInfo();
 
 			boolean dirty = false;
@@ -156,6 +177,11 @@ public class ImageModel extends DisplayModel {
 			dirty = dirty || transparentCache != transp;
 			dirty = dirty || compressedCache != compressed;
 			dirty = dirty || !compare(viCache, vi);
+			dirty = dirty || filledCache != filled;
+			dirty = dirty || outlinedCache != outlined;
+			dirty = dirty || dirty_col4d(fillColorCache, fillColor);
+			dirty = dirty || dirty_col4d(outlineColorCache, outlineColor);
+			dirty = dirty || outlineWidthCache != outlineWidth;
 
 			transCache = trans;
 			scaleCache = scale;
@@ -163,6 +189,11 @@ public class ImageModel extends DisplayModel {
 			transparentCache = transp;
 			compressedCache = compressed;
 			viCache = vi;
+			filledCache = filled;
+			outlinedCache = outlined;
+			fillColorCache = fillColor;
+			outlineColorCache = outlineColor;
+			outlineWidthCache = outlineWidth;
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
@@ -171,10 +202,29 @@ public class ImageModel extends DisplayModel {
 			}
 
 			registerCacheMiss("ImageModel");
-			// Gather some inputs
-
-			CachedTexLoader loader = new CachedTexLoader(imageName, transp, compressed);
 			cachedProxies = new ArrayList<>();
+
+			// Show the background rectangle
+			if (filled || outlined) {
+				double zcoord = -0.001d;
+				ArrayList<Vec4d> backgroundRect = new ArrayList<>();
+				backgroundRect.add(new Vec4d( 0.5d,  0.5d, zcoord, 1.0d ));
+				backgroundRect.add(new Vec4d(-0.5d,  0.5d, zcoord, 1.0d ));
+				backgroundRect.add(new Vec4d(-0.5d, -0.5d, zcoord, 1.0d ));
+				backgroundRect.add(new Vec4d( 0.5d, -0.5d, zcoord, 1.0d ));
+				Transform backgroundTrans = dispEnt.getGlobalTrans();
+				if (filled) {
+					cachedProxies.add(new PolygonProxy(backgroundRect, backgroundTrans, scale,
+							fillColor, false, 1, vi, pickingID));
+				}
+				if (outlined) {
+					cachedProxies.add(new PolygonProxy(backgroundRect, backgroundTrans, scale,
+							outlineColor, true, outlineWidth, vi, pickingID));
+				}
+			}
+
+			// Show the image
+			CachedTexLoader loader = new CachedTexLoader(imageName, transp, compressed);
 			cachedProxies.add(new ImageProxy(loader, trans, scale, vi, pickingID));
 
 		}
