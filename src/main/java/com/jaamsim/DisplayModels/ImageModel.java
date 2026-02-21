@@ -26,10 +26,12 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayImage;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
@@ -344,6 +346,22 @@ public class ImageModel extends AbstractShapeModel {
 					!alignBottomCache, alignRightCache, 1, viCache, imageObservee.getEntityNumber());
 			out.add(outline);
 		}
+	}
+
+	@Output(name = "PixelSize",
+	 description = "Height and width of the image in pixels.",
+	    sequence = 1)
+	public int[] getPixelSize(double simTime) {
+		int[] ret = new int[2];
+		if (!RenderManager.isGood())
+			return ret;
+		URI uri = imageFile.getValue();
+		Vec2d imageDims = RenderManager.inst().getImageDims(uri);
+		if (imageDims == null)
+			return ret;
+		ret[0] = (int) imageDims.x;
+		ret[1] = (int) imageDims.y;
+		return ret;
 	}
 
 }
