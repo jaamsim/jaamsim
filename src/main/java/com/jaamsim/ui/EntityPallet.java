@@ -51,7 +51,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
 
-public class EntityPallet extends OSFixJFrame implements DragGestureListener {
+public class EntityPallet extends FrameBox implements DragGestureListener {
 
 	private static EntityPallet myInstance;  // only one instance allowed to be open
 
@@ -113,12 +113,6 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 			@Override
 			public void keyReleased(KeyEvent e) {}
 		});
-	}
-
-	public static void allowResizing(boolean bool) {
-		if (myInstance == null)
-			return;
-		myInstance.setResizable(bool);
 	}
 
 	@Override

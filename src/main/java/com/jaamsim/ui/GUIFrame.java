@@ -4135,7 +4135,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	@Override
 	public void allowResizing(boolean bool) {
 		FrameBox.allowResizing(bool);
-		EntityPallet.allowResizing(bool);
 
 		if (!RenderManager.isGood())
 			return;
