@@ -4134,16 +4134,21 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	@Override
 	public void allowResizing(boolean bool) {
-		FrameBox.allowResizing(bool);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				FrameBox.allowResizing(bool);
 
-		if (!RenderManager.isGood())
-			return;
+				if (!RenderManager.isGood())
+					return;
 
-		synchronized (views) {
-			for (View v : views) {
-				RenderManager.inst().setResizable(v, bool);
+				synchronized (views) {
+					for (View v : views) {
+						RenderManager.inst().setResizable(v, bool);
+					}
+				}
 			}
-		}
+		});
 	}
 
 	// ******************************************************************************************************
