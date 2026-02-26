@@ -114,6 +114,15 @@ public void add3(Vec3d v) {
 	this.y = this.y + v.y;
 	this.z = this.z + v.z;
 }
+/**
+ * Add a scaled v to this Vec3d: this = this + scale*v
+ * @throws NullPointerException if v is null
+ */
+public void add3(double scale, Vec3d v) {
+	this.x = this.x + scale * v.x;
+	this.y = this.y + scale * v.y;
+	this.z = this.z + scale * v.z;
+}
 
 /**
  * Add v1 to v2 into this Vec3d: this = v1 + v2
