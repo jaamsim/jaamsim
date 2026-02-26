@@ -24,6 +24,7 @@ Define ObjectType  { TimeUnit
                      AreaUnit
                      DimensionlessUnit
                      RateUnit
+                     ForceUnit
                      }
 
 TimeUnit            JavaClass { com.jaamsim.units.TimeUnit            } Palette { Units } DragAndDrop { FALSE }
@@ -50,6 +51,7 @@ ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette 
 AreaUnit            JavaClass { com.jaamsim.units.AreaUnit            } Palette { Units } DragAndDrop { FALSE }
 DimensionlessUnit   JavaClass { com.jaamsim.units.DimensionlessUnit   } Palette { Units } DragAndDrop { FALSE }
 RateUnit            JavaClass { com.jaamsim.units.RateUnit            } Palette { Units } DragAndDrop { FALSE }
+ForceUnit           JavaClass { com.jaamsim.units.ForceUnit           } Palette { Units } DragAndDrop { FALSE }
 
 TimeUnit                Description { 'Unit of time. Default = seconds (s).' }
 DistanceUnit            Description { 'Unit of length. Default = meters (m).' }
@@ -75,6 +77,7 @@ ViscosityUnit           Description { 'Unit of dynamic viscosity. Default = Pasc
 AreaUnit                Description { 'Unit of area. Default = square meters (m2).' }
 DimensionlessUnit       Description { 'Indicates that a value is a pure number. No unit is required or accepted.' }
 RateUnit                Description { 'Unit of number per unit time. Default = per second (/s).' }
+RateUnit                Description { 'Unit of force. Default = Newton (N).' }
 
 # ======================================================================================================================================================
 # Time units
@@ -341,5 +344,15 @@ Define RateUnit  { /s  /min  /h  /d  /w  /y  /ms  /us  /ns }
 /ms    ConversionFactorToSI { 1.0e3      }  Description { 'Per Millisecond' }
 /us    ConversionFactorToSI { 1.0e6      }  Description { 'Per Microsecond' }
 /ns    ConversionFactorToSI { 1.0e9      }  Description { 'Per Nanosecond' }
+
+# ======================================================================================================================================================
+# Force units
+# ======================================================================================================================================================
+
+Define ForceUnit  { N  dyn  kgf }
+
+N      ConversionFactorToSI { 1          }  Description { 'Netwon' }
+dyn    ConversionFactorToSI { 1.0e-5     }  Description { 'Dyne' }
+kgf    ConversionFactorToSI { 9.80665    }  Description { 'Kilogram-force' }
 
 

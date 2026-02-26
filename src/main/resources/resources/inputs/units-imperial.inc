@@ -41,3 +41,11 @@ psi    ConversionFactorToSI { 6894.757  }  Description { 'Pounds per Square Inch
 Define AreaUnit { in2 }
 
 in2    ConversionFactorToSI { 6.4516e-4 }  Description { 'Square Inches' }
+
+# ======================================================================================================================================================
+# Force units
+# ======================================================================================================================================================
+
+Define ForceUnit { lbf }
+
+lbf    ConversionFactorToSI { 4.44822  }  Description { 'Pound-force' }

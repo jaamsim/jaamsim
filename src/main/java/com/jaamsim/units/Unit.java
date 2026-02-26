@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -197,6 +197,11 @@ public abstract class Unit extends Entity {
 		addMultRule(       EnergyDensityUnit.class,  VolumeFlowUnit.class,          PowerUnit.class);
 		addMultRule(             DensityUnit.class,  VolumeFlowUnit.class,       MassFlowUnit.class);
 		addMultRule(            PressureUnit.class,  VolumeFlowUnit.class,          PowerUnit.class);
+
+		addMultRule(        AccelerationUnit.class,        MassUnit.class,          ForceUnit.class);
+		addMultRule(            PressureUnit.class,        AreaUnit.class,          ForceUnit.class);
+		addMultRule(               ForceUnit.class,    DistanceUnit.class,         EnergyUnit.class);
+		addMultRule(               ForceUnit.class,       SpeedUnit.class,          PowerUnit.class);
 	}
 
 	public static void addMultRule(Class<? extends Unit> a, Class<? extends Unit> b, Class<? extends Unit> product) {
