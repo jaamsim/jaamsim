@@ -289,11 +289,9 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
 			if (de.usePointsInput())
 				return;
-			de.setPosition(v3dinp.getValue());
+			de.setPosition(de.getPositionInput());
 		}
 	};
 
@@ -313,9 +311,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
-			de.setSize(v3dinp.getValue());
+			de.setSize(de.getSizeInput());
 		}
 	};
 
@@ -323,9 +319,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
-			de.setOrientation(v3dinp.getValue());
+			de.setOrientation(de.getOrientationInput());
 		}
 	};
 
@@ -333,9 +327,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
-			de.setAlignment(v3dinp.getValue());
+			de.setAlignment(de.getAlignmentInput());
 		}
 	};
 
@@ -515,6 +507,22 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		return isRegistered() && !getName().equals("XY-Grid") && !getName().equals("XYZ-Axis");
 	}
 
+	public Vec3d getPositionInput() {
+		return positionInput.getValue();
+	}
+
+	public Vec3d getAlignmentInput() {
+		return alignmentInput.getValue();
+	}
+
+	public Vec3d getSizeInput() {
+		return sizeInput.getValue();
+	}
+
+	public Vec3d getOrientationInput() {
+		return orientationInput.getValue();
+	}
+
 	/**
 	 * Restores the initial appearance of this entity.
 	 */
@@ -522,7 +530,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 		// Normal objects
 		if (!usePointsInput()) {
-			setPosition(positionInput.getValue());
+			setPosition(getPositionInput());
 			pointsInput.reset();
 		}
 
@@ -532,16 +540,16 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 			positionInput.reset();
 		}
 
-		this.setSize(sizeInput.getValue());
-		this.setAlignment(alignmentInput.getValue());
-		this.setOrientation(orientationInput.getValue());
+		this.setSize(getSizeInput());
+		this.setAlignment(getAlignmentInput());
+		this.setOrientation(getOrientationInput());
 		this.setDisplayModelList(displayModelListInput.getValue());
 		this.setRegion(regionInput.getValue());
 		this.setShow(getShowInput());
 	}
 
 	public boolean isPositionNominal() {
-		return position.equals3(positionInput.getValue());
+		return position.equals3(getPositionInput());
 	}
 
 	public boolean isPointsNominal() {
@@ -549,15 +557,15 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 	}
 
 	public boolean isSizeNominal() {
-		return size.equals3(sizeInput.getValue());
+		return size.equals3(getSizeInput());
 	}
 
 	public boolean isAlignmentNominal() {
-		return align.equals3(alignmentInput.getValue());
+		return align.equals3(getAlignmentInput());
 	}
 
 	public boolean isOrientationNominal() {
-		return orient.equals3(orientationInput.getValue());
+		return orient.equals3(getOrientationInput());
 	}
 
 	public boolean isDisplayModelNominal() {
@@ -765,7 +773,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 	public void setRelativeOrientation(Quaternion rotQ) {
 		Quaternion q = new Quaternion();
-		q.setEuler3(orientationInput.getValue());
+		q.setEuler3(getOrientationInput());
 		q.mult(rotQ, q);
 		setOrientation(q.getEuler3());
 	}
@@ -781,7 +789,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		Vec3d zdir = new Vec3d(0.0d, 0.0d, ret.z);
 
 		Mat4d mat = new Mat4d();
-		mat.setEuler3(orientationInput.getValue());
+		mat.setEuler3(getOrientationInput());
 		xdir.mult3(mat, xdir);
 		ydir.mult3(mat, ydir);
 		zdir.mult3(mat, zdir);

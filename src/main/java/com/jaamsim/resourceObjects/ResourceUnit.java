@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -331,7 +331,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		// Set the resource unit's position
 		if (followAssignment.getNextBoolean(this, simTime)) {
 			if (presentAssignment == null) {
-				setPosition(positionInput.getValue());
+				setPosition(getPositionInput());
 			}
 			else {
 				Vec3d pos = presentAssignment.getGlobalPosition();
