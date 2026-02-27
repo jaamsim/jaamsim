@@ -68,18 +68,21 @@ public class Vec3dInput extends Input<Vec3d> {
 	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue == null)
 			return "";
+		return toString(simModel, unitType, defValue);
+	}
 
-		double factor = simModel.getDisplayedUnitFactor(unitType);
+	public static String toString(JaamSimModel simModel, Class<? extends Unit> ut, Vec3d vec) {
+		double factor = simModel.getDisplayedUnitFactor(ut);
 
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(defValue.x/factor);
+		tmp.append(vec.x/factor);
 		tmp.append(SEPARATOR);
-		tmp.append(defValue.y/factor);
+		tmp.append(vec.y/factor);
 		tmp.append(SEPARATOR);
-		tmp.append(defValue.z/factor);
-		if (unitType != Unit.class) {
+		tmp.append(vec.z/factor);
+		if (ut != Unit.class && ut != DimensionlessUnit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(simModel.getDisplayedUnit(unitType));
+			tmp.append(simModel.getDisplayedUnit(ut));
 		}
 
 		return tmp.toString();
