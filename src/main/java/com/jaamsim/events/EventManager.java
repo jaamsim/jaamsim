@@ -169,8 +169,7 @@ public final class EventManager {
 	private void executeTarget(ProcessTarget t) {
 		try {
 			// If the event has a captured process, pass control to it
-			Thread p = t.getProcess();
-			if (p != null) {
+			if (t instanceof WaitTarget) {
 				pushProcess(t);
 				return;
 			}
@@ -427,15 +426,8 @@ public final class EventManager {
 	 * the condition in the currently running ThreadEntry.
 	 */
 	private void pushProcess(ProcessTarget t) {
-		Thread proc = t.getProcess();
 		ThreadEntry te = runningProc.get();
-		if (proc == null) {
-			runningProc.set(new ThreadEntry(this, this.allocateThread(), te, t));
-		}
-		else {
-			runningProc.set(new ThreadEntry(this, proc, te, null));
-			((WaitTarget)t).eventWake();
-		}
+		runningProc.set(new ThreadEntry(this, te, t));
 
 		/*
 		 * Halt the thread and only wake up by being interrupted.
@@ -785,12 +777,18 @@ public final class EventManager {
 			start = startup;
 		}
 
-		ThreadEntry(EventManager evt, Thread p, ThreadEntry nxt, ProcessTarget t) {
+		ThreadEntry(EventManager evt, ThreadEntry nxt, ProcessTarget t) {
+			if (t instanceof WaitTarget) {
+				proc = ((WaitTarget)t).getProcessWake();
+				target = null;
+			}
+			else {
+				proc = evt.allocateThread();
+				target = t;
+			}
 			next = nxt;
-			proc = p;
 			cond = evt.getWaitCondition();
 			dieFlag = new AtomicBoolean(false);
-			target = t;
 			start = false;
 		}
 
