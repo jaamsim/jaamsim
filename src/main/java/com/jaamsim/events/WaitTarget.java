@@ -31,17 +31,13 @@ final class WaitTarget extends ProcessTarget {
 	}
 
 	Thread getProcessWake() {
-		eventWake();
+		cond.signal();
 		return proc;
 	}
 
 	@Override
 	void kill() {
 		dieFlag.set(true);
-		eventWake();
-	}
-
-	void eventWake() {
 		cond.signal();
 	}
 
