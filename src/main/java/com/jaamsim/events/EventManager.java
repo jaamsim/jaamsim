@@ -441,10 +441,10 @@ public final class EventManager {
 			if (te.dieFlag.get())
 				throw new ThreadKilledException("Thread killed");
 
-			if (runningProc.get().proc == Thread.currentThread())
+			if (runningProc.get().proc == te.proc)
 				break;
 
-			System.out.println("Spurious wakeup in EventManager eventStack." + Thread.currentThread());
+			System.out.println("Spurious wakeup in EventManager eventStack." + te.proc);
 		}
 	}
 
@@ -476,10 +476,10 @@ public final class EventManager {
 			if (t.dieFlag.get())
 				throw new ThreadKilledException("Thread killed");
 
-			if (runningProc.get().proc == Thread.currentThread())
+			if (runningProc.get().proc == t.proc)
 				break;
 
-			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
+			System.out.println("Spurious wakeup in EventManager wait." + t.proc);
 		}
 	}
 

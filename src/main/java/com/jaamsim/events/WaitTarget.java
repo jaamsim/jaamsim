@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 
 final class WaitTarget extends ProcessTarget {
-	private final Thread proc;
+	final Thread proc;
 	final Condition cond;
 	final AtomicBoolean dieFlag;
 
