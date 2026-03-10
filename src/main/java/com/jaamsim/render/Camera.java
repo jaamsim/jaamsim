@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,13 +39,15 @@ import com.jaamsim.math.Vec4d;
 public class Camera {
 
 // Tuning parameters for logarithmic depth buffer
-// Thanks to this algorithm, we can have a near distance of 0.1mm, and a far distance of around
-// 10,000km
+// Thanks to this algorithm, we can have a near distance of zero and a far distance of 1.0e27 metres.
+// The far distance is equal to 106 billion light years, which is greater than the diameter of the
+// observable universe (93 billion light years).
+// With a 24-bit depth buffer, these parameters give a resolution of 0.007 millimetres at a distance of 1 metre.
 // This uses the algorithm from the following article:
 // http://outerra.blogspot.ca/2012/11/maximizing-depth-buffer-range-and.html
 public static final float C = 1.0f;
 public static final float FC;
-public static final float far = 100000000f;
+public static final float far = 1.0e27f;  // 106 billion light-years
 static {
 	FC = (float)(1.0/Math.log(far*C + 1));
 }
