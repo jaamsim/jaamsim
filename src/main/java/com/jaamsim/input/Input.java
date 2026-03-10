@@ -43,6 +43,9 @@ import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.StringProviders.StringProvSample;
 import com.jaamsim.StringProviders.StringProvider;
+import com.jaamsim.Vec3dProviders.Vec3dProvConstant;
+import com.jaamsim.Vec3dProviders.Vec3dProvExpression;
+import com.jaamsim.Vec3dProviders.Vec3dProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -52,6 +55,7 @@ import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -89,6 +93,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
 	protected static final String INP_ERR_BADDATE = "Expected a valid RFC8601 datetime, got: %s";
 	public    static final String INP_ERR_BADCOLOUR = "Expected a valid colour name or RGB value with or without transparency, got: %s";
+	public    static final String INP_ERR_BADVEC3D = "Expected a valid 3d vector, got: %s";
 	protected static final String INP_ERR_BADEXP = "Error parsing expression: %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
@@ -182,6 +187,10 @@ public abstract class Input<T> {
 	protected static final String VALID_VEC3D = "Accepts three numbers separated by spaces followed by a unit of type %s. "
 	                                          + "If only two numbers are entered, the third value defaults to zero.";
 	protected static final String VALID_VEC3D_DIMLESS = "Accepts three dimensionless numbers separated by spaces.";
+	protected static final String VALID_VEC3D_PROV = "Accepts three numbers separated by spaces followed by a unit of type %s, "
+	                                               + "or an expression that returns an array contain three numbers with that unit type.";
+	protected static final String VALID_VEC3D_PROV_DIMLESS = "Accepts three dimensionless numbers separated by spaces, "
+	                                                       + "or an expression that return an array containing three dimensionless numbers.";
 	protected static final String VALID_VEC3D_LIST = "Accepts a list of vectors enclosed by braces. "
 	                                               + "Each vector consists of three numbers separated by spaces followed by a unit of type %s. "
 	                                               + "If a vector has only two numbers, the third value defaults to zero.";
@@ -1777,6 +1786,33 @@ public abstract class Input<T> {
 		// Parse the input as an expression
 		try {
 			return new ColourProvExpression(kw.getArg(0), thisEnt);
+		}
+		catch (ExpError e) {
+			throw new InputErrorException(e);
+		}
+	}
+
+	public static Vec3dProvider parseVec3dProvider(KeywordIndex kw, Entity thisEnt, double minValue, double maxValue, Class<? extends Unit> unitType) {
+
+		// Parse the input as a Vec3d constant
+		try {
+			JaamSimModel simModel = thisEnt.getJaamSimModel();
+			DoubleVector temp = Input.parseDoubles(simModel, kw, minValue, maxValue, unitType);
+			assertCountRange(temp, 1, 3);
+			// Pad the vector to have 3 elements
+			while (temp.size() < 3) {
+				temp.add(0.0d);
+			}
+			return new Vec3dProvConstant(new Vec3d(temp.get(0), temp.get(1), temp.get(2)));
+		}
+		catch (Exception e) {
+			if (kw.numArgs() > 1)
+				throw e;
+		}
+
+		// Parse the input as an expression
+		try {
+			return new Vec3dProvExpression(kw.getArg(0), thisEnt, unitType);
 		}
 		catch (ExpError e) {
 			throw new InputErrorException(e);
