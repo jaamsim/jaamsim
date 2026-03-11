@@ -17,8 +17,6 @@
 package com.jaamsim.events;
 
 public abstract class ProcessTarget {
-	void kill() {}
-
 	public abstract String getDescription();
 	public abstract void process();
 
