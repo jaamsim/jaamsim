@@ -138,7 +138,7 @@ public final class EventManager {
 			clearFreeList();
 
 			for (int i = 0; i < condEvents.size(); i++) {
-				condEvents.get(i).target.kill();
+				kill(condEvents.get(i).target);
 				if (condEvents.get(i).handle != null) {
 					condEvents.get(i).handle.event = null;
 				}
@@ -147,6 +147,14 @@ public final class EventManager {
 		}
 		finally {
 			evtLock.unlock();
+		}
+	}
+
+	static void kill(final ProcessTarget t) {
+		if (t instanceof WaitTarget) {
+			final WaitTarget wt = (WaitTarget)t;
+			wt.dieFlag.set(true);
+			wt.cond.signal();
 		}
 	}
 
@@ -160,7 +168,7 @@ public final class EventManager {
 					each.handle = null;
 				}
 
-				each.target.kill();
+				kill(each.target);
 				each = each.next;
 			}
 		}
@@ -709,7 +717,7 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		getTargetFromHandle(handle).kill();
+		kill(getTargetFromHandle(handle));
 	}
 
 	private void trcKill(BaseEvent event) {

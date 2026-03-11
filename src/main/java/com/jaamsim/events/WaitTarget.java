@@ -36,12 +36,6 @@ final class WaitTarget extends ProcessTarget {
 	}
 
 	@Override
-	void kill() {
-		dieFlag.set(true);
-		cond.signal();
-	}
-
-	@Override
 	public String getDescription() {
 		return "Waiting";
 	}
