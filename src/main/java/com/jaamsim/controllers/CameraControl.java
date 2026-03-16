@@ -497,12 +497,10 @@ public class CameraControl implements WindowInteractionListener {
 
 		// If no entity has been selected, the camera will handle the key event
 		Vec3d pos = _updateView.getGlobalPosition();
-		Vec3d cent = _updateView.getGlobalCenter();
 		Vec3d dir = _updateView.getGlobalDirection();
 
 		// Construct a unit vector in the x-y plane in the direction of the view center
-		Vec3d forward = new Vec3d(cent);
-		forward.sub3(pos);
+		Vec3d forward = new Vec3d(dir);
 		forward.z = 0.0d;
 		forward.normalize3();
 
@@ -523,33 +521,27 @@ public class CameraControl implements WindowInteractionListener {
 
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
 			pos.add3(left);
-			cent.add3(left);
 		}
 
 		else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
 			pos.sub3(left);
-			cent.sub3(left);
 		}
 
 		else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
 			if (e.isShiftDown()) {
 				pos.set3(pos.x, pos.y, pos.z+inc);
-				cent.set3(cent.x, cent.y, cent.z+inc);
 			}
 			else {
 				pos.add3(forward);
-				cent.add3(forward);
 			}
 		}
 
 		else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
 			if (e.isShiftDown()) {
 				pos.set3(pos.x, pos.y, pos.z-inc);
-				cent.set3(cent.x, cent.y, cent.z-inc);
 			}
 			else {
 				pos.sub3(forward);
-				cent.sub3(forward);
 			}
 		}
 
