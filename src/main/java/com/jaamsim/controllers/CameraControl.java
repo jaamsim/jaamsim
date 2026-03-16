@@ -364,7 +364,7 @@ public class CameraControl implements WindowInteractionListener {
 
 
 		if (updateInputs) {
-			updateViewPos(finalTrans.getTransRef(), pi.viewCenter);
+			updateViewPos(finalTrans.getTransRef(), pi.viewCenter, pi.viewDirection);
 		}
 
 		// Finally update the renders camera info
@@ -443,12 +443,12 @@ public class CameraControl implements WindowInteractionListener {
 	/**
 	 * Set the position information in the saved view to match this window
 	 */
-	private void updateViewPos(Vec3d viewPos, Vec3d viewCenter) {
+	private void updateViewPos(Vec3d viewPos, Vec3d viewCenter, Vec3d viewDir) {
 		if (_updateView == null) {
 			return;
 		}
 
-		_updateView.updateCenterAndPos(viewCenter, viewPos);
+		_updateView.updateCenterAndPos(viewCenter, viewPos, viewDir);
 
 		GUIFrame.updateUI();
 	}
@@ -498,6 +498,7 @@ public class CameraControl implements WindowInteractionListener {
 		// If no entity has been selected, the camera will handle the key event
 		Vec3d pos = _updateView.getGlobalPosition();
 		Vec3d cent = _updateView.getGlobalCenter();
+		Vec3d dir = _updateView.getGlobalDirection();
 
 		// Construct a unit vector in the x-y plane in the direction of the view center
 		Vec3d forward = new Vec3d(cent);
@@ -555,7 +556,7 @@ public class CameraControl implements WindowInteractionListener {
 		else
 			return;
 
-		_updateView.updateCenterAndPos(cent, pos);
+		_updateView.updateCenterAndPos(cent, pos, dir);
 	}
 
 	@Override

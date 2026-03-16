@@ -330,8 +330,9 @@ public class View extends Entity {
 	 * coordinates and sets the corresponding inputs (in region coordinates).
 	 * @param center - view center in world coordinates
 	 * @param pos - camera position in world coordinates
+	 * @param dir - camera direction in world coordinates
 	 */
-	public void updateCenterAndPos(Vec3d center, Vec3d pos) {
+	public void updateCenterAndPos(Vec3d center, Vec3d pos, Vec3d dir) {
 		synchronized (setLock){
 
 			if (isScripted())
@@ -339,12 +340,14 @@ public class View extends Entity {
 
 			Vec3d tempPos = new Vec3d(pos);
 			Vec3d tempCent = new Vec3d(center);
+			Vec3d tempDir = new Vec3d(dir);
 
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
 				regTrans.inverse(regTrans);
 				regTrans.multAndTrans(pos, tempPos);
 				regTrans.multAndTrans(center, tempCent);
+				tempDir.mult3(regTrans.getMat4dRef(), dir);
 			}
 
 			// If this is following an entity, subtract that entity's position from the camera position (as it is interpreted as relative)
@@ -352,10 +355,6 @@ public class View extends Entity {
 			if (isFollowing()) {
 				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 			}
-
-			Vec3d tempDir = new Vec3d();
-			tempDir.sub3(tempCent, tempPos);
-			tempDir.normalize3();
 
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, "ViewPosition", tempPos, DistanceUnit.class);
 			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, "ViewDirection", tempDir, DistanceUnit.class);
