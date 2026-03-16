@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ public class DefineViewCommand implements Command {
 	private View view;
 	private final String viewName;
 	private final Vec3d viewPosition;
-	private final Vec3d viewCenter;
+	private final Vec3d viewDirection;
 	private final IntegerVector windowPos;
 
-	public DefineViewCommand(JaamSimModel sim, String str, Vec3d viewPos, Vec3d viewCntr, IntegerVector winPos) {
+	public DefineViewCommand(JaamSimModel sim, String str, Vec3d viewPos, Vec3d viewDir, IntegerVector winPos) {
 		simModel = sim;
 		view = null;
 		viewName = str;
 		viewPosition = viewPos;
-		viewCenter = viewCntr;
+		viewDirection = viewDir;
 		windowPos = winPos;
 	}
 
@@ -64,8 +64,8 @@ public class DefineViewCommand implements Command {
 		if (viewPosition != null) {
 			InputAgent.applyVec3d(view, "ViewPosition", viewPosition, DistanceUnit.class);
 		}
-		if (viewCenter != null) {
-			InputAgent.applyVec3d(view, "ViewCenter", viewCenter, DistanceUnit.class);
+		if (viewDirection != null) {
+			InputAgent.applyVec3d(view, "ViewDirection", viewDirection, DistanceUnit.class);
 		}
 	}
 

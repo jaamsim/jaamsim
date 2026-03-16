@@ -1085,7 +1085,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 						String name = InputAgent.getUniqueName(sim, "View", "");
 						IntegerVector winPos = null;
 						Vec3d pos = null;
-						Vec3d center = null;
+						Vec3d dir = null;
 						ArrayList<View> viewList = getInstance().getViews();
 						if (!viewList.isEmpty()) {
 							View lastView = viewList.get(viewList.size() - 1);
@@ -1093,9 +1093,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 							winPos = new IntegerVector(winPos);
 							winPos.set(0, winPos.get(0) + winDefs.VIEW_OFFSET);
 							pos = lastView.getViewPosition();
-							center = lastView.getViewCenter();
+							dir = lastView.getViewDirection();
 						}
-						sim.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
+						sim.storeAndExecute(new DefineViewCommand(sim, name, pos, dir, winPos));
 					}
 				});
 				viewsMenu.addSeparator();
