@@ -328,25 +328,22 @@ public class View extends Entity {
 	/**
 	 * updateCenterAndPos is used only by the mouse interaction code. It takes the camera view center and camera position in global
 	 * coordinates and sets the corresponding inputs (in region coordinates).
-	 * @param center - view center in world coordinates
 	 * @param pos - camera position in world coordinates
 	 * @param dir - camera direction in world coordinates
 	 */
-	public void updateCenterAndPos(Vec3d center, Vec3d pos, Vec3d dir) {
+	public void updateCenterAndPos(Vec3d pos, Vec3d dir) {
 		synchronized (setLock){
 
 			if (isScripted())
 				return;
 
 			Vec3d tempPos = new Vec3d(pos);
-			Vec3d tempCent = new Vec3d(center);
 			Vec3d tempDir = new Vec3d(dir);
 
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
 				regTrans.inverse(regTrans);
 				regTrans.multAndTrans(pos, tempPos);
-				regTrans.multAndTrans(center, tempCent);
 				tempDir.mult3(regTrans.getMat4dRef(), dir);
 			}
 

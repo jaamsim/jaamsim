@@ -448,7 +448,7 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		_updateView.updateCenterAndPos(viewCenter, viewPos, viewDir);
+		_updateView.updateCenterAndPos(viewPos, viewDir);
 
 		GUIFrame.updateUI();
 	}
@@ -556,7 +556,7 @@ public class CameraControl implements WindowInteractionListener {
 		else
 			return;
 
-		_updateView.updateCenterAndPos(cent, pos, dir);
+		_updateView.updateCenterAndPos(pos, dir);
 	}
 
 	@Override
