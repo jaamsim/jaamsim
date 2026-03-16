@@ -444,12 +444,10 @@ public class ContextMenu {
 				Vec3d diff = new Vec3d();
 				diff.sub3(ent.getGlobalPosition(), viewCenter);
 				viewPos.add3(diff);
-				viewCenter.add3(diff);
 
 				RenderManager.inst().setPOI(v, viewCenter);
 				KeywordIndex posKw = InputAgent.formatVec3dInput(v, "ViewPosition", viewPos, DistanceUnit.class);
-				KeywordIndex ctrKw = InputAgent.formatVec3dInput(v, "ViewCenter", viewCenter, DistanceUnit.class);
-				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
+				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw));
 			}
 		} );
 		if (RenderManager.getActiveView() == null) {
