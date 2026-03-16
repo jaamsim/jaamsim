@@ -788,7 +788,9 @@ public final class EventManager {
 
 		ThreadEntry(EventManager evt, ThreadEntry nxt, ProcessTarget t) {
 			if (t instanceof WaitTarget) {
-				proc = ((WaitTarget)t).getProcessWake();
+				final WaitTarget wt = (WaitTarget)t;
+				proc = wt.proc;
+				wt.cond.signal();
 				target = null;
 			}
 			else {

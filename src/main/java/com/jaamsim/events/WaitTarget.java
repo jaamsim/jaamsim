@@ -30,11 +30,6 @@ final class WaitTarget extends ProcessTarget {
 		dieFlag = new AtomicBoolean(false);
 	}
 
-	Thread getProcessWake() {
-		cond.signal();
-		return proc;
-	}
-
 	@Override
 	public String getDescription() {
 		return "Waiting";
