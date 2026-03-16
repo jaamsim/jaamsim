@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2021 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,10 +125,14 @@ public class PreviewCache {
 
 			// If this model is 3D, switch to an isometric view
 			Vec3d cameraPos = new Vec3d(0.0d, 0.0d, 12.0d);
-			if (!isFlat)
+			Vec3d cameraDir = new Vec3d(0.0d, 0.0d, -1.0d);
+			if (!isFlat) {
 				cameraPos = new Vec3d(10.0d, 10.0d, 10.0d);
+				cameraDir = new Vec3d(-1.0d, -1.0d, -1.0d);
+				cameraDir.normalize3();
+			}
 
-			PolarInfo pi = new PolarInfo(new Vec3d(), cameraPos);
+			PolarInfo pi = new PolarInfo(new Vec3d(), cameraPos, cameraDir);
 			Transform camTrans = new Transform(cameraPos, pi.getRotation(), 1);
 			CameraInfo camInfo = new CameraInfo(Math.PI/30, camTrans, null); // one-tenth the normal FOV
 

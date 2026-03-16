@@ -472,8 +472,9 @@ public class View extends Entity {
 
 	public CameraInfo getCameraInfo() {
 		Vec3d cameraPos = getGlobalPosition();
+		Vec3d cameraDir = getGlobalDirection();
 		Vec3d cameraCenter = getGlobalCenter();
-		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
+		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos, cameraDir);
 
 		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);
 		return new CameraInfo(Math.PI/3, trans, getSkyboxTexture());

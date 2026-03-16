@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2024 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ public class CameraControl implements WindowInteractionListener {
 
 	private Vec3d dragViewCenter;    // ViewCenter input at start of a drag action
 	private Vec3d dragViewPosition;  // ViewPosition input at the start of a drag action
+	private Vec3d dragViewDirection;  // ViewDirection input at the start of a drag action
 
 	public CameraControl(Renderer renderer, int windowID, View updateView) {
 		_renderer = renderer;
@@ -98,8 +99,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
 		Vec3d center = new Vec3d(dragViewCenter);
+		Vec3d camDir = new Vec3d(dragViewDirection);
 
-		PolarInfo origPi = new PolarInfo(center, camPos);
+		PolarInfo origPi = new PolarInfo(center, camPos, camDir);
 
 		Mat4d rot = new Mat4d();
 		rot.setRot3(origPi.getRotation());
@@ -119,8 +121,10 @@ public class CameraControl implements WindowInteractionListener {
 
 		center.multAndTrans3(rotTransX, center);
 		center.multAndTrans3(rotTransZ, center);
+		camDir.mult3(rotTransX, camDir);
+		camDir.mult3(rotTransZ, camDir);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos, camDir);
 		updateCamTrans(pi, true);
 
 	}
@@ -174,7 +178,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d camPos = new Vec3d(dragViewPosition);
 		camPos.sub3(diff);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
 	}
@@ -193,7 +197,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d center = new Vec3d(dragViewCenter);
 		camPos.z -= zDiff;
 		center.z -= zDiff;
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
 	}
@@ -202,8 +206,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
 		Vec3d center = new Vec3d(dragViewCenter);
+		Vec3d camDir = new Vec3d(dragViewDirection);
 
-		PolarInfo origPi = new PolarInfo(center, camPos);
+		PolarInfo origPi = new PolarInfo(center, camPos, camDir);
 		if ( camPos.x == center.x &&
 		     camPos.y == center.y ) {
 			// This is a degenerate camera view, tweak the polar info a bit to
@@ -231,11 +236,13 @@ public class CameraControl implements WindowInteractionListener {
 
 		camPos.multAndTrans3(rotTransX, camPos);
 		center.multAndTrans3(rotTransX, center);
+		camDir.mult3(rotTransX, camDir);
 
 		camPos.multAndTrans3(rotTransZ, camPos);
 		center.multAndTrans3(rotTransZ, center);
+		camDir.mult3(rotTransZ, camDir);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos, camDir);
 
 		rot.setRot3(pi.getRotation());
 
@@ -248,11 +255,13 @@ public class CameraControl implements WindowInteractionListener {
 			// Instead only apply the rotation around Z
 			camPos = new Vec3d(dragViewPosition);
 			center = new Vec3d(dragViewCenter);
+			camDir = new Vec3d(dragViewDirection);
 
 			camPos.multAndTrans3(rotTransZ, camPos);
 			center.multAndTrans3(rotTransZ, center);
+			camDir.mult3(rotTransZ, camDir);
 
-			pi = new PolarInfo(center, camPos);
+			pi = new PolarInfo(center, camPos, camDir);
 		}
 
 		updateCamTrans(pi, true);
@@ -267,6 +276,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec3d camPos = _updateView.getGlobalPosition();
 		Vec3d center = _updateView.getGlobalCenter();
+		Vec3d camDir = _updateView.getGlobalDirection();
 
 		Vec3d diff = new Vec3d();
 		diff.sub3(POI, camPos);
@@ -283,7 +293,7 @@ public class CameraControl implements WindowInteractionListener {
 		camPos.add3(diff);
 		center.add3(diff);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos, camDir);
 		updateCamTrans(pi, true);
 	}
 
@@ -418,6 +428,7 @@ public class CameraControl implements WindowInteractionListener {
 		// Save the initial view parameters at the start of a drag action
 		dragViewCenter = _updateView.getGlobalCenter();
 		dragViewPosition = _updateView.getGlobalPosition();
+		dragViewDirection = _updateView.getGlobalDirection();
 
 		RenderManager.inst().handleMouseButton(windowID, x, y, button, isDown, modifiers);
 	}
@@ -469,7 +480,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	private PolarInfo getPolarCoordsFromView() {
-		return new PolarInfo(_updateView.getGlobalCenter(), _updateView.getGlobalPosition());
+		return new PolarInfo(_updateView.getGlobalCenter(), _updateView.getGlobalPosition(), _updateView.getGlobalDirection());
 	}
 
 	public void checkForUpdate() {
