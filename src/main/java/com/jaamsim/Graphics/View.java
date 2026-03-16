@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,10 @@ public class View extends Entity {
 	@Keyword(description = "The position of the view camera.",
 	         exampleList = {"0 0 50 m"})
 	private final Vec3dInput position;
+
+	@Keyword(description = "Unit vector pointing in the direction of the view camera.",
+	         exampleList = {"0 0 -1 m"})
+	private final Vec3dInput direction;
 
 	@Keyword(description = "The size of the window in pixels (width, height).",
 	         exampleList = {"500 300"})
@@ -135,6 +139,11 @@ public class View extends Entity {
 		position.setUnitType(DistanceUnit.class);
 		position.setPromptReqd(false);
 		this.addInput(position);
+
+		direction = new Vec3dInput("ViewDirection", GRAPHICS, new Vec3d(-1/Math.sqrt(3), 1/Math.sqrt(3), -1/Math.sqrt(3)));
+		direction.setUnitType(DistanceUnit.class);
+		direction.setPromptReqd(false);
+		this.addInput(direction);
 
 		windowSize = new IntegerListInput("WindowSize", GRAPHICS, defSize);
 		windowSize.setValidCount(2);
@@ -215,11 +224,25 @@ public class View extends Entity {
 	}
 
 	public Vec3d getViewCenter() {
-		return center.getValue();
+		if (direction.isDef() && !center.isDef())
+			return center.getValue();
+		Vec3d ret = new Vec3d();
+		ret.add3(getViewPosition(), direction.getValue());
+		return ret;
 	}
 
 	public Vec3d getViewPosition() {
 		return position.getValue();
+	}
+
+	public Vec3d getViewDirection() {
+		if (direction.isDef() && !center.isDef()) {
+			Vec3d ret = new Vec3d();
+			ret.sub3(center.getValue(), getViewPosition());
+			ret.normalize3();
+			return ret;
+		}
+		return direction.getValue();
 	}
 
 	/**
@@ -241,6 +264,18 @@ public class View extends Entity {
 		return ret;
 	}
 
+	public Vec3d getGlobalDirection() {
+		synchronized (setLock) {
+			Vec3d tmp = getViewDirection();
+			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
+			if (region.getValue() != null) {
+				Transform regTrans = region.getValue().getRegionTrans();
+				regTrans.apply(ret, ret);
+			}
+			return ret;
+		}
+	}
+
 	public Vec3d getGlobalPosition() {
 		synchronized (setLock) {
 
@@ -257,7 +292,7 @@ public class View extends Entity {
 				return ret;
 			}
 
-			Vec3d tmp = position.getValue();
+			Vec3d tmp = getViewPosition();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
@@ -280,7 +315,7 @@ public class View extends Entity {
 				return follow.getGlobalPosition();
 			}
 
-			Vec3d tmp = center.getValue();
+			Vec3d tmp = getViewCenter();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
