@@ -30,11 +30,10 @@ public class PolarInfo {
 
 	/**
 	 * Constructs the polar coordinates for the view camera.
-	 * @param center - position along the camera's line of sight
 	 * @param pos - position of the view camera
 	 * @param dir - direction of the view camera
 	 */
-	public PolarInfo(Vec3d center, Vec3d pos, Vec3d dir) {
+	public PolarInfo(Vec3d pos, Vec3d dir) {
 		viewPosition = new Vec3d(pos);
 		viewDirection = new Vec3d(dir);
 

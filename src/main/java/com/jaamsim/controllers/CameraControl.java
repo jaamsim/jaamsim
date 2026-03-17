@@ -97,10 +97,9 @@ public class CameraControl implements WindowInteractionListener {
 	private void handleTurnCamera(int x, int y, int x0, int y0) {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
-		Vec3d center = new Vec3d(dragViewCenter);
 		Vec3d camDir = new Vec3d(dragViewDirection);
 
-		PolarInfo origPi = new PolarInfo(center, camPos, camDir);
+		PolarInfo origPi = new PolarInfo(camPos, camDir);
 
 		Mat4d rot = new Mat4d();
 		rot.setRot3(origPi.getRotation());
@@ -118,12 +117,10 @@ public class CameraControl implements WindowInteractionListener {
 		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
 		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, camPos);
 
-		center.multAndTrans3(rotTransX, center);
-		center.multAndTrans3(rotTransZ, center);
 		camDir.mult3(rotTransX, camDir);
 		camDir.mult3(rotTransZ, camDir);
 
-		PolarInfo pi = new PolarInfo(center, camPos, camDir);
+		PolarInfo pi = new PolarInfo(camPos, camDir);
 		updateCamTrans(pi, true);
 
 	}
@@ -176,8 +173,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
 		camPos.sub3(diff);
-
-		PolarInfo pi = new PolarInfo(center, camPos, dragViewDirection);
+		PolarInfo pi = new PolarInfo(camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
 	}
@@ -193,10 +189,8 @@ public class CameraControl implements WindowInteractionListener {
 		double zDiff = RenderUtils.getZDiff(POI, currRay, prevRay);
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
-		Vec3d center = new Vec3d(dragViewCenter);
 		camPos.z -= zDiff;
-		center.z -= zDiff;
-		PolarInfo pi = new PolarInfo(center, camPos, dragViewDirection);
+		PolarInfo pi = new PolarInfo(camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
 	}
@@ -207,7 +201,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d center = new Vec3d(dragViewCenter);
 		Vec3d camDir = new Vec3d(dragViewDirection);
 
-		PolarInfo origPi = new PolarInfo(center, camPos, camDir);
+		PolarInfo origPi = new PolarInfo(camPos, camDir);
 		if ( camPos.x == center.x &&
 		     camPos.y == center.y ) {
 			// This is a degenerate camera view, tweak the polar info a bit to
@@ -234,14 +228,12 @@ public class CameraControl implements WindowInteractionListener {
 		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
 
 		camPos.multAndTrans3(rotTransX, camPos);
-		center.multAndTrans3(rotTransX, center);
 		camDir.mult3(rotTransX, camDir);
 
 		camPos.multAndTrans3(rotTransZ, camPos);
-		center.multAndTrans3(rotTransZ, center);
 		camDir.mult3(rotTransZ, camDir);
 
-		PolarInfo pi = new PolarInfo(center, camPos, camDir);
+		PolarInfo pi = new PolarInfo(camPos, camDir);
 
 		rot.setRot3(pi.getRotation());
 
@@ -253,14 +245,12 @@ public class CameraControl implements WindowInteractionListener {
 			// The up angle has changed by more than 90 degrees, we probably are looking directly up or down
 			// Instead only apply the rotation around Z
 			camPos = new Vec3d(dragViewPosition);
-			center = new Vec3d(dragViewCenter);
 			camDir = new Vec3d(dragViewDirection);
 
 			camPos.multAndTrans3(rotTransZ, camPos);
-			center.multAndTrans3(rotTransZ, center);
 			camDir.mult3(rotTransZ, camDir);
 
-			pi = new PolarInfo(center, camPos, camDir);
+			pi = new PolarInfo(camPos, camDir);
 		}
 
 		updateCamTrans(pi, true);
@@ -274,7 +264,6 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d center = _updateView.getGlobalCenter();
 		Vec3d camDir = _updateView.getGlobalDirection();
 
 		Vec3d diff = new Vec3d();
@@ -288,11 +277,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		// offset is the difference from where we are to where we're going
 		diff.scale3(1 - scale);
-
 		camPos.add3(diff);
-		center.add3(diff);
 
-		PolarInfo pi = new PolarInfo(center, camPos, camDir);
+		PolarInfo pi = new PolarInfo(camPos, camDir);
 		updateCamTrans(pi, true);
 	}
 
@@ -471,7 +458,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	private PolarInfo getPolarCoordsFromView() {
-		return new PolarInfo(_updateView.getGlobalCenter(), _updateView.getGlobalPosition(), _updateView.getGlobalDirection());
+		return new PolarInfo(_updateView.getGlobalPosition(), _updateView.getGlobalDirection());
 	}
 
 	public void checkForUpdate() {

@@ -132,7 +132,7 @@ public class PreviewCache {
 				cameraDir.normalize3();
 			}
 
-			PolarInfo pi = new PolarInfo(new Vec3d(), cameraPos, cameraDir);
+			PolarInfo pi = new PolarInfo(cameraPos, cameraDir);
 			Transform camTrans = new Transform(cameraPos, pi.getRotation(), 1);
 			CameraInfo camInfo = new CameraInfo(Math.PI/30, camTrans, null); // one-tenth the normal FOV
 
