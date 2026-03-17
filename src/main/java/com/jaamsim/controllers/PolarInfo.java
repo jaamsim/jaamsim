@@ -25,8 +25,6 @@ public class PolarInfo {
 
 	double rotZ; // The spherical coordinate that rotates around Z (in radians)
 	double rotX; // Ditto for X
-	double radius; // The distance the camera is from the view center
-	final Vec3d viewCenter; // centre of the polar coordinate system
 	final Vec3d viewPosition; // postion of the camera
 	final Vec3d viewDirection; // direction in which the camera is pointing
 
@@ -37,12 +35,6 @@ public class PolarInfo {
 	 * @param dir - direction of the view camera
 	 */
 	public PolarInfo(Vec3d center, Vec3d pos, Vec3d dir) {
-		viewCenter = new Vec3d(center);
-
-		Vec3d viewDiff = new Vec3d();
-		viewDiff.sub3(pos, center);
-		radius = viewDiff.mag3();
-
 		viewPosition = new Vec3d(pos);
 		viewDirection = new Vec3d(dir);
 
@@ -73,16 +65,14 @@ public class PolarInfo {
 		PolarInfo pi = (PolarInfo)o;
 
 		return pi.rotZ == rotZ && pi.rotX == rotX
-				&& pi.radius == radius
-				&& viewCenter.equals3(pi.viewCenter)
 				&& viewPosition.equals3(pi.viewPosition)
 				&& viewDirection.equals3(pi.viewDirection);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("rotZ=%s, rotX=%s, viewPosition=%s, viewDirection=%s, radius=%s, viewCenter=%s",
-				rotZ, rotX, viewPosition, viewDirection, radius, viewCenter);
+		return String.format("rotZ=%s, rotX=%s, viewPosition=%s, viewDirection=%s",
+				rotZ, rotX, viewPosition, viewDirection);
 	}
 
 }
