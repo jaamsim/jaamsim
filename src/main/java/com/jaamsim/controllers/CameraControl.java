@@ -27,7 +27,6 @@ import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -355,16 +354,8 @@ public class CameraControl implements WindowInteractionListener {
 
 		piCache = pi;
 
-		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
-
-		Transform finalTrans = new Transform(pi.viewCenter);
-
-		finalTrans.merge(finalTrans, new Transform(null, pi.getRotation(), 1));
-		finalTrans.merge(finalTrans, new Transform(zOffset));
-
-
 		if (updateInputs) {
-			updateViewPos(finalTrans.getTransRef(), pi.viewDirection);
+			updateViewPos(pi.viewPosition, pi.viewDirection);
 		}
 
 		// Finally update the renders camera info
@@ -377,7 +368,7 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		info.trans = finalTrans;
+		info.trans = new Transform(pi.viewPosition, pi.getRotation(), 1);
 
 		info.skyboxTexture = _updateView.getSkyboxTexture();
 
