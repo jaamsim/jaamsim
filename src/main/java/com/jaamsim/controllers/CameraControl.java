@@ -50,7 +50,6 @@ public class CameraControl implements WindowInteractionListener {
 
 	private PolarInfo piCache; // The last polar info this view has re-drawn for
 
-	private Vec3d dragViewCenter;    // ViewCenter input at start of a drag action
 	private Vec3d dragViewPosition;  // ViewPosition input at the start of a drag action
 	private Vec3d dragViewDirection;  // ViewDirection input at the start of a drag action
 
@@ -398,7 +397,6 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		// Save the initial view parameters at the start of a drag action
-		dragViewCenter = _updateView.getGlobalCenter();
 		dragViewPosition = _updateView.getGlobalPosition();
 		dragViewDirection = _updateView.getGlobalDirection();
 
