@@ -194,12 +194,10 @@ public class CameraControl implements WindowInteractionListener {
 	private void handleRotAroundPoint(int x, int y, int x0, int y0) {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
-		Vec3d center = new Vec3d(dragViewCenter);
 		Vec3d camDir = new Vec3d(dragViewDirection);
 
 		PolarInfo origPi = new PolarInfo(camPos, camDir);
-		if ( camPos.x == center.x &&
-		     camPos.y == center.y ) {
+		if (camDir.x == 0.0d && camDir.y == 0.0d) {
 			// This is a degenerate camera view, tweak the polar info a bit to
 			// prevent view flipping
 			origPi.rotX = 0.00001;
