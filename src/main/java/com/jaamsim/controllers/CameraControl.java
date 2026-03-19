@@ -183,6 +183,13 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
 		camPos.z -= zDiff;
+
+		// Apply snap-grid
+		Simulation simulation = _updateView.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
+			camPos = simulation.getSnapGridPosition(camPos, dragViewPosition, true);
+		}
+
 		PolarInfo pi = new PolarInfo(camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
