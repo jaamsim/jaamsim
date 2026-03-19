@@ -523,7 +523,11 @@ public class InputAgent {
 	}
 
 	public static void applyValue(Entity ent, String keyword, double val, String unit){
-		KeywordIndex kw = formatDoubleInput(keyword, val, unit);
+		ArrayList<String> tokens = new ArrayList<>(2);
+		tokens.add(String.format((Locale)null, "%s", val));
+		if (unit != null && !unit.isEmpty())
+			tokens.add(unit);
+		KeywordIndex kw = new KeywordIndex(keyword, tokens, null);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -1835,14 +1839,6 @@ public class InputAgent {
 
 		// Set the model state to unedited
 		simModel.setSessionEdited(false);
-	}
-
-	public static KeywordIndex formatDoubleInput(String keyword, double val, String unit) {
-		ArrayList<String> tokens = new ArrayList<>(2);
-		tokens.add(String.format((Locale)null, "%s", val));
-		if (unit != null && !unit.isEmpty())
-			tokens.add(unit);
-		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	public static KeywordIndex formatInput(String keyword, String str) {
