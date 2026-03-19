@@ -1238,7 +1238,7 @@ public class RenderManager implements DragSourceListener {
 		int posY = dragEntityScreenPosition.get(1) + dy * (olEnt.getAlignBottom() ? -1 : 1);
 		posX = Math.min(Math.max(0, posX), windowWidth);
 		posY = Math.min(Math.max(0, posY), windowHeight);
-		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
+		KeywordIndex kw = KeywordIndex.formatIntegers("ScreenPosition", posX, posY);
 		ArrayList<Command> cmdList = new ArrayList<>();
 		cmdList.add(new KeywordCommand(olEnt, kw));
 
@@ -1254,7 +1254,7 @@ public class RenderManager implements DragSourceListener {
 			posY = pos.get(1) + yOffset * (olEnt.getAlignBottom() ? -1 : 1);
 			posX = Math.min(Math.max(0, posX), windowWidth);
 			posY = Math.min(Math.max(0, posY), windowHeight);
-			kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
+			kw = KeywordIndex.formatIntegers("ScreenPosition", posX, posY);
 			cmdList.add(new KeywordCommand(olEnt, kw));
 		}
 

@@ -344,13 +344,13 @@ public class View extends Entity {
 
 		IntegerVector pos = windowPos.getValue();
 		if (pos.get(0) != x || pos.get(1) != y) {
-			KeywordIndex posKw = InputAgent.formatIntegers(windowPos.getKeyword(), x, y);
+			KeywordIndex posKw = KeywordIndex.formatIntegers(windowPos.getKeyword(), x, y);
 			kwList.add(posKw);
 		}
 
 		IntegerVector size = windowSize.getValue();
 		if (size.get(0) != width || size.get(1) != height) {
-			KeywordIndex sizeKw = InputAgent.formatIntegers(windowSize.getKeyword(), width, height);
+			KeywordIndex sizeKw = KeywordIndex.formatIntegers(windowSize.getKeyword(), width, height);
 			kwList.add(sizeKw);
 		}
 

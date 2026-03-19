@@ -76,7 +76,7 @@ public abstract class OverlayEntity extends DisplayEntity {
 
 	@Override
 	public void dragged(int x, int y, Vec3d newPos) {
-		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", x, y);
+		KeywordIndex kw = KeywordIndex.formatIntegers("ScreenPosition", x, y);
 		InputAgent.apply(this, kw);
 	}
 
@@ -113,7 +113,7 @@ public abstract class OverlayEntity extends DisplayEntity {
 
 		x = Math.max(0, x);
 		y = Math.max(0, y);
-		KeywordIndex kw = InputAgent.formatIntegers(screenPosition.getKeyword(), x, y);
+		KeywordIndex kw = KeywordIndex.formatIntegers(screenPosition.getKeyword(), x, y);
 		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 		return true;
 	}

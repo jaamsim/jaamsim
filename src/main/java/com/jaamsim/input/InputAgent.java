@@ -518,7 +518,7 @@ public class InputAgent {
 	}
 
 	public static void applyIntegers(Entity ent, String keyword, int... args){
-		KeywordIndex kw = formatIntegers(keyword, args);
+		KeywordIndex kw = KeywordIndex.formatIntegers(keyword, args);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -1835,14 +1835,6 @@ public class InputAgent {
 
 		// Set the model state to unedited
 		simModel.setSessionEdited(false);
-	}
-
-	public static KeywordIndex formatIntegers(String keyword, int... args) {
-		ArrayList<String> tokens = new ArrayList<>(args.length);
-		for (int each : args) {
-			tokens.add(String.format((Locale)null, "%d", each));
-		}
-		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	public static KeywordIndex formatDoubleInput(String keyword, double val, String unit) {

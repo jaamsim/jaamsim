@@ -19,6 +19,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 
 public class KeywordIndex {
@@ -133,5 +134,13 @@ public class KeywordIndex {
 		if (bool)
 			str = "TRUE";
 		return formatArgs(keyword, str);
+	}
+
+	public static KeywordIndex formatIntegers(String keyword, int... args) {
+		ArrayList<String> tokens = new ArrayList<>(args.length);
+		for (int each : args) {
+			tokens.add(String.format((Locale)null, "%d", each));
+		}
+		return new KeywordIndex(keyword, tokens, null);
 	}
 }

@@ -2624,7 +2624,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				int val = (int) lineWidth.getValue();
 				if (val == lineEnt.getLineWidth(0.0d))
 					return;
-				KeywordIndex kw = InputAgent.formatIntegers("LineWidth", val);
+				KeywordIndex kw = KeywordIndex.formatIntegers("LineWidth", val);
 				selectedEntity.getJaamSimModel().storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 				controlStartResume.requestFocusInWindow();
 			}

@@ -40,7 +40,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 
 public class FrameBox extends OSFixJFrame {
@@ -154,8 +153,8 @@ public class FrameBox extends OSFixJFrame {
 					&& oldPos.get(0) == pos.x && oldPos.get(1) == pos.y)
 				return;
 
-			KeywordIndex sizeKw = InputAgent.formatIntegers(sizeKeyword, size.width, size.height);
-			KeywordIndex posKw = InputAgent.formatIntegers(posKeyword, pos.x, pos.y);
+			KeywordIndex sizeKw = KeywordIndex.formatIntegers(sizeKeyword, size.width, size.height);
+			KeywordIndex posKw = KeywordIndex.formatIntegers(posKeyword, pos.x, pos.y);
 			simModel.storeAndExecute(new KeywordCommand(simulation, sizeKw, posKw));
 		}
 	}

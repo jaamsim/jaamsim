@@ -30,7 +30,6 @@ import com.jaamsim.input.DateInput;
 import com.jaamsim.input.DirInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
@@ -1224,7 +1223,7 @@ public class Simulation extends Entity {
 	public void setControlPanelWidth(int width) {
 		if (controlPanelWidth.getValue().get(0) == width)
 			return;
-		KeywordIndex kw = InputAgent.formatIntegers(controlPanelWidth.getKeyword(), width);
+		KeywordIndex kw = KeywordIndex.formatIntegers(controlPanelWidth.getKeyword(), width);
 		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 	}
 
