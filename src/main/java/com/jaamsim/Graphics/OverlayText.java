@@ -232,7 +232,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	@Override
 	public void acceptEdits() {
 		editableText.acceptEdits();
-		KeywordIndex kw = InputAgent.formatArgs("Format", getText());
+		KeywordIndex kw = KeywordIndex.formatArgs("Format", getText());
 		try {
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 		}

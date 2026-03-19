@@ -25,7 +25,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -196,20 +195,20 @@ implements SampleProvider {
 		if (!nextCalc.controller.getHidden()
 				&& !controller.getHidden() && !controller.isDefault()) {
 			String key = controller.getKeyword();
-			kwList.add( InputAgent.formatArgs(key, controller.getValue().getName()) );
+			kwList.add( KeywordIndex.formatArgs(key, controller.getValue().getName()) );
 		}
 
 		// Set the UnitType input for the next object
 		if (!nextCalc.unitType.getHidden()
 				&& !unitType.getHidden() && !unitType.isDefault()) {
 			String key = unitType.getKeyword();
-			kwList.add( InputAgent.formatArgs(key, getUnitType().getSimpleName()) );
+			kwList.add( KeywordIndex.formatArgs(key, getUnitType().getSimpleName()) );
 		}
 
 		// Set the InputValue input for the next object
 		if (!nextCalc.inputValue.getHidden()) {
 			String key = nextCalc.inputValue.getKeyword();
-			kwList.add( InputAgent.formatArgs(key, this.getName()) );
+			kwList.add( KeywordIndex.formatArgs(key, this.getName()) );
 		}
 
 		if (kwList.isEmpty())

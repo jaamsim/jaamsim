@@ -240,7 +240,7 @@ public class GraphicBox extends JDialog {
 				if (dm == null)
 					return;
 				ArrayList<KeywordIndex> kwList = new ArrayList<>(3);
-				KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", dmName);
+				KeywordIndex dmKw = KeywordIndex.formatArgs("DisplayModel", dmName);
 				kwList.add(dmKw);
 
 				if (!RenderManager.isGood()) {
@@ -278,7 +278,7 @@ public class GraphicBox extends JDialog {
 
 					entitySize = new Vec3d(modelSize);
 					entitySize.scale3(ratio);
-					KeywordIndex sizeKw = InputAgent.formatArgs("Size",
+					KeywordIndex sizeKw = KeywordIndex.formatArgs("Size",
 		                                 String.format(loc, "%.6f", entitySize.x),
 		                                 String.format(loc, "%.6f", entitySize.y),
 		                                 String.format(loc, "%.6f", entitySize.z), "m");
@@ -291,7 +291,7 @@ public class GraphicBox extends JDialog {
 					if (imageDims != null && useModelSize.isSelected()) {
 						// Keep the y size the same, but use the image's proportions. We can't really use the model size, as it is in pixels
 						double scale = currentEntity.getSize().y / imageDims.y;
-						KeywordIndex sizeKw = InputAgent.formatArgs("Size",
+						KeywordIndex sizeKw = KeywordIndex.formatArgs("Size",
 						                     String.format(loc, "%.6f", imageDims.x * scale),
 						                     String.format(loc, "%.6f", imageDims.y * scale),
 						                     "1.0", "m");
@@ -303,11 +303,11 @@ public class GraphicBox extends JDialog {
 
 					Vec3d entityPos = modelBounds.center;
 
-					KeywordIndex posKw = InputAgent.formatArgs("Position",
+					KeywordIndex posKw = KeywordIndex.formatArgs("Position",
 					                     String.format(loc, "%.6f", entityPos.x),
 					                     String.format(loc, "%.6f", entityPos.y),
 					                     String.format(loc, "%.6f", entityPos.z), "m");
-					KeywordIndex alignKw = InputAgent.formatArgs("Alignment", "0", "0", "0");
+					KeywordIndex alignKw = KeywordIndex.formatArgs("Alignment", "0", "0", "0");
 					kwList.add(posKw);
 					kwList.add(alignKw);
 				}

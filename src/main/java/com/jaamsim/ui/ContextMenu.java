@@ -315,12 +315,12 @@ public class ContextMenu {
 				public void actionPerformed( ActionEvent event ) {
 					ArrayList<Command> cmdList = new ArrayList<>();
 					if (parentName.equals("<None>")) {
-						cmdList.add(new KeywordCommand(ent, InputAgent.formatArgs("Parent")));
-						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity")));
+						cmdList.add(new KeywordCommand(ent, KeywordIndex.formatArgs("Parent")));
+						cmdList.add(new CoordinateCommand(ent, KeywordIndex.formatArgs("RelativeEntity")));
 					}
 					else {
-						cmdList.add(new KeywordCommand(ent, InputAgent.formatArgs("Parent", parentName)));
-						cmdList.add(new CoordinateCommand(ent, InputAgent.formatArgs("RelativeEntity", "parent")));
+						cmdList.add(new KeywordCommand(ent, KeywordIndex.formatArgs("Parent", parentName)));
+						cmdList.add(new CoordinateCommand(ent, KeywordIndex.formatArgs("RelativeEntity", "parent")));
 					}
 					ent.getJaamSimModel().storeAndExecute(new ListCommand(cmdList));
 					GUIListener gui = simModel.getGUIListener();
@@ -368,10 +368,10 @@ public class ContextMenu {
 				public void actionPerformed( ActionEvent event ) {
 					KeywordIndex kw;
 					if (entName.equals("<None>")) {
-						kw = InputAgent.formatArgs("RelativeEntity");
+						kw = KeywordIndex.formatArgs("RelativeEntity");
 					}
 					else {
-						kw = InputAgent.formatArgs("RelativeEntity", entName);
+						kw = KeywordIndex.formatArgs("RelativeEntity", entName);
 					}
 					ent.getJaamSimModel().storeAndExecute(new CoordinateCommand(ent, kw));
 				}
@@ -416,10 +416,10 @@ public class ContextMenu {
 				public void actionPerformed( ActionEvent event ) {
 					KeywordIndex kw;
 					if (regionName.equals("<None>")) {
-						kw = InputAgent.formatArgs("Region");
+						kw = KeywordIndex.formatArgs("Region");
 					}
 					else {
-						kw = InputAgent.formatArgs("Region", regionName);
+						kw = KeywordIndex.formatArgs("Region", regionName);
 					}
 					ent.getJaamSimModel().storeAndExecute(new CoordinateCommand(ent, kw));
 				}

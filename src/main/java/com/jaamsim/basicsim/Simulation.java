@@ -1147,21 +1147,21 @@ public class Simulation extends Entity {
 
 	public void resetWindowPositionsAndSizes() {
 		KeywordIndex[] kws = new KeywordIndex[15];
-		kws[0] = InputAgent.formatArgs(modelBuilderPos.getKeyword());
-		kws[1] = InputAgent.formatArgs(modelBuilderSize.getKeyword());
-		kws[2] = InputAgent.formatArgs(objectSelectorPos.getKeyword());
-		kws[3] = InputAgent.formatArgs(objectSelectorSize.getKeyword());
-		kws[4] = InputAgent.formatArgs(inputEditorPos.getKeyword());
-		kws[5] = InputAgent.formatArgs(inputEditorSize.getKeyword());
-		kws[6] = InputAgent.formatArgs(outputViewerPos.getKeyword());
-		kws[7] = InputAgent.formatArgs(outputViewerSize.getKeyword());
-		kws[8] = InputAgent.formatArgs(propertyViewerPos.getKeyword());
-		kws[9] = InputAgent.formatArgs(propertyViewerSize.getKeyword());
-		kws[10] = InputAgent.formatArgs(logViewerPos.getKeyword());
-		kws[11] = InputAgent.formatArgs(logViewerSize.getKeyword());
-		kws[12] = InputAgent.formatArgs(eventViewerPos.getKeyword());
-		kws[13] = InputAgent.formatArgs(eventViewerSize.getKeyword());
-		kws[14] = InputAgent.formatArgs(controlPanelWidth.getKeyword());
+		kws[0] = KeywordIndex.formatArgs(modelBuilderPos.getKeyword());
+		kws[1] = KeywordIndex.formatArgs(modelBuilderSize.getKeyword());
+		kws[2] = KeywordIndex.formatArgs(objectSelectorPos.getKeyword());
+		kws[3] = KeywordIndex.formatArgs(objectSelectorSize.getKeyword());
+		kws[4] = KeywordIndex.formatArgs(inputEditorPos.getKeyword());
+		kws[5] = KeywordIndex.formatArgs(inputEditorSize.getKeyword());
+		kws[6] = KeywordIndex.formatArgs(outputViewerPos.getKeyword());
+		kws[7] = KeywordIndex.formatArgs(outputViewerSize.getKeyword());
+		kws[8] = KeywordIndex.formatArgs(propertyViewerPos.getKeyword());
+		kws[9] = KeywordIndex.formatArgs(propertyViewerSize.getKeyword());
+		kws[10] = KeywordIndex.formatArgs(logViewerPos.getKeyword());
+		kws[11] = KeywordIndex.formatArgs(logViewerSize.getKeyword());
+		kws[12] = KeywordIndex.formatArgs(eventViewerPos.getKeyword());
+		kws[13] = KeywordIndex.formatArgs(eventViewerSize.getKeyword());
+		kws[14] = KeywordIndex.formatArgs(controlPanelWidth.getKeyword());
 		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kws));
 	}
 

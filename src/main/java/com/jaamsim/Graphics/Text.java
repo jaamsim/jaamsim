@@ -157,7 +157,7 @@ public class Text extends TextBasics {
 	public void acceptEdits() {
 		super.acceptEdits();
 		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
-		kwList.add( InputAgent.formatArgs("Format", getText()) );
+		kwList.add( KeywordIndex.formatArgs("Format", getText()) );
 		if (isAutoSize()) {
 			Vec3d size = getAutoSize(getFontName(), getStyle(), getTextHeight(0.0d));
 			kwList.add( InputAgent.formatVec3dInput(this, "Size", size, DistanceUnit.class) );

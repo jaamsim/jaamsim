@@ -503,7 +503,7 @@ public class InputAgent {
 	 * @param args - the input value String for the keyword.
 	 */
 	public static void applyArgs(Entity ent, String keyword, String... args){
-		KeywordIndex kw = formatArgs(keyword, args);
+		KeywordIndex kw = KeywordIndex.formatArgs(keyword, args);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -1837,19 +1837,11 @@ public class InputAgent {
 		simModel.setSessionEdited(false);
 	}
 
-	public static KeywordIndex formatArgs(String keyword, String... args) {
-		ArrayList<String> tokens = new ArrayList<>(args.length);
-		for (String each : args) {
-			tokens.add(each);
-		}
-		return new KeywordIndex(keyword, tokens, null);
-	}
-
 	public static KeywordIndex formatBoolean(String keyword, boolean bool) {
 		String str = "FALSE";
 		if (bool)
 			str = "TRUE";
-		return formatArgs(keyword, str);
+		return KeywordIndex.formatArgs(keyword, str);
 	}
 
 	public static KeywordIndex formatIntegers(String keyword, int... args) {

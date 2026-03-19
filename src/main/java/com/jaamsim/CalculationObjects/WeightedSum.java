@@ -26,7 +26,6 @@ import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -169,13 +168,13 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 		if (!nextCalc.unitType.getHidden()
 				&& !unitType.getHidden() && !unitType.isDefault()) {
 			String key = unitType.getKeyword();
-			kwList.add( InputAgent.formatArgs(key, getUnitType().getSimpleName()) );
+			kwList.add( KeywordIndex.formatArgs(key, getUnitType().getSimpleName()) );
 		}
 
 		// Set the InputValue input for the next object
 		if (!nextCalc.inputValue.getHidden()) {
 			String key = nextCalc.inputValue.getKeyword();
-			kwList.add( InputAgent.formatArgs(key, this.getName()) );
+			kwList.add( KeywordIndex.formatArgs(key, this.getName()) );
 		}
 
 		if (kwList.isEmpty())

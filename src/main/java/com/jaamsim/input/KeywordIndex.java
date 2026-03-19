@@ -120,4 +120,11 @@ public class KeywordIndex {
 		return input.subList(start, end).toString();
 	}
 
+	public static KeywordIndex formatArgs(String keyword, String... args) {
+		ArrayList<String> tokens = new ArrayList<>(args.length);
+		for (String each : args) {
+			tokens.add(each);
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
 }

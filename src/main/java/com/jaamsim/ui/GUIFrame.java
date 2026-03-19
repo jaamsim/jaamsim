@@ -1108,8 +1108,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					@Override
 					public void actionPerformed( ActionEvent e ) {
 						for (View v : getInstance().getViews()) {
-							KeywordIndex posKw = InputAgent.formatArgs("WindowPosition");
-							KeywordIndex sizeKw = InputAgent.formatArgs("WindowSize");
+							KeywordIndex posKw = KeywordIndex.formatArgs("WindowPosition");
+							KeywordIndex sizeKw = KeywordIndex.formatArgs("WindowSize");
 							v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw, sizeKw));
 						}
 					}
@@ -1686,8 +1686,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				if (ent == null && sim.getNamedEntity("Grid100x100") != null) {
 					sim.storeAndExecute(new DefineCommand(sim, DisplayEntity.class, "XY-Grid"));
 					ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
-					KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", "Grid100x100");
-					KeywordIndex sizeKw = InputAgent.formatArgs("Size", "100", "100", "0", "m");
+					KeywordIndex dmKw = KeywordIndex.formatArgs("DisplayModel", "Grid100x100");
+					KeywordIndex sizeKw = KeywordIndex.formatArgs("Size", "100", "100", "0", "m");
 					sim.storeAndExecute(new KeywordCommand(ent, dmKw, sizeKw));
 					grid.setSelected(true);
 				}
@@ -2129,7 +2129,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 					@Override
 					public void showPreview(String str) {
-						KeywordIndex kw = InputAgent.formatArgs("DisplayModel", str);
+						KeywordIndex kw = KeywordIndex.formatArgs("DisplayModel", str);
 						dispEnt.getJaamSimModel().storeAndExecute(new KeywordCommand(dispEnt, kw));
 					}
 
@@ -2183,7 +2183,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					String cat = in.getCategory();
 					if (in.isDef() || !cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
 						continue;
-					KeywordIndex kw = InputAgent.formatArgs(in.getKeyword());
+					KeywordIndex kw = KeywordIndex.formatArgs(in.getKeyword());
 					kwList.add(kw);
 				}
 				if (kwList.isEmpty())
@@ -2278,7 +2278,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					stylesList.add("ITALIC");
 				String[] styles = stylesList.toArray(new String[stylesList.size()]);
 				ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
-				kwList.add( InputAgent.formatArgs("FontStyle", styles) );
+				kwList.add( KeywordIndex.formatArgs("FontStyle", styles) );
 				if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 					Text t = (Text) textEnt;
 					int style = (bold.isSelected() ? Font.BOLD : 0) + (italic.isSelected() ? Font.ITALIC : 0);
@@ -2960,7 +2960,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 				DecimalFormat df = (DecimalFormat)nf;
 				df.applyPattern("0.######");
-				KeywordIndex kw = InputAgent.formatArgs("RealTimeFactor", df.format(val));
+				KeywordIndex kw = KeywordIndex.formatArgs("RealTimeFactor", df.format(val));
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -3423,7 +3423,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	public void renameEntity(Entity ent, String localName) {
 		if (ent.getLocalName().equals(localName))
 			return;
-		KeywordIndex kw = InputAgent.formatArgs("Name", localName);
+		KeywordIndex kw = KeywordIndex.formatArgs("Name", localName);
 		ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, kw));
 	}
 
@@ -3449,7 +3449,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (ent instanceof Region) {
 
 			// Reset the Region input for the entities in this region
-			KeywordIndex kw = InputAgent.formatArgs("Region");
+			KeywordIndex kw = KeywordIndex.formatArgs("Region");
 			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
 				if (e == ent || e.getParent() == ent
 						|| e.getInput("Region").getValue() != ent)
@@ -3462,7 +3462,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (ent instanceof DisplayEntity) {
 
 			// Reset the RelativeEntity input for entities
-			KeywordIndex kw = InputAgent.formatArgs("RelativeEntity");
+			KeywordIndex kw = KeywordIndex.formatArgs("RelativeEntity");
 			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
 				if (e == ent || e.getParent() == ent
 						|| e.getInput("RelativeEntity").getValue() != ent)
