@@ -2074,7 +2074,7 @@ public class RenderManager implements DragSourceListener {
 		int winID = getWindowID(view);
 		CameraControl control = windowControls.get(winID);
 		if (control == null)
-			return null;
+			return new Vec3d();
 		return control.getPOI();
 	}
 
