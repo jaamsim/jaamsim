@@ -96,7 +96,7 @@ public class FrameBox extends OSFixJFrame {
 		final KeywordIndex kw;
 
 		public CloseListener(String keyword) {
-			kw = InputAgent.formatBoolean(keyword, false);
+			kw = KeywordIndex.formatBoolean(keyword, false);
 		}
 
 		@Override

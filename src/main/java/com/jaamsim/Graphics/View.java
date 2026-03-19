@@ -390,7 +390,7 @@ public class View extends Entity {
 		synchronized (setLock) {
 
 			// Set the Lock2D keyword
-			KeywordIndex kw = InputAgent.formatBoolean(lock2D.getKeyword(), bLock2D);
+			KeywordIndex kw = KeywordIndex.formatBoolean(lock2D.getKeyword(), bLock2D);
 
 			// Set the camera position
 			Vec3d viewCenter = new Vec3d(getEffViewCenter());

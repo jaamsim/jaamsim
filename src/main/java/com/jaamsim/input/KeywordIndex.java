@@ -127,4 +127,11 @@ public class KeywordIndex {
 		}
 		return new KeywordIndex(keyword, tokens, null);
 	}
+
+	public static KeywordIndex formatBoolean(String keyword, boolean bool) {
+		String str = "FALSE";
+		if (bool)
+			str = "TRUE";
+		return formatArgs(keyword, str);
+	}
 }

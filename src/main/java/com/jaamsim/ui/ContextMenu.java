@@ -617,7 +617,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showComponentsMenuItem.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowComponents", bool);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowComponents", bool);
 				ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, kw));
 			}
 		});

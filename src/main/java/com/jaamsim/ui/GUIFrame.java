@@ -798,10 +798,10 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				EditBox.getInstance().toFront();
 				OutputBox.getInstance().toFront();
 				KeywordIndex[] kws = new KeywordIndex[4];
-				kws[0] = InputAgent.formatBoolean("ShowModelBuilder", true);
-				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", true);
-				kws[2] = InputAgent.formatBoolean("ShowInputEditor", true);
-				kws[3] = InputAgent.formatBoolean("ShowOutputViewer", true);
+				kws[0] = KeywordIndex.formatBoolean("ShowModelBuilder", true);
+				kws[1] = KeywordIndex.formatBoolean("ShowObjectSelector", true);
+				kws[2] = KeywordIndex.formatBoolean("ShowInputEditor", true);
+				kws[3] = KeywordIndex.formatBoolean("ShowOutputViewer", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
@@ -816,13 +816,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				KeywordIndex[] kws = new KeywordIndex[7];
-				kws[0] = InputAgent.formatBoolean("ShowModelBuilder", false);
-				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", false);
-				kws[2] = InputAgent.formatBoolean("ShowInputEditor", false);
-				kws[3] = InputAgent.formatBoolean("ShowOutputViewer", false);
-				kws[4] = InputAgent.formatBoolean("ShowPropertyViewer", false);
-				kws[5] = InputAgent.formatBoolean("ShowLogViewer", false);
-				kws[6] = InputAgent.formatBoolean("ShowEventViewer", false);
+				kws[0] = KeywordIndex.formatBoolean("ShowModelBuilder", false);
+				kws[1] = KeywordIndex.formatBoolean("ShowObjectSelector", false);
+				kws[2] = KeywordIndex.formatBoolean("ShowInputEditor", false);
+				kws[3] = KeywordIndex.formatBoolean("ShowOutputViewer", false);
+				kws[4] = KeywordIndex.formatBoolean("ShowPropertyViewer", false);
+				kws[5] = KeywordIndex.formatBoolean("ShowLogViewer", false);
+				kws[6] = KeywordIndex.formatBoolean("ShowEventViewer", false);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
@@ -838,7 +838,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				EntityPallet.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowModelBuilder", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowModelBuilder", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -855,7 +855,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				ObjectSelector.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowObjectSelector", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowObjectSelector", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -871,7 +871,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				EditBox.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowInputEditor", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowInputEditor", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -887,7 +887,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				OutputBox.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowOutputViewer", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowOutputViewer", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -903,7 +903,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				PropertyBox.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowPropertyViewer", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowPropertyViewer", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -919,7 +919,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				LogBox.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowLogViewer", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -935,7 +935,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed(ActionEvent e) {
 				clearPresentationMode();
 				EventViewer.getInstance().toFront();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowEventViewer", true);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowEventViewer", true);
 				JaamSimModel sim = getJaamSimModel();
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -1059,7 +1059,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 									return;
 								}
 							}
-							KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", true);
+							KeywordIndex kw = KeywordIndex.formatBoolean("ShowWindow", true);
 							view.getJaamSimModel().storeAndExecute(new KeywordCommand(view, kw));
 							FrameBox.setSelectedEntity(view, false);
 						}
@@ -1660,7 +1660,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				JaamSimModel sim = getJaamSimModel();
 				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
 				if (ent != null) {
-					KeywordIndex kw = InputAgent.formatBoolean("Show", xyzAxis.isSelected());
+					KeywordIndex kw = KeywordIndex.formatBoolean("Show", xyzAxis.isSelected());
 					sim.storeAndExecute(new KeywordCommand(ent, kw));
 				}
 				controlStartResume.requestFocusInWindow();
@@ -1692,7 +1692,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					grid.setSelected(true);
 				}
 				if (ent != null) {
-					KeywordIndex kw = InputAgent.formatBoolean("Show", grid.isSelected());
+					KeywordIndex kw = KeywordIndex.formatBoolean("Show", grid.isSelected());
 					sim.storeAndExecute(new KeywordCommand(ent, kw));
 				}
 				controlStartResume.requestFocusInWindow();
@@ -1715,7 +1715,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bool = showLabels.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowLabels", bool);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowLabels", bool);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				if (bool)
 					sim.showTemporaryLabels();
@@ -1740,7 +1740,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bool = showSubModels.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowSubModels", bool);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				updateUI();
 				controlStartResume.requestFocusInWindow();
@@ -1763,7 +1763,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bool = presentMode.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("PresentationMode", bool);
+				KeywordIndex kw = KeywordIndex.formatBoolean("PresentationMode", bool);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1785,7 +1785,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bool = lockWindows.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("LockWindows", bool);
+				KeywordIndex kw = KeywordIndex.formatBoolean("LockWindows", bool);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1806,7 +1806,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
-				KeywordIndex kw = InputAgent.formatBoolean("SnapToGrid", snapToGrid.isSelected());
+				KeywordIndex kw = KeywordIndex.formatBoolean("SnapToGrid", snapToGrid.isSelected());
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				gridSpacing.setEnabled(snapToGrid.isSelected());
 				controlStartResume.requestFocusInWindow();
@@ -1866,7 +1866,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bShow = showReferences.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowReferences", bShow);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowReferences", bShow);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowReferences(bShow);
 				controlStartResume.requestFocusInWindow();
@@ -1887,7 +1887,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bShow = showLinks.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("ShowEntityFlow", bShow);
+				KeywordIndex kw = KeywordIndex.formatBoolean("ShowEntityFlow", bShow);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowEntityFlow(bShow);
 				controlStartResume.requestFocusInWindow();
@@ -2601,7 +2601,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				lineColour.setEnabled(outline.isSelected());
 				if (lineEnt.isOutlined(0.0d) == outline.isSelected())
 					return;
-				KeywordIndex kw = InputAgent.formatBoolean("Outlined", outline.isSelected());
+				KeywordIndex kw = KeywordIndex.formatBoolean("Outlined", outline.isSelected());
 				selectedEntity.getJaamSimModel().storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -2698,7 +2698,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				fillColour.setEnabled(fill.isSelected());
 				if (fillEnt.isFilled(0.0d) == fill.isSelected())
 					return;
-				KeywordIndex kw = InputAgent.formatBoolean("Filled", fill.isSelected());
+				KeywordIndex kw = KeywordIndex.formatBoolean("Filled", fill.isSelected());
 				selectedEntity.getJaamSimModel().storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -2924,7 +2924,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
 				boolean bool = controlRealTime.isSelected();
-				KeywordIndex kw = InputAgent.formatBoolean("RealTime", bool);
+				KeywordIndex kw = KeywordIndex.formatBoolean("RealTime", bool);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -5443,7 +5443,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+			KeywordIndex kw = KeywordIndex.formatBoolean("ShowLogViewer", true);
 			sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 	}

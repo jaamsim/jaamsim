@@ -317,7 +317,7 @@ public class RenderManager implements DragSourceListener {
 		View v = windowToViewMap.get(windowID);
 		if (v.showWindow() && !GUIFrame.getInstance().isIconified() && !v.isDead()
 				&& GUIFrame.getJaamSimModel() == v.getJaamSimModel()) {
-			KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", false);
+			KeywordIndex kw = KeywordIndex.formatBoolean("ShowWindow", false);
 			v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, kw));
 		}
 

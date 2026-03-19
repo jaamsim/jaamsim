@@ -513,7 +513,7 @@ public class InputAgent {
 	}
 
 	public static void applyBoolean(Entity ent, String keyword, boolean bool) {
-		KeywordIndex kw = formatBoolean(keyword, bool);
+		KeywordIndex kw = KeywordIndex.formatBoolean(keyword, bool);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -1835,13 +1835,6 @@ public class InputAgent {
 
 		// Set the model state to unedited
 		simModel.setSessionEdited(false);
-	}
-
-	public static KeywordIndex formatBoolean(String keyword, boolean bool) {
-		String str = "FALSE";
-		if (bool)
-			str = "TRUE";
-		return KeywordIndex.formatArgs(keyword, str);
 	}
 
 	public static KeywordIndex formatIntegers(String keyword, int... args) {
