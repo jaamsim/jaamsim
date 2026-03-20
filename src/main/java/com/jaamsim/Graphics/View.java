@@ -246,21 +246,18 @@ public class View extends Entity {
 	}
 
 	/**
-	 * Returns the point at which the camera is aimed on the x-y plane containing the point of interest.
-	 * @return point on the x-y plane containing the point of interest
+	 * Returns the point on the xy-plane at which the camera is aimed.
+	 * @return point on the xy-plane
 	 */
 	public Vec3d getEffViewCenter() {
 		Vec3d camPos = getViewPosition();
-		Vec3d center = getViewCenter();
-		Vec3d poi = getPointOfInterest(0.0d);
-		Vec3d vec = new Vec3d();
-		vec.sub3(camPos, center);
-		if (MathUtils.near(center.z, poi.z) || MathUtils.near(vec.z, 0.0d))
-			return center;
-		double factor = (center.z - poi.z)/vec.z;
-		vec.scale3(factor);
-		Vec3d ret = new Vec3d(center);
-		ret.sub3(vec);
+		Vec3d camDir = getViewDirection();
+		if (MathUtils.near(camDir.z, 0.0d))
+			return new Vec3d(camPos.x, camPos.y, 0.0d);
+		double factor = camPos.z/camDir.z;
+		Vec3d ret = new Vec3d(camDir);
+		ret.scale3(factor);
+		ret.sub3(camPos, ret);
 		return ret;
 	}
 
@@ -428,25 +425,30 @@ public class View extends Entity {
 			KeywordIndex kw = InputAgent.formatBoolean(lock2D.getKeyword(), bLock2D);
 
 			// Set the camera position
-			Vec3d viewCenter = new Vec3d(getEffViewCenter());
-			Vec3d camPos = new Vec3d(getViewPosition());
+			Vec3d viewCenter = getEffViewCenter();
+			Vec3d camPos = getViewPosition();
 			Vec3d vec = new Vec3d();
 			vec.sub3(viewCenter, camPos);
 			double dist = vec.mag3();
 			Vec3d pos = new Vec3d(viewCenter);
+
+			Vec3d dir;
 			if (bLock2D) {
 				pos.z += dist;
+				dir = new Vec3d(0.0d, 0.0d, -1.0d);
 			}
 			else {
 				dist = dist/Math.sqrt(3);
 				pos.x += dist;
 				pos.y -= dist;
 				pos.z += dist;
+				double val = 1.0d/Math.sqrt(3);
+				dir = new Vec3d(-val, val, -val);
 			}
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), pos, DistanceUnit.class);
-			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, center.getKeyword(), viewCenter, DistanceUnit.class);
+			KeywordIndex dirKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), dir, DistanceUnit.class);
 
-			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, ctrKw));
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, dirKw));
 		}
 	}
 
