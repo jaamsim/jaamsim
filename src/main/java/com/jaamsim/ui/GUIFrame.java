@@ -1638,6 +1638,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				View currentView = RenderManager.getActiveView();
 				if (currentView != null) {
 					currentView.setLock2D(bLock2D);
+					currentView.setPointOfInterest(currentView.getGlobalCenter());
 				}
 				controlStartResume.requestFocusInWindow();
 			}
