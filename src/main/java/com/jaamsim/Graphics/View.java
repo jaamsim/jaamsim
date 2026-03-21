@@ -223,14 +223,6 @@ public class View extends Entity {
 		defSize.set(1, winDefs.VIEW_HEIGHT);
 	}
 
-	public Vec3d getViewCenter() {
-		if (direction.isDef() && !center.isDef())
-			return center.getValue();
-		Vec3d ret = new Vec3d();
-		ret.add3(getViewPosition(), direction.getValue());
-		return ret;
-	}
-
 	public Vec3d getViewPosition() {
 		return position.getValue();
 	}
