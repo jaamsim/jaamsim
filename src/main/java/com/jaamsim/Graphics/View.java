@@ -312,7 +312,7 @@ public class View extends Entity {
 				return follow.getGlobalPosition();
 			}
 
-			Vec3d tmp = getViewCenter();
+			Vec3d tmp = getEffViewCenter();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
