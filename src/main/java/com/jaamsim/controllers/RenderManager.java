@@ -1903,6 +1903,11 @@ public class RenderManager implements DragSourceListener {
 			}
 			catch (InputErrorException e) {}
 
+			// Set the point of interest
+			View view = _getActiveView();
+			if (view != null)
+				view.setPointOfInterest(creationPoint);
+
 			// Set the focus on the window that received the entity
 			renderer.requestFocus(windowID);
 		}
