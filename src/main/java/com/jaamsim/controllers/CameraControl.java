@@ -393,17 +393,6 @@ public class CameraControl implements WindowInteractionListener {
 		// Sets the POI when an object is either selected or dragged
 		if (button == 1 && !isDown) {
 			Vec3d clickPoint = RenderManager.inst().getNearestPick(_windowID);
-
-			// If no object is under the mouse then default to the xy-plane
-			if (clickPoint == null) {
-				Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
-				if (info != null) {
-					Ray mouseRay = RenderUtils.getPickRayForPosition(info, x, y);
-					double dist = RenderManager.XY_PLANE.collisionDist(mouseRay);
-					if (dist >= 0.0d)
-						clickPoint = mouseRay.getPointAtDist(dist);
-				}
-			}
 			if (clickPoint != null)
 				_updateView.setPointOfInterest(clickPoint);
 		}
