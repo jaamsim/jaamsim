@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1003,7 +1003,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	/**
-	 * Cast the provided ray into the current scene and return the list of bounds collisions
+	 * Returns a list of entity numbers and distances for the entities along the specified ray and
+	 * view window.
+	 * @param pickRay - direction from the camera
+	 * @param viewID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entity numbers and distances
 	 */
 	public List<PickResult> pick(Ray pickRay, int viewID, boolean precise) {
 

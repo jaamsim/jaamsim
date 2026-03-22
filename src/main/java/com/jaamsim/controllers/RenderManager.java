@@ -701,6 +701,13 @@ public class RenderManager implements DragSourceListener {
 		GUIFrame.updateUI();
 	}
 
+	/**
+	 * Returns the first movable entity for the present mouse position in the specified window.
+	 * If no movable entity is found, the first non-movable entity is returned.
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return first entity under the mouse
+	 */
 	private DisplayEntity pickEntityForMouse(int windowID, boolean precise) {
 		List<PickData> picks = pickForMouse(windowID, false);
 		Collections.sort(picks, selectionSorter);
@@ -723,11 +730,11 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
-	 * Utility, convert a window and mouse coordinate into a list of picking IDs for that pixel
-	 * @param windowID
-	 * @param mouseX
-	 * @param mouseY
-	 * @return
+	 * Returns a list of entities and distances that are under the mouse for the specified window.
+	 * Overlay entities are included in the list
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entities and distances under the mouse
 	 */
 	private List<PickData> pickForMouse(int windowID, boolean precise) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
@@ -750,6 +757,14 @@ public class RenderManager implements DragSourceListener {
 		return ret;
 	}
 
+	/**
+	 * Returns a list of the overlay entities at the specified raster position in the
+	 * specified window.
+	 * @param x - horizontal raster position
+	 * @param y - vertical raster position
+	 * @param viewID - view window
+	 * @return list of overlay entities
+	 */
 	private List<PickData> pickForRasterCoord(int x, int y, int viewID) {
 		List<PickData> ret = new ArrayList<>();
 		Vec2d vec = new Vec2d(x, y);
@@ -863,6 +878,11 @@ public class RenderManager implements DragSourceListener {
 		return 6;
 	}
 
+	/**
+	 * Returns the global position of the point on the surface of the first entity under the mouse.
+	 * @param windowID - identity number for the view window
+	 * @return position on the surface of the entity under the mouse
+	 */
 	public Vec3d getNearestPick(int windowID) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
@@ -896,9 +916,12 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
-	 * Perform a pick from this world space ray
-	 * @param pickRay - the ray
-	 * @return
+	 * Returns a list of entities and distances along with any mouse handles for the specified ray
+	 * in 3d space.
+	 * @param pickRay - ray in 3d space
+	 * @param viewID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entities and distances along with mouse handles
 	 */
 	private List<PickData> pickForRay(Ray pickRay, int viewID, boolean precise) {
 		List<Renderer.PickResult> picks = renderer.pick(pickRay, viewID, precise);
