@@ -293,7 +293,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		// Right click
 		if (button  == 3) {
-			Vec3d pos = RenderManager.inst().getMousePosition(windowID, x, y);
+			Vec3d pos = RenderManager.inst().getNearestPick(windowID);
 			if (pos != null)
 				_updateView.setPointOfInterest(pos);
 			// Hand this off to the RenderManager to deal with
