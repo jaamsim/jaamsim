@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2024 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ public class RenderUtils {
 	public static final List<Vec4d> HEPTAGRAM_POINTS;
 	public static final List<Vec4d> OCTAGRAM_POINTS;
 	public static final List<Vec4d> ARROW2D_POINTS;
+	public static final List<Vec4d> GRID_POINTS;
 
 	static {
 		CIRCLE_POINTS = getCirclePoints(32);
@@ -96,6 +97,8 @@ public class RenderUtils {
 		ARROW2D_POINTS.add(new Vec4d(-0.5, -0.2, 0.0, 1.0d));
 		ARROW2D_POINTS.add(new Vec4d( 0.1, -0.2, 0.0, 1.0d));
 		ARROW2D_POINTS.add(new Vec4d( 0.1, -0.5, 0.0, 1.0d));
+
+		GRID_POINTS = getGridPoints(100);
 	}
 
 	// Transform the list of points in place
@@ -184,6 +187,22 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 			ret.add(new Vec4d(Math.cos(theta), Math.sin(theta), 0, 1.0d));
 		}
 
+		return ret;
+	}
+
+	public static ArrayList<Vec4d> getGridPoints(int num) {
+		ArrayList<Vec4d> ret = new ArrayList<>(4*(num + 1));
+		for (int i = 0; i <= num; ++i) {
+			double val = -0.5d + ((double) i) / num;
+
+			// Horizontal line
+			ret.add(new Vec4d(-0.5d, val, 0.0d, 1.0d));
+			ret.add(new Vec4d( 0.5d, val, 0.0d, 1.0d));
+
+			// Vertical line
+			ret.add(new Vec4d(val, -0.5d, 0.0d, 1.0d));
+			ret.add(new Vec4d(val,  0.5d, 0.0d, 1.0d));
+		}
 		return ret;
 	}
 

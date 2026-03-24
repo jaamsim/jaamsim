@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
+import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
@@ -59,6 +60,7 @@ public class ShapeModel extends AbstractShapeModel {
 		HEPTAGRAM,
 		OCTAGRAM,
 		BARGAUGE2D,
+		GRID,
 	}
 
 	@Keyword(description = "The shape of a display model determines the appearance of the display model.")
@@ -168,6 +170,9 @@ public class ShapeModel extends AbstractShapeModel {
 			switch (shapeCache) {
 			case BARGAUGE2D:
 				addBarGaugeProxies(simTime);
+				return;
+			case GRID:
+				addGridProxies();
 				return;
 			case ARROW2D:
 				points = RenderUtils.ARROW2D_POINTS;
@@ -354,6 +359,52 @@ public class ShapeModel extends AbstractShapeModel {
 
 					cachedProxies.add(new PolygonProxy(rescontentsPoints, transCache, scaleCache, rescolours[i], false, 1, viCache, pickingID));
 				}
+			}
+		}
+
+		private void addGridProxies() {
+			long pickingID = getPickingID();
+			Color4d col;
+			double wid = 1.0d;
+
+			// Outline
+			if (outlinedCache && isTagVisible(ShapeModel.TAG_OUTLINES)) {
+				Color4d colour = getTagColor(ShapeModel.TAG_OUTLINES, outlineColourCache);
+				cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, transCache, scaleCache, colour, true, lineWidthCache, viCache, pickingID));
+			}
+
+			// Fill
+			if (filledCache && isTagVisible(ShapeModel.TAG_CONTENTS)) {
+				Color4d colour = getTagColor(ShapeModel.TAG_CONTENTS, fillColourCache);
+				cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, transCache, scaleCache, colour, false, 1, viCache, pickingID));
+			}
+
+			// Grid lines
+			List<Vec4d> rawPoints = RenderUtils.GRID_POINTS;
+			ArrayList<Vec4d> points = new ArrayList<>(rawPoints.size());
+			for (Vec4d rawPoint : rawPoints) {
+				Vec4d point = new Vec4d(rawPoint);
+				point.mul3(scaleCache);
+				points.add(point);
+			}
+			if (transCache != null)
+				RenderUtils.transformPointsLocal(transCache, points, 0);
+
+			int numLinesPerDir = points.size() / 4;
+			for (int i = 0; i < numLinesPerDir; i++) {
+				col = (i % 5 == 0) ? ColourInput.BLACK : ColourInput.LIGHT_GREY;
+
+				// Horizontal line
+				ArrayList<Vec4d> line1 = new ArrayList<>(2);
+				line1.add(points.get(4*i));
+				line1.add(points.get(4*i + 1));
+				cachedProxies.add(new LineProxy(line1, col, wid, viCache, pickingID));
+
+				// Vertical line
+				ArrayList<Vec4d> line2 = new ArrayList<>(2);
+				line2.add(points.get(4*i + 2));
+				line2.add(points.get(4*i + 3));
+				cachedProxies.add(new LineProxy(line2, col, wid, viCache, pickingID));
 			}
 		}
 
