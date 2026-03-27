@@ -28,7 +28,10 @@ import com.jaamsim.Graphics.Tag;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EnumInput;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -66,15 +69,33 @@ public class ShapeModel extends AbstractShapeModel {
 	@Keyword(description = "The shape of a display model determines the appearance of the display model.")
 	private final EnumInput<ValidShapes> shape;
 
+	@Keyword(description = "Provides backward compatibility for the Grid100x100 object in older "
+	                     + "models where it was a ColladaModel instead of a ShapeModel.")
+	private final StringInput colladaFile;
+
 	{
 		filled.setDefaultValue(true);
 		outlined.setDefaultValue(true);
 
 		shape = new EnumInput<>(ValidShapes.class, "Shape", KEY_INPUTS, ValidShapes.CIRCLE);
 		this.addInput(shape);
+
+		colladaFile = new StringInput("ColladaFile", KEY_INPUTS, "");
+		colladaFile.setCallback(colladaFileCallback);
+		colladaFile.setHidden(true);
+		colladaFile.setOutput(false);
+		this.addInput(colladaFile);
 	}
 
 	public ShapeModel() {}
+
+	static final InputCallback colladaFileCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			// Clear the ColladaFile input so that it is not saved
+			inp.reset();
+		}
+	};
 
 	public String getShapeName() {
 		return shape.getValue().name();
