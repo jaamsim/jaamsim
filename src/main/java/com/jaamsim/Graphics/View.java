@@ -345,8 +345,8 @@ public class View extends Entity {
 				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 			}
 
-			KeywordIndex posKw = InputAgent.formatVec3dInput(this, "ViewPosition", tempPos, DistanceUnit.class);
-			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, "ViewDirection", tempDir, DistanceUnit.class);
+			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), tempPos, DistanceUnit.class);
+			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), tempDir, DistanceUnit.class);
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
 		}
 	}
