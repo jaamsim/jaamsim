@@ -113,6 +113,9 @@ public class View extends Entity {
 
 	private double cachedSimTime = 0;
 
+	private static final Vec3d DIR_ISO = new Vec3d(-1/Math.sqrt(3), 1/Math.sqrt(3), -1/Math.sqrt(3));
+	private static final Vec3d DIR_2D = new Vec3d(0.0d, 0.0d, -1.0d);
+
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
@@ -140,7 +143,7 @@ public class View extends Entity {
 		position.setPromptReqd(false);
 		this.addInput(position);
 
-		direction = new Vec3dInput("ViewDirection", GRAPHICS, new Vec3d(-1/Math.sqrt(3), 1/Math.sqrt(3), -1/Math.sqrt(3)));
+		direction = new Vec3dInput("ViewDirection", GRAPHICS, DIR_ISO);
 		direction.setUnitType(DistanceUnit.class);
 		direction.setPromptReqd(false);
 		this.addInput(direction);
@@ -427,15 +430,14 @@ public class View extends Entity {
 			Vec3d dir;
 			if (bLock2D) {
 				pos.z += dist;
-				dir = new Vec3d(0.0d, 0.0d, -1.0d);
+				dir = DIR_2D;
 			}
 			else {
 				dist = dist/Math.sqrt(3);
 				pos.x += dist;
 				pos.y -= dist;
 				pos.z += dist;
-				double val = 1.0d/Math.sqrt(3);
-				dir = new Vec3d(-val, val, -val);
+				dir = DIR_ISO;
 			}
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), pos, DistanceUnit.class);
 			KeywordIndex dirKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), dir, DistanceUnit.class);
