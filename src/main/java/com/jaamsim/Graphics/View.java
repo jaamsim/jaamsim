@@ -136,6 +136,7 @@ public class View extends Entity {
 		center = new Vec3dInput("ViewCenter", GRAPHICS, new Vec3d());
 		center.setUnitType(DistanceUnit.class);
 		center.setPromptReqd(false);
+		center.setHidden(true);
 		this.addInput(center);
 
 		position = new Vec3dInput("ViewPosition", GRAPHICS, new Vec3d(10.0d, -10.0d, 10.0d));
@@ -348,6 +349,9 @@ public class View extends Entity {
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), tempPos, DistanceUnit.class);
 			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), tempDir, DistanceUnit.class);
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
+
+			// Ignore the 'ViewCenter' input if is was entered as an input
+			center.reset();
 		}
 	}
 
@@ -441,8 +445,10 @@ public class View extends Entity {
 			}
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), pos, DistanceUnit.class);
 			KeywordIndex dirKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), dir, DistanceUnit.class);
-
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, dirKw));
+
+			// Ignore the 'ViewCenter' input if is was entered as an input
+			center.reset();
 		}
 	}
 
