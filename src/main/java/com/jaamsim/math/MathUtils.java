@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -299,15 +299,11 @@ public static double collisionDistLines(Mat4d rayMat, Vec4d[] lines, double coll
 	for (int i = 0; i < lines.length; i+=2) {
 		Vec4d nearPoint = RenderUtils.rayClosePoint(rayMat, lines[i], lines[i+1]);
 
-		double angle = RenderUtils.angleToRay(rayMat, nearPoint);
-		if (angle < 0) {
-			continue;
-		}
-
 		Vec4d raySpaceNear = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		raySpaceNear.mult4(rayMat, nearPoint);
 
-		if (angle < collisionAngle && raySpaceNear.z < shortDist) {
+		double angle = Math.atan2(raySpaceNear.mag2(), raySpaceNear.z);
+		if (angle >= 0.0d && angle < collisionAngle && raySpaceNear.z < shortDist) {
 			shortDist = raySpaceNear.z;
 		}
 	}
