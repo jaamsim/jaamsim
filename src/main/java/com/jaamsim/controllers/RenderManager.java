@@ -890,16 +890,8 @@ public class RenderManager implements DragSourceListener {
 	public Vec3d getNearestPick(int windowID) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
-		View view = windowToViewMap.get(windowID);
-		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
-			// The mouse is not actually in the window, or the window was closed along the way
-			return null;
-		}
-
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
-
-		List<Renderer.PickResult> picks = renderer.pick(pickRay, view.getID(), true);
-
+		List<Renderer.PickResult> picks = pick(pickRay, windowID, true);
 		if (picks.size() == 0) {
 			return null;
 		}
@@ -930,10 +922,7 @@ public class RenderManager implements DragSourceListener {
 	private List<PickData> pickForRay(Ray pickRay, int windowID, boolean precise) {
 		List<PickData> uniquePicks = new ArrayList<>();
 
-		View view = windowToViewMap.get(windowID);
-		if (view == null)
-			return uniquePicks;
-		List<Renderer.PickResult> picks = renderer.pick(pickRay, view.getID(), precise);
+		List<Renderer.PickResult> picks = pick(pickRay, windowID, precise);
 
 		// IDs that have already been added
 		Set<Long> knownIDs = new HashSet<>();
@@ -954,6 +943,26 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		return uniquePicks;
+	}
+
+	/**
+	 * Returns a list of entity numbers and distances for the entities along the specified ray and
+	 * view window.
+	 * @param pickRay - direction from the camera
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entity numbers and distances
+	 */
+	public List<Renderer.PickResult> pick(Ray pickRay, int windowID, boolean precise) {
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
+
+		View view = windowToViewMap.get(windowID);
+		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
+			// The mouse is not actually in the window, or the window was closed along the way
+			return new ArrayList<>();
+		}
+
+		return renderer.pick(pickRay, view.getID(), precise);
 	}
 
 	/**
