@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -829,15 +829,11 @@ public class RenderManager implements DragSourceListener {
 	 * This Comparator sorts based on interaction handle priority
 	 */
 	private static class HandleSorter implements Comparator<PickData> {
-
 		@Override
 		public int compare(PickData p0, PickData p1) {
 			int p0priority = getHandlePriority(p0.id);
 			int p1priority = getHandlePriority(p1.id);
-			if (p0priority == p1priority)
-				return 0;
-
-			return (p0priority < p1priority) ? 1 : -1;
+			return Integer.compare(p0priority, p1priority);
 		}
 	}
 
@@ -847,24 +843,25 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	private static int getHandlePriority(long handleID) {
-		if (handleID == MOVE_PICK_ID) return 1;
-		if (handleID == LINEDRAG_PICK_ID) return 1;
 
-		if (handleID <= LINENODE_PICK_ID) return 2;
+		if (handleID == RESIZE_PXPY_PICK_ID) return 1;
+		if (handleID == RESIZE_PXNY_PICK_ID) return 1;
+		if (handleID == RESIZE_NXPY_PICK_ID) return 1;
+		if (handleID == RESIZE_NXNY_PICK_ID) return 1;
+
+		if (handleID == RESIZE_POSX_PICK_ID) return 2;
+		if (handleID == RESIZE_NEGX_PICK_ID) return 2;
+		if (handleID == RESIZE_POSY_PICK_ID) return 2;
+		if (handleID == RESIZE_NEGY_PICK_ID) return 2;
 
 		if (handleID == ROTATE_PICK_ID) return 3;
 
-		if (handleID == RESIZE_POSX_PICK_ID) return 4;
-		if (handleID == RESIZE_NEGX_PICK_ID) return 4;
-		if (handleID == RESIZE_POSY_PICK_ID) return 4;
-		if (handleID == RESIZE_NEGY_PICK_ID) return 4;
+		if (handleID <= LINENODE_PICK_ID) return 4;
 
-		if (handleID == RESIZE_PXPY_PICK_ID) return 5;
-		if (handleID == RESIZE_PXNY_PICK_ID) return 5;
-		if (handleID == RESIZE_NXPY_PICK_ID) return 5;
-		if (handleID == RESIZE_NXNY_PICK_ID) return 5;
+		if (handleID == MOVE_PICK_ID) return 5;
+		if (handleID == LINEDRAG_PICK_ID) return 5;
 
-		return 0;
+		return 6;
 	}
 
 	public Vec3d getNearestPick(int windowID) {
