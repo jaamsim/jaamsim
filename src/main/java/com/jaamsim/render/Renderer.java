@@ -188,6 +188,8 @@ public class Renderer implements GLAnimatorControl {
 	private MeshData badData;
 	private MeshProto badProto;
 
+	private double pixelAngularSize;
+
 	// A cache of the current scene, needed by the individual windows to render
 	private ArrayList<Renderable> currentScene = new ArrayList<>();
 	private ArrayList<OverlayRenderable> currentOverlay = new ArrayList<>();
@@ -350,6 +352,7 @@ public class Renderer implements GLAnimatorControl {
 				sharedContext.release();
 				drawContext = null;
 
+
 				updateRenderableScene();
 
 				// Run all render messages
@@ -417,6 +420,10 @@ public class Renderer implements GLAnimatorControl {
 				logException(t);
 			}
 		}
+	}
+
+	public double getPixelAngularSize() {
+		return pixelAngularSize;
 	}
 
 	/**
@@ -1790,8 +1797,8 @@ private static class TransSortable implements Comparable<TransSortable> {
 		gl.glClear(GL2GL3.GL_COLOR_BUFFER_BIT
 				| GL2GL3.GL_DEPTH_BUFFER_BIT);
 
-		// The 'height' of a pixel 1 unit from the viewer
-		double unitPixelHeight = 2 * Math.tan(cam.getFOV()/2.0) / height;
+		// Angular size of one pixel in radians
+		pixelAngularSize = 2 * Math.tan(cam.getFOV()/2.0) / Math.max(height, width);
 
 		ArrayList<TransSortable> transparents = new ArrayList<>();
 
@@ -1812,7 +1819,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 			}
 
 			double apparentSize = 2 * bounds.radius.mag3() / Math.abs(dist);
-			if (apparentSize < unitPixelHeight) {
+			if (apparentSize < pixelAngularSize) {
 				// This object is too small to draw
 				++perfInfo.objectsCulled;
 				continue;
