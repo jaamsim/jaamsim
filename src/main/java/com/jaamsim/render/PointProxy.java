@@ -32,8 +32,6 @@ public class PointProxy implements RenderProxy {
 	private final long _pickingID;
 	private final VisibilityInfo _visInfo;
 
-	private double _collisionAngle = 0.008727; // 0.5 degrees in radians
-
 	private DebugPoints cached;
 
 	public PointProxy(List<Vec4d> points, Color4d colour, double pointWidth, VisibilityInfo visInfo, long pickingID) {
@@ -63,9 +61,5 @@ public class PointProxy implements RenderProxy {
 	public void collectOverlayRenderables(Renderer r,
 			ArrayList<OverlayRenderable> outList) {
 		// None
-	}
-
-	public void setCollisionAngle(double angleRad) {
-		_collisionAngle = angleRad;
 	}
 }

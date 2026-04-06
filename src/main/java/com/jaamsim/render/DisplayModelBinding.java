@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,7 +156,6 @@ public abstract class DisplayModelBinding {
 			pl.add(handlePoints.get(i));
 			PointProxy point = new PointProxy(pl, ColourInput.GREEN, 8, getVisibilityInfo(), RenderManager.RESIZE_POSX_PICK_ID - i);
 			point.setHoverColour(ColourInput.LIGHT_GREY);
-			point.setCollisionAngle(0.004363); // 0.25 degrees in radians
 
 			out.add(point);
 		}

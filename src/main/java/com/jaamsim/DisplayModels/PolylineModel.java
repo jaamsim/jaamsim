@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -629,7 +629,6 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 		pl.add(new Vec4d(p));
 		PointProxy pp = new PointProxy(pl, col, 8, getVisibilityInfo(), pickID);
 		pp.setHoverColour(hovCol);
-		pp.setCollisionAngle(0.004363); // 0.25 degrees in radians
 
 		out.add(pp);
 	}
