@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2024 JaamSim Software Inc.
+ * Copyright (C) 2024-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ public class LineProxy implements RenderProxy {
 		if (_cachedLine == null) {
 			_cachedLine = new DebugLine(_lineSegments, _colour, _hoverColour, _lineWidth, _visInfo, _pickingID);
 		}
+		_cachedLine.setCollisionAngle(5.0d * r.getPixelAngularSize());
 		outList.add(_cachedLine);
 	}
 	@Override
