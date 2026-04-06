@@ -703,7 +703,7 @@ public class RenderManager implements DragSourceListener {
 
 	private DisplayEntity pickEntityForMouse(int windowID, boolean precise) {
 		List<PickData> picks = pickForMouse(windowID, false);
-		Collections.sort(picks, new SelectionSorter());
+		Collections.sort(picks, selectionSorter);
 		DisplayEntity ret = null;
 		for (PickData pd : picks) {
 			if (!pd.isEntity)
@@ -810,7 +810,6 @@ public class RenderManager implements DragSourceListener {
 	 * This Comparator sorts based on entity selection preference
 	 */
 	private static class SelectionSorter implements Comparator<PickData> {
-
 		@Override
 		public int compare(PickData p0, PickData p1) {
 			if (p0.isEntity && !p1.isEntity) {
@@ -819,11 +818,10 @@ public class RenderManager implements DragSourceListener {
 			if (!p0.isEntity && p1.isEntity) {
 				return 1;
 			}
-
 			return Double.compare(p0.size, p1.size);
 		}
-
 	}
+	private static SelectionSorter selectionSorter = new SelectionSorter();
 
 	/**
 	 * This Comparator sorts based on interaction handle priority
@@ -836,6 +834,7 @@ public class RenderManager implements DragSourceListener {
 			return Integer.compare(p0priority, p1priority);
 		}
 	}
+	private static HandleSorter handleSorter = new HandleSorter();
 
 	/**
 	 * This determines the priority for interaction handles if several are selectable at drag time
@@ -1727,7 +1726,7 @@ public class RenderManager implements DragSourceListener {
 
 		List<PickData> picks = pickForRay(pickRay, view.getID(), true);
 
-		Collections.sort(picks, new HandleSorter());
+		Collections.sort(picks, handleSorter);
 
 		if (picks.size() == 0) {
 			return false;
@@ -1823,7 +1822,7 @@ public class RenderManager implements DragSourceListener {
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		int viewID = _getActiveView().getID();
 		List<PickData> picks = pickForRay(currentRay, viewID, false);
-		Collections.sort(picks, new SelectionSorter());
+		Collections.sort(picks, selectionSorter);
 		for (PickData pd : picks) {
 			if (!pd.isEntity)
 				continue;
