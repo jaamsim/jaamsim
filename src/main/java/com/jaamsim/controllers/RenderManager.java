@@ -739,8 +739,7 @@ public class RenderManager implements DragSourceListener {
 	private List<PickData> pickForMouse(int windowID, boolean precise) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
-		View view = windowToViewMap.get(windowID);
-		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
+		if (mouseInfo == null || !mouseInfo.mouseInWindow) {
 			// The mouse is not actually in the window, or the window was closed along the way
 			return new ArrayList<>(); // empty set
 		}
@@ -748,11 +747,11 @@ public class RenderManager implements DragSourceListener {
 		// Look for overlay entities
 		int x = mouseInfo.getScaledX();
 		int y = mouseInfo.getScaledY();
-		List<PickData> ret = pickForRasterCoord(x, y, view.getID());
+		List<PickData> ret = pickForRasterCoord(x, y, windowID);
 
 		// Look for normal entities
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
-		ret.addAll(pickForRay(pickRay, view.getID(), precise));
+		ret.addAll(pickForRay(pickRay, windowID, precise));
 
 		return ret;
 	}
@@ -762,13 +761,18 @@ public class RenderManager implements DragSourceListener {
 	 * specified window.
 	 * @param x - horizontal raster position
 	 * @param y - vertical raster position
-	 * @param viewID - view window
+	 * @param windowID - view window
 	 * @return list of overlay entities
 	 */
-	private List<PickData> pickForRasterCoord(int x, int y, int viewID) {
+	private List<PickData> pickForRasterCoord(int x, int y, int windowID) {
 		List<PickData> ret = new ArrayList<>();
+
+		View view = windowToViewMap.get(windowID);
+		if (view == null)
+			return ret;
+
 		Vec2d vec = new Vec2d(x, y);
-		List<Long> overlayList = renderer.overlayPick(vec, viewID);
+		List<Long> overlayList = renderer.overlayPick(vec, view.getID());
 		for (Long id : overlayList) {
 			ret.add(new PickData(id));
 		}
@@ -919,14 +923,17 @@ public class RenderManager implements DragSourceListener {
 	 * Returns a list of entities and distances along with any mouse handles for the specified ray
 	 * in 3d space.
 	 * @param pickRay - ray in 3d space
-	 * @param viewID - view window
+	 * @param windowID - view window
 	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
 	 * @return list of entities and distances along with mouse handles
 	 */
-	private List<PickData> pickForRay(Ray pickRay, int viewID, boolean precise) {
-		List<Renderer.PickResult> picks = renderer.pick(pickRay, viewID, precise);
-
+	private List<PickData> pickForRay(Ray pickRay, int windowID, boolean precise) {
 		List<PickData> uniquePicks = new ArrayList<>();
+
+		View view = windowToViewMap.get(windowID);
+		if (view == null)
+			return uniquePicks;
+		List<Renderer.PickResult> picks = renderer.pick(pickRay, view.getID(), precise);
 
 		// IDs that have already been added
 		Set<Long> knownIDs = new HashSet<>();
@@ -1742,12 +1749,7 @@ public class RenderManager implements DragSourceListener {
 
 		Ray pickRay = getRayForMouse(windowID, x, y);
 
-		View view = windowToViewMap.get(windowID);
-		if (view == null) {
-			return false;
-		}
-
-		List<PickData> picks = pickForRay(pickRay, view.getID(), true);
+		List<PickData> picks = pickForRay(pickRay, windowID, true);
 
 		Collections.sort(picks, handleSorter);
 
@@ -1845,8 +1847,7 @@ public class RenderManager implements DragSourceListener {
 
 	private Region getRegion(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
-		int viewID = _getActiveView().getID();
-		List<PickData> picks = pickForRay(currentRay, viewID, false);
+		List<PickData> picks = pickForRay(currentRay, windowID, false);
 		Collections.sort(picks, selectionSorter);
 		for (PickData pd : picks) {
 			if (!pd.isEntity)
