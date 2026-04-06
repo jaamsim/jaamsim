@@ -1734,6 +1734,7 @@ public class RenderManager implements DragSourceListener {
 
 		double mouseHandleDist = Double.POSITIVE_INFINITY;
 		double entityDist = Double.POSITIVE_INFINITY;
+		double entitySize = 0.0d;
 		// See if we are hovering over any interaction handles
 		for (PickData pd : picks) {
 			if (isMouseHandleID(pd.id) && mouseHandleDist == Double.POSITIVE_INFINITY) {
@@ -1744,14 +1745,15 @@ public class RenderManager implements DragSourceListener {
 			if (selectedEntity != null && pd.id == selectedEntity.getEntityNumber()) {
 				// We clicked on the selected entity
 				entityDist = pd.dist;
+				entitySize = pd.size;
 			}
 		}
 
 		// The following logical condition effectively checks if we hit the entity first, and did not select
 		// any mouse handle other than the move handle
-		if (entityDist != Double.POSITIVE_INFINITY &&
-		    entityDist < mouseHandleDist &&
-		    (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID)) {
+		if (entityDist != Double.POSITIVE_INFINITY && entityDist < mouseHandleDist
+				&& (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID
+				|| mouseHandleDist - entityDist > 0.01d * entitySize)) {
 
 			// Use the entity collision point for dragging instead of the handle collision point
 			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
