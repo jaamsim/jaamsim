@@ -33,7 +33,7 @@ class EventTree {
 	///////////////////////////////////////////
 	// Scratch space, used instead of having parent pointers
 
-	private EventNode[] scratch = new EventNode[64];
+	private final EventNode[] scratch = new EventNode[64];
 	private int scratchPos = 0;
 
 	private void pushScratch(EventNode n) {
