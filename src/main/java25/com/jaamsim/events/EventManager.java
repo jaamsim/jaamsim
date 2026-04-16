@@ -68,6 +68,9 @@ public final class EventManager {
 	private EventTimeListener timelistener;
 	private EventTraceListener trcListener;
 
+	static {
+		System.out.println("Java 25 version enabled");
+	}
 	/**
 	 * Allocates a new EventManager with the given parent and name
 	 *
@@ -218,6 +221,26 @@ public final class EventManager {
 
 	final Condition getWaitCondition() {
 		return evtLock.newCondition();
+	}
+
+	private static final ScopedValue<EventManager> scopedEvt = ScopedValue.newInstance();
+	private final Runnable startThread = new EventStart(this);
+
+	private static class EventStart implements Runnable {
+		private final EventManager evt;
+
+		EventStart(EventManager evt) {
+			this.evt = evt;
+		}
+
+		@Override
+		public void run() {
+			ScopedValue.where(scopedEvt, evt).run( () -> { evt.execute(); });
+		}
+	}
+
+	private Thread allocateThread() {
+		return Thread.ofVirtual().start(startThread);
 	}
 
 	/**
@@ -959,17 +982,13 @@ public final class EventManager {
 		return name;
 	}
 
-	private Thread allocateThread() {
-		return Process.allocate(this);
-	}
-
 	/**
 	 * Returns whether or not we are currently running in a Process context
 	 * that has a controlling EventManager.
 	 * @return true if we are in a Process context, false otherwise
 	 */
 	public static final boolean hasCurrent() {
-		return (Thread.currentThread() instanceof Process);
+		return scopedEvt.isBound();
 	}
 
 	/**
@@ -977,7 +996,9 @@ public final class EventManager {
 	 * @return true if a future event can be scheduled
 	 */
 	public static final boolean canSchedule() {
-		return hasCurrent() && EventManager.current().scheduleEnabled();
+		if (!scopedEvt.isBound())
+			return false;
+		return scopedEvt.get().scheduleEnabled();
 	}
 
 	/**
@@ -985,12 +1006,10 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
-		try {
-			return ((Process)Thread.currentThread()).evt();
-		}
-		catch (ClassCastException e) {
-			throw new ProcessError("Non-process thread called Process.current()");
-		}
+		if (!scopedEvt.isBound())
+			throw new ProcessError("Non-event thread called EventManager.current()");
+
+		return scopedEvt.get();
 	}
 
 	/**
