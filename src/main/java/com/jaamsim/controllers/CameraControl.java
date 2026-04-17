@@ -377,13 +377,6 @@ public class CameraControl implements WindowInteractionListener {
 		RenderManager.redraw();
 	}
 
-	public void setRotationAngles(double rotX, double rotZ) {
-		PolarInfo pi = getPolarCoordsFromView();
-		pi.rotX = rotX;
-		pi.rotZ = rotZ;
-		updateCamTrans(pi, true);
-	}
-
 	@Override
 	public void windowClosing() {
 		if (!RenderManager.isGood()) { return; }

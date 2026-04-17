@@ -1991,28 +1991,6 @@ public class RenderManager implements DragSourceListener {
 		return new Vec2d(dim.getWidth(), dim.getHeight());
 	}
 
-	/**
-	 * Set the current windows camera to an isometric view
-	 */
-	public void setIsometricView() {
-		CameraControl control = windowControls.get(activeWindowID);
-		if (control == null) return;
-
-		// The constant is acos(1/sqrt(3))
-		control.setRotationAngles(0.955316, Math.PI/4);
-	}
-
-	/**
-	 * Set the current windows camera to an XY plane view
-	 */
-	public void setXYPlaneView() {
-		CameraControl control = windowControls.get(activeWindowID);
-		if (control == null) return;
-
-		// Do not look straight down the Z axis as that is actually a degenerate state
-		control.setRotationAngles(0.0000001, 0.0);
-	}
-
 	public static View getActiveView() {
 		if (!isGood())
 			return null;
