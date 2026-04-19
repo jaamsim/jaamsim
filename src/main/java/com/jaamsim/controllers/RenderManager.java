@@ -2138,7 +2138,7 @@ public class RenderManager implements DragSourceListener {
 	 * @param target - optional target to prevent re-allocating GPU resources
 	 */
 	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
-		CameraInfo camInfo = view.getCameraInfo();
+		CameraInfo camInfo = CameraControl.getCameraInfo(view);
 		return renderer.renderOffscreen(null, view.getID(), camInfo, width, height, null, target);
 	}
 

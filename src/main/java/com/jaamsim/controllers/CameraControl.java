@@ -461,6 +461,15 @@ public class CameraControl implements WindowInteractionListener {
 		}
 	}
 
+	public static CameraInfo getCameraInfo(View view) {
+		Vec3d cameraPos = view.getGlobalPosition();
+		Vec3d cameraCenter = view.getGlobalCenter();
+		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
+
+		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);
+		return new CameraInfo(Math.PI/3, trans, view.getSkyboxTexture());
+	}
+
 	private PolarInfo getPolarCoordsFromView() {
 		return new PolarInfo(_updateView.getGlobalCenter(), _updateView.getGlobalPosition());
 	}

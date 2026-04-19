@@ -26,7 +26,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.WindowDefaults;
-import com.jaamsim.controllers.PolarInfo;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FileInput;
@@ -42,7 +41,6 @@ import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.render.CameraInfo;
 import com.jaamsim.units.DistanceUnit;
 
 public class View extends Entity {
@@ -429,15 +427,6 @@ public class View extends Entity {
 
 	public void update(double simTime) {
 		cachedSimTime = simTime;
-	}
-
-	public CameraInfo getCameraInfo() {
-		Vec3d cameraPos = getGlobalPosition();
-		Vec3d cameraCenter = getGlobalCenter();
-		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
-
-		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);
-		return new CameraInfo(Math.PI/3, trans, getSkyboxTexture());
 	}
 
 	@Output(name = "PointOfInterest",

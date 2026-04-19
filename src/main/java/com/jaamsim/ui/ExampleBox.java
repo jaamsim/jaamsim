@@ -48,6 +48,7 @@ import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.controllers.CameraControl;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -350,7 +351,7 @@ public class ExampleBox extends JDialog {
 			// Render the view offscreen
 			if (view == null || !RenderManager.isGood())
 				return null;
-			CameraInfo camInfo = view.getCameraInfo();
+			CameraInfo camInfo = CameraControl.getCameraInfo(view);
 			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(simModel, 0.0d, camInfo, 640, 480);
 
 			// Save and return the image
