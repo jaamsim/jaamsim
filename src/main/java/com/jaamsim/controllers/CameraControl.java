@@ -354,7 +354,8 @@ public class CameraControl implements WindowInteractionListener {
 
 
 		if (updateInputs) {
-			updateViewPos(finalTrans.getTransRef(), pi.viewCenter);
+			_updateView.updateCenterAndPos(pi.viewCenter, finalTrans.getTransRef());
+			GUIFrame.updateUI();
 		}
 
 		// Finally update the renders camera info
@@ -420,19 +421,6 @@ public class CameraControl implements WindowInteractionListener {
 		if (!RenderManager.isGood()) { return; }
 
 		RenderManager.inst().setActiveWindow(_windowID);
-	}
-
-	/**
-	 * Set the position information in the saved view to match this window
-	 */
-	private void updateViewPos(Vec3d viewPos, Vec3d viewCenter) {
-		if (_updateView == null) {
-			return;
-		}
-
-		_updateView.updateCenterAndPos(viewCenter, viewPos);
-
-		GUIFrame.updateUI();
 	}
 
 	@Override
