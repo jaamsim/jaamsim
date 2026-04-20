@@ -4031,14 +4031,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 	}
 
-	public void updateViewTime(double simTime) {
-		synchronized (views) {
-			for (int i = 0; i < views.size(); i++) {
-				views.get(i).update(simTime);
-			}
-		}
-	}
-
 	@Override
 	public void addView(View v) {
 		synchronized (views) {

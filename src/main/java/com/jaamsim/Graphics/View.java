@@ -105,8 +105,6 @@ public class View extends Entity {
 
 	private final Object setLock = new Object();
 
-	private double cachedSimTime = 0;
-
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
@@ -240,7 +238,7 @@ public class View extends Entity {
 	}
 
 	public Vec3d getGlobalPosition() {
-		return getGlobalPosition(cachedSimTime);
+		return getGlobalPosition(getJaamSimModel().getSimTime());
 	}
 
 	public Vec3d getGlobalPosition(double simTime) {
@@ -270,7 +268,7 @@ public class View extends Entity {
 	}
 
 	public Vec3d getGlobalCenter() {
-		return getGlobalCenter(cachedSimTime);
+		return getGlobalCenter(getJaamSimModel().getSimTime());
 	}
 
 	public Vec3d getGlobalCenter(double simTime) {
@@ -431,10 +429,6 @@ public class View extends Entity {
 			return null;
 		}
 		return file;
-	}
-
-	public void update(double simTime) {
-		cachedSimTime = simTime;
 	}
 
 	@Output(name = "PointOfInterest",
