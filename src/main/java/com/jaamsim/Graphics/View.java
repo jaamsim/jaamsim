@@ -302,10 +302,6 @@ public class View extends Entity {
 	 */
 	public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 		synchronized (setLock){
-
-			if (isScripted())
-				return;
-
 			Vec3d tempPos = new Vec3d(pos);
 			Vec3d tempCent = new Vec3d(center);
 

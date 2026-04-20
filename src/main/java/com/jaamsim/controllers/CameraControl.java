@@ -354,7 +354,8 @@ public class CameraControl implements WindowInteractionListener {
 
 
 		if (updateInputs) {
-			_updateView.updateCenterAndPos(pi.viewCenter, finalTrans.getTransRef());
+			if (!_updateView.isScripted())
+				_updateView.updateCenterAndPos(pi.viewCenter, finalTrans.getTransRef());
 			GUIFrame.updateUI();
 		}
 
@@ -468,6 +469,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		// If an entity has been selected, pass the key event to it
 		if (RenderManager.handleKeyPressed(e))
+			return;
+
+		if (_updateView.isScripted())
 			return;
 
 		// If no entity has been selected, the camera will handle the key event
