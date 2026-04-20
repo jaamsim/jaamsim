@@ -449,9 +449,9 @@ public class CameraControl implements WindowInteractionListener {
 		}
 	}
 
-	public static CameraInfo getCameraInfo(View view) {
-		Vec3d cameraPos = view.getGlobalPosition();
-		Vec3d cameraCenter = view.getGlobalCenter();
+	public static CameraInfo getCameraInfo(View view, double simTime) {
+		Vec3d cameraPos = view.getGlobalPosition(simTime);
+		Vec3d cameraCenter = view.getGlobalCenter(simTime);
 		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
 
 		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);

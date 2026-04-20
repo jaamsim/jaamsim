@@ -112,7 +112,7 @@ public class VideoRecorder {
 
 	}
 
-	public void sample() {
+	public void sample(double simTime) {
 		assert(_isLoaded);
 
 		if (!_saveVideo && !_saveImages) {
@@ -123,7 +123,7 @@ public class VideoRecorder {
 
 		ArrayList<Future<BufferedImage>> images = new ArrayList<>();
 		for (ViewInfo vi : _views) {
-			images.add(RenderManager.inst().renderScreenShot(vi.view, vi.width, vi.height, vi.renderTarget));
+			images.add(RenderManager.inst().renderScreenShot(vi.view, simTime, vi.width, vi.height, vi.renderTarget));
 		}
 
 		// Make sure all the renders are queued up before waiting for any of them.

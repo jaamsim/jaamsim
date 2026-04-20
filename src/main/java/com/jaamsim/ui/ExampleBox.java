@@ -351,8 +351,9 @@ public class ExampleBox extends JDialog {
 			// Render the view offscreen
 			if (view == null || !RenderManager.isGood())
 				return null;
-			CameraInfo camInfo = CameraControl.getCameraInfo(view);
-			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(simModel, 0.0d, camInfo, 640, 480);
+			double simTime = 0.0d;
+			CameraInfo camInfo = CameraControl.getCameraInfo(view, simTime);
+			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(simModel, simTime, camInfo, 640, 480);
 
 			// Save and return the image
 			imageCache.put(example, fi);

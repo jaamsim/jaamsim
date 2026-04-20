@@ -499,7 +499,7 @@ public class RenderManager implements DragSourceListener {
 				renderer.queueRedraw();
 
 				if (screenShotThisFrame) {
-					takeScreenShot();
+					takeScreenShot(renderTime);
 				}
 
 			} catch (Throwable t) {
@@ -2137,8 +2137,8 @@ public class RenderManager implements DragSourceListener {
 	 * @param height - height of returned image
 	 * @param target - optional target to prevent re-allocating GPU resources
 	 */
-	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
-		CameraInfo camInfo = CameraControl.getCameraInfo(view);
+	public Future<BufferedImage> renderScreenShot(View view, double simTime, int width, int height, OffscreenTarget target) {
+		CameraInfo camInfo = CameraControl.getCameraInfo(view, simTime);
 		return renderer.renderOffscreen(null, view.getID(), camInfo, width, height, null, target);
 	}
 
@@ -2154,10 +2154,10 @@ public class RenderManager implements DragSourceListener {
 		renderer.freeOffscreenTarget(target);
 	}
 
-	private void takeScreenShot() {
+	private void takeScreenShot(double simTime) {
 		VideoRecorder rec = recorder.get();
 		if (rec != null)
-			rec.sample();
+			rec.sample(simTime);
 
 		screenshotLock.lock();
 		try {
