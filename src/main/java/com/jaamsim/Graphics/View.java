@@ -240,11 +240,15 @@ public class View extends Entity {
 	}
 
 	public Vec3d getGlobalPosition() {
+		return getGlobalPosition(cachedSimTime);
+	}
+
+	public Vec3d getGlobalPosition(double simTime) {
 		synchronized (setLock) {
 
 			// Check if this is following a script
 			if (positionScriptInput.hasKeys()) {
-				return positionScriptInput.getValueForTime(cachedSimTime);
+				return positionScriptInput.getValueForTime(simTime);
 			}
 
 			// Is this view following an entity?
@@ -266,11 +270,15 @@ public class View extends Entity {
 	}
 
 	public Vec3d getGlobalCenter() {
+		return getGlobalCenter(cachedSimTime);
+	}
+
+	public Vec3d getGlobalCenter(double simTime) {
 		synchronized (setLock) {
 
 			// Check if this is following a script
 			if (centerScriptInput.hasKeys()) {
-				return centerScriptInput.getValueForTime(cachedSimTime);
+				return centerScriptInput.getValueForTime(simTime);
 			}
 
 			DisplayEntity follow = followEntityInput.getValue();
