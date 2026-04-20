@@ -458,8 +458,8 @@ public class CameraControl implements WindowInteractionListener {
 		return new CameraInfo(Math.PI/3, trans, view.getSkyboxTexture());
 	}
 
-	public void checkForUpdate() {
-		PolarInfo pi = new PolarInfo(_updateView.getGlobalCenter(), _updateView.getGlobalPosition());
+	void checkForUpdate(double simTime) {
+		PolarInfo pi = new PolarInfo(_updateView.getGlobalCenter(simTime), _updateView.getGlobalPosition(simTime));
 		updateCamTrans(pi, false);
 	}
 

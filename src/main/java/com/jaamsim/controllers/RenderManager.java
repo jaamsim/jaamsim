@@ -395,7 +395,7 @@ public class RenderManager implements DragSourceListener {
 				GUIFrame.getInstance().updateViewTime(renderTime);
 
 				for (CameraControl cc : windowControls.values()) {
-					cc.checkForUpdate();
+					cc.checkForUpdate(renderTime);
 				}
 
 				boolean screenShotThisFrame = (recorder.get() != null);
