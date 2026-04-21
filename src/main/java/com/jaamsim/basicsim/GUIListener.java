@@ -17,7 +17,6 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.Graphics.View;
-import com.jaamsim.math.Vec3d;
 
 public interface GUIListener {
 
@@ -33,9 +32,7 @@ public interface GUIListener {
 	public void removeView(View v);
 	public void createWindow(View v);
 	public void closeWindow(View v);
-	public Vec3d getPOI(View v);
 	public void allowResizing(boolean bool);
-
 	public void gui_tickUpdate(long tick);
 	public void gui_timeRunning();
 	public void gui_handleError(JaamSimModel sm, Throwable t);

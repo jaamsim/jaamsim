@@ -47,8 +47,6 @@ public class CameraControl implements WindowInteractionListener {
 	private final int _windowID;
 	private final View _updateView;
 
-	private final Vec3d POI = new Vec3d();
-
 	private PolarInfo piCache; // The last polar info this view has re-drawn for
 
 	private Vec3d dragViewCenter;    // ViewCenter input at start of a drag action
@@ -61,7 +59,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec3d pos = _updateView.getGlobalCenter();
 		pos.z = 0.0d;
-		setPOI(pos);
+		_updateView.setPointOfInterest(pos);
 	}
 
 	@Override
@@ -143,7 +141,7 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		Plane dragPlane = new Plane(null, POI.z);
+		Plane dragPlane = new Plane(null, _updateView.getPointOfInterest().z);
 		double currDist = dragPlane.collisionDist(currRay);
 		double prevDist = dragPlane.collisionDist(prevRay);
 		if (currDist < 0 || prevDist < 0 ||
@@ -187,7 +185,7 @@ public class CameraControl implements WindowInteractionListener {
 		Ray currRay = RenderUtils.getPickRayForPosition(info, x, y);
 		Ray prevRay = RenderUtils.getPickRayForPosition(info, x0, y0);
 
-		double zDiff = RenderUtils.getZDiff(POI, currRay, prevRay);
+		double zDiff = RenderUtils.getZDiff(_updateView.getPointOfInterest(), currRay, prevRay);
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
 		Vec3d center = new Vec3d(dragViewCenter);
@@ -226,8 +224,8 @@ public class CameraControl implements WindowInteractionListener {
 		Quaternion rotZ = new Quaternion();
 		rotZ.setRotZAxis(-(x - x0) * ROT_SCALE_Z);
 
-		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, POI);
-		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
+		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, _updateView.getPointOfInterest());
+		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, _updateView.getPointOfInterest());
 
 		camPos.multAndTrans3(rotTransX, camPos);
 		center.multAndTrans3(rotTransX, center);
@@ -269,7 +267,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d center = _updateView.getGlobalCenter();
 
 		Vec3d diff = new Vec3d();
-		diff.sub3(POI, camPos);
+		diff.sub3(_updateView.getPointOfInterest(), camPos);
 
 		double scale = 1;
 		double zoomFactor = (wheelRotation > 0) ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
@@ -297,7 +295,7 @@ public class CameraControl implements WindowInteractionListener {
 		if (button  == 3) {
 			Vec3d pos = RenderManager.inst().getMousePosition(windowID, x, y);
 			if (pos != null)
-				setPOI(pos);
+				_updateView.setPointOfInterest(pos);
 			// Hand this off to the RenderManager to deal with
 			RenderManager.inst().popupMenu(windowID);
 		}
@@ -407,7 +405,7 @@ public class CameraControl implements WindowInteractionListener {
 				}
 			}
 			if (clickPoint != null)
-				setPOI(clickPoint);
+				_updateView.setPointOfInterest(clickPoint);
 		}
 
 		// Save the initial view parameters at the start of a drag action
@@ -436,18 +434,6 @@ public class CameraControl implements WindowInteractionListener {
 
 	public View getView() {
 		return _updateView;
-	}
-
-	public void setPOI(Vec3d pt) {
-		synchronized (POI) {
-			POI.set3(pt);
-		}
-	}
-
-	public Vec3d getPOI() {
-		synchronized (POI) {
-			return POI;
-		}
 	}
 
 	public static CameraInfo getCameraInfo(View view, double simTime) {

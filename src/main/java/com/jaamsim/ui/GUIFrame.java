@@ -4111,13 +4111,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		v.setWindowPos(pt.x, pt.y, width - fix.width, height - fix.height);
 	}
 
-	@Override
-	public Vec3d getPOI(View v) {
-		if (!RenderManager.isGood())
-			return new Vec3d();
-		return RenderManager.inst().getPOI(v);
-	}
-
 	public boolean isResizable(View v) {
 		if (!RenderManager.isGood())
 			return false;

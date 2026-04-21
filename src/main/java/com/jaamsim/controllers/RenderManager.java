@@ -2038,29 +2038,6 @@ public class RenderManager implements DragSourceListener {
 		return rman.renderer.getAWTFrame(winID);
 	}
 
-	public void setPOI(View view, Vec3d pt) {
-		int winID = getWindowID(view);
-		CameraControl control = windowControls.get(winID);
-		if (control == null)
-			return;
-		control.setPOI(pt);
-	}
-
-	public Vec3d getPOI(View view) {
-		int winID = getWindowID(view);
-		CameraControl control = windowControls.get(winID);
-		if (control == null)
-			return null;
-		return control.getPOI();
-	}
-
-	public Vec3d getPOI() {
-		CameraControl control = windowControls.get(activeWindowID);
-		if (control == null)
-			return null;
-		return control.getPOI();
-	}
-
 	public void setResizable(View v, boolean bool) {
 		int winID = getWindowID(v);
 		Frame frame = renderer.getAWTFrame(winID);
@@ -2320,10 +2297,10 @@ public class RenderManager implements DragSourceListener {
 	 * @param ent - entity to be positioned
 	 */
 	public void dragEntityToMousePosition(DisplayEntity ent) {
-		CameraControl cam = windowControls.get(activeWindowID);
-		if (cam == null)
+		View view = _getActiveView();
+		if (view == null)
 			return;
-		Vec3d pos = cam.getPOI();
+		Vec3d pos = view.getPointOfInterest();
 		pos = ent.getLocalPosition(pos);
 		Simulation simulation = ent.getSimulation();
 		if (simulation.isSnapToGrid()) {

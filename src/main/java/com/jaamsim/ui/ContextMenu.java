@@ -446,7 +446,7 @@ public class ContextMenu {
 				viewPos.add3(diff);
 				viewCenter.add3(diff);
 
-				RenderManager.inst().setPOI(v, viewCenter);
+				v.setPointOfInterest(viewCenter);
 				KeywordIndex posKw = InputAgent.formatVec3dInput(v, "ViewPosition", viewPos, DistanceUnit.class);
 				KeywordIndex ctrKw = InputAgent.formatVec3dInput(v, "ViewCenter", viewCenter, DistanceUnit.class);
 				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
@@ -469,9 +469,10 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<Vec3d> pts = ent.getPoints();
-				Vec3d pos = RenderManager.inst().getPOI();
-				if (pos == null)
+				View view = RenderManager.getActiveView();
+				if (view == null)
 					return;
+				Vec3d pos = view.getPointOfInterest();
 				Vec3d localPos = ent.getLocalPosition(pos);
 				final Simulation simulation = ent.getSimulation();
 				if (simulation.isSnapToGrid()) {
@@ -524,9 +525,10 @@ public class ContextMenu {
 				ArrayList<Vec3d> pts = ent.getPoints();
 				int ind = nodeIndex;
 				if (nodeIndex == -1) {
-					Vec3d pos = RenderManager.inst().getPOI();
-					if (pos == null)
+					View view = RenderManager.getActiveView();
+					if (view == null)
 						return;
+					Vec3d pos = view.getPointOfInterest();
 					Vec3d localPos = ent.getLocalPosition(pos);
 					final Simulation simulation = simModel.getSimulation();
 					if (simulation.isSnapToGrid()) {

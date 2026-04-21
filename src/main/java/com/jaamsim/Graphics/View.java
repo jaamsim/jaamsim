@@ -105,6 +105,8 @@ public class View extends Entity {
 
 	private final Object setLock = new Object();
 
+	private final Vec3d poi = new Vec3d();
+
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
@@ -216,6 +218,14 @@ public class View extends Entity {
 
 	public Vec3d getViewPosition() {
 		return position.getValue();
+	}
+
+	public Vec3d getPointOfInterest() {
+		return poi;
+	}
+
+	public void setPointOfInterest(Vec3d pos) {
+		poi.set3(pos);
 	}
 
 	/**
@@ -432,10 +442,7 @@ public class View extends Entity {
 	    unitType = DistanceUnit.class,
 	    sequence = 1)
 	public Vec3d getPointOfInterest(double simTime) {
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui == null)
-			return new Vec3d();
-		return gui.getPOI(this);
+		return getPointOfInterest();
 	}
 
 	@Output(name = "DistanceToPOI",
@@ -443,16 +450,8 @@ public class View extends Entity {
 	    unitType = DistanceUnit.class,
 	    sequence = 2)
 	public double geDistanceToPOI(double simTime) {
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui == null)
-			return Double.NaN;
-
-		Vec3d poi = gui.getPOI(this);
-		if (poi == null)
-			return Double.NaN;
-
 		Vec3d vec = new Vec3d(getViewPosition());
-		vec.sub3(poi);
+		vec.sub3(getPointOfInterest());
 		return vec.mag3();
 	}
 
