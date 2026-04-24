@@ -259,6 +259,15 @@ public class View extends Entity {
 
 	public Vec3d getGlobalDirection() {
 		synchronized (setLock) {
+
+			// Check if this is following a script
+			if (centerScriptInput.hasKeys()) {
+				Vec3d ret = new Vec3d();
+				ret.sub3(centerScriptInput.getValueForTime(cachedSimTime), getGlobalPosition());
+				ret.normalize3();
+				return ret;
+			}
+
 			Vec3d tmp = getViewDirection();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
@@ -297,17 +306,6 @@ public class View extends Entity {
 
 	public Vec3d getGlobalCenter() {
 		synchronized (setLock) {
-
-			// Check if this is following a script
-			if (centerScriptInput.hasKeys()) {
-				return centerScriptInput.getValueForTime(cachedSimTime);
-			}
-
-			DisplayEntity follow = followEntityInput.getValue();
-			if (follow != null) {
-				return follow.getGlobalPosition();
-			}
-
 			Vec3d tmp = getEffViewCenter();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
