@@ -259,8 +259,9 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d camDir = _updateView.getGlobalDirection();
+		double simTime = _updateView.getJaamSimModel().getSimTime();
+		Vec3d camPos = _updateView.getGlobalPosition(simTime);
+		Vec3d camDir = _updateView.getGlobalDirection(simTime);
 
 		Vec3d diff = new Vec3d();
 		diff.sub3(_updateView.getPointOfInterest(), camPos);
@@ -384,8 +385,9 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		// Save the initial view parameters at the start of a drag action
-		dragViewPosition = _updateView.getGlobalPosition();
-		dragViewDirection = _updateView.getGlobalDirection();
+		double simTime = _updateView.getJaamSimModel().getSimTime();
+		dragViewPosition = _updateView.getGlobalPosition(simTime);
+		dragViewDirection = _updateView.getGlobalDirection(simTime);
 
 		RenderManager.inst().handleMouseButton(windowID, x, y, button, isDown, modifiers);
 	}
@@ -436,8 +438,9 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 
 		// If no entity has been selected, the camera will handle the key event
-		Vec3d pos = _updateView.getGlobalPosition();
-		Vec3d dir = _updateView.getGlobalDirection();
+		double simTime = _updateView.getJaamSimModel().getSimTime();
+		Vec3d pos = _updateView.getGlobalPosition(simTime);
+		Vec3d dir = _updateView.getGlobalDirection(simTime);
 
 		// Construct a unit vector in the x-y plane in the direction of the view center
 		Vec3d forward = new Vec3d(dir);

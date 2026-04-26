@@ -264,10 +264,6 @@ public class View extends Entity {
 		return ret;
 	}
 
-	public Vec3d getGlobalDirection() {
-		return getGlobalDirection(getJaamSimModel().getSimTime());
-	}
-
 	public Vec3d getGlobalDirection(double simTime) {
 		synchronized (setLock) {
 
@@ -287,10 +283,6 @@ public class View extends Entity {
 			}
 			return ret;
 		}
-	}
-
-	public Vec3d getGlobalPosition() {
-		return getGlobalPosition(getJaamSimModel().getSimTime());
 	}
 
 	public Vec3d getGlobalPosition(double simTime) {
