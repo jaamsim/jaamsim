@@ -406,6 +406,8 @@ public class InputAgent {
 	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
 		if (existingEnt != null) {
+			if (existingEnt.getName().equals("Grid100x100"))  // For backward compatibility with old models
+				return null;
 			simModel.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
 			return null;
 		}

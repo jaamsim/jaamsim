@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2024 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -49,17 +48,15 @@ public class CameraControl implements WindowInteractionListener {
 
 	private PolarInfo piCache; // The last polar info this view has re-drawn for
 
-	private Vec3d dragViewCenter;    // ViewCenter input at start of a drag action
 	private Vec3d dragViewPosition;  // ViewPosition input at the start of a drag action
+	private Vec3d dragViewDirection;  // ViewDirection input at the start of a drag action
 
 	public CameraControl(Renderer renderer, int windowID, View updateView) {
 		_renderer = renderer;
 		_windowID = windowID;
 		_updateView = updateView;
 
-		Vec3d pos = _updateView.getGlobalCenter();
-		pos.z = 0.0d;
-		_updateView.setPointOfInterest(pos);
+		_updateView.setPointOfInterest(_updateView.getGlobalCenter());
 	}
 
 	@Override
@@ -95,9 +92,9 @@ public class CameraControl implements WindowInteractionListener {
 	private void handleTurnCamera(int x, int y, int x0, int y0) {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
-		Vec3d center = new Vec3d(dragViewCenter);
+		Vec3d camDir = new Vec3d(dragViewDirection);
 
-		PolarInfo origPi = new PolarInfo(center, camPos);
+		PolarInfo origPi = new PolarInfo(camPos, camDir);
 
 		Mat4d rot = new Mat4d();
 		rot.setRot3(origPi.getRotation());
@@ -115,10 +112,10 @@ public class CameraControl implements WindowInteractionListener {
 		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
 		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, camPos);
 
-		center.multAndTrans3(rotTransX, center);
-		center.multAndTrans3(rotTransZ, center);
+		camDir.mult3(rotTransX, camDir);
+		camDir.mult3(rotTransZ, camDir);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(camPos, camDir);
 		updateCamTrans(pi, true);
 
 	}
@@ -158,21 +155,16 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d diff = new Vec3d();
 		diff.sub3(currIntersect, prevIntersect);
 
-		Vec3d center = new Vec3d(dragViewCenter);
-		center.sub3(diff);
+		Vec3d camPos = new Vec3d(dragViewPosition);
+		camPos.sub3(diff);
 
 		// Apply snap-grid
 		Simulation simulation = _updateView.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid()) {
-			center = simulation.getSnapGridPosition(center, dragViewCenter, false);
-			diff = new Vec3d(dragViewCenter);
-			diff.sub3(center);
+			camPos = simulation.getSnapGridPosition(camPos, dragViewPosition, false);
 		}
 
-		Vec3d camPos = new Vec3d(dragViewPosition);
-		camPos.sub3(diff);
-
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
 	}
@@ -188,10 +180,15 @@ public class CameraControl implements WindowInteractionListener {
 		double zDiff = RenderUtils.getZDiff(_updateView.getPointOfInterest(), currRay, prevRay);
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
-		Vec3d center = new Vec3d(dragViewCenter);
 		camPos.z -= zDiff;
-		center.z -= zDiff;
-		PolarInfo pi = new PolarInfo(center, camPos);
+
+		// Apply snap-grid
+		Simulation simulation = _updateView.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
+			camPos = simulation.getSnapGridPosition(camPos, dragViewPosition, true);
+		}
+
+		PolarInfo pi = new PolarInfo(camPos, dragViewDirection);
 		updateCamTrans(pi, true);
 
 	}
@@ -199,11 +196,10 @@ public class CameraControl implements WindowInteractionListener {
 	private void handleRotAroundPoint(int x, int y, int x0, int y0) {
 
 		Vec3d camPos = new Vec3d(dragViewPosition);
-		Vec3d center = new Vec3d(dragViewCenter);
+		Vec3d camDir = new Vec3d(dragViewDirection);
 
-		PolarInfo origPi = new PolarInfo(center, camPos);
-		if ( camPos.x == center.x &&
-		     camPos.y == center.y ) {
+		PolarInfo origPi = new PolarInfo(camPos, camDir);
+		if (camDir.x == 0.0d && camDir.y == 0.0d) {
 			// This is a degenerate camera view, tweak the polar info a bit to
 			// prevent view flipping
 			origPi.rotX = 0.00001;
@@ -228,12 +224,12 @@ public class CameraControl implements WindowInteractionListener {
 		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, _updateView.getPointOfInterest());
 
 		camPos.multAndTrans3(rotTransX, camPos);
-		center.multAndTrans3(rotTransX, center);
+		camDir.mult3(rotTransX, camDir);
 
 		camPos.multAndTrans3(rotTransZ, camPos);
-		center.multAndTrans3(rotTransZ, center);
+		camDir.mult3(rotTransZ, camDir);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(camPos, camDir);
 
 		rot.setRot3(pi.getRotation());
 
@@ -245,12 +241,12 @@ public class CameraControl implements WindowInteractionListener {
 			// The up angle has changed by more than 90 degrees, we probably are looking directly up or down
 			// Instead only apply the rotation around Z
 			camPos = new Vec3d(dragViewPosition);
-			center = new Vec3d(dragViewCenter);
+			camDir = new Vec3d(dragViewDirection);
 
 			camPos.multAndTrans3(rotTransZ, camPos);
-			center.multAndTrans3(rotTransZ, center);
+			camDir.mult3(rotTransZ, camDir);
 
-			pi = new PolarInfo(center, camPos);
+			pi = new PolarInfo(camPos, camDir);
 		}
 
 		updateCamTrans(pi, true);
@@ -264,7 +260,7 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d center = _updateView.getGlobalCenter();
+		Vec3d camDir = _updateView.getGlobalDirection();
 
 		Vec3d diff = new Vec3d();
 		diff.sub3(_updateView.getPointOfInterest(), camPos);
@@ -277,11 +273,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		// offset is the difference from where we are to where we're going
 		diff.scale3(1 - scale);
-
 		camPos.add3(diff);
-		center.add3(diff);
 
-		PolarInfo pi = new PolarInfo(center, camPos);
+		PolarInfo pi = new PolarInfo(camPos, camDir);
 		updateCamTrans(pi, true);
 	}
 
@@ -343,17 +337,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		piCache = pi;
 
-		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
-
-		Transform finalTrans = new Transform(pi.viewCenter);
-
-		finalTrans.merge(finalTrans, new Transform(null, pi.getRotation(), 1));
-		finalTrans.merge(finalTrans, new Transform(zOffset));
-
-
 		if (updateInputs) {
 			if (!_updateView.isScripted())
-				_updateView.updateCenterAndPos(pi.viewCenter, finalTrans.getTransRef());
+				_updateView.updateCenterAndPos(pi.viewPosition, pi.viewDirection);
 			GUIFrame.updateUI();
 		}
 
@@ -367,7 +353,7 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		info.trans = finalTrans;
+		info.trans = new Transform(pi.viewPosition, pi.getRotation(), 1);
 
 		info.skyboxTexture = _updateView.getSkyboxTexture();
 
@@ -398,8 +384,8 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		// Save the initial view parameters at the start of a drag action
-		dragViewCenter = _updateView.getGlobalCenter();
 		dragViewPosition = _updateView.getGlobalPosition();
+		dragViewDirection = _updateView.getGlobalDirection();
 
 		RenderManager.inst().handleMouseButton(windowID, x, y, button, isDown, modifiers);
 	}
@@ -435,7 +421,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	void checkForUpdate(double simTime) {
-		PolarInfo pi = new PolarInfo(_updateView.getGlobalCenter(simTime), _updateView.getGlobalPosition(simTime));
+		PolarInfo pi = new PolarInfo(_updateView.getGlobalPosition(simTime), _updateView.getGlobalDirection(simTime));
 		updateCamTrans(pi, false);
 	}
 
@@ -451,11 +437,10 @@ public class CameraControl implements WindowInteractionListener {
 
 		// If no entity has been selected, the camera will handle the key event
 		Vec3d pos = _updateView.getGlobalPosition();
-		Vec3d cent = _updateView.getGlobalCenter();
+		Vec3d dir = _updateView.getGlobalDirection();
 
 		// Construct a unit vector in the x-y plane in the direction of the view center
-		Vec3d forward = new Vec3d(cent);
-		forward.sub3(pos);
+		Vec3d forward = new Vec3d(dir);
 		forward.z = 0.0d;
 		forward.normalize3();
 
@@ -476,40 +461,34 @@ public class CameraControl implements WindowInteractionListener {
 
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
 			pos.add3(left);
-			cent.add3(left);
 		}
 
 		else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
 			pos.sub3(left);
-			cent.sub3(left);
 		}
 
 		else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
 			if (e.isShiftDown()) {
 				pos.set3(pos.x, pos.y, pos.z+inc);
-				cent.set3(cent.x, cent.y, cent.z+inc);
 			}
 			else {
 				pos.add3(forward);
-				cent.add3(forward);
 			}
 		}
 
 		else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
 			if (e.isShiftDown()) {
 				pos.set3(pos.x, pos.y, pos.z-inc);
-				cent.set3(cent.x, cent.y, cent.z-inc);
 			}
 			else {
 				pos.sub3(forward);
-				cent.sub3(forward);
 			}
 		}
 
 		else
 			return;
 
-		_updateView.updateCenterAndPos(cent, pos);
+		_updateView.updateCenterAndPos(pos, dir);
 	}
 
 	@Override

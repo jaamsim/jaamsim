@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,10 @@ public class View extends Entity {
 	         exampleList = {"0 0 50 m"})
 	private final Vec3dInput position;
 
+	@Keyword(description = "Unit vector pointing in the direction of the view camera.",
+	         exampleList = {"0 0 -1 m"})
+	private final Vec3dInput direction;
+
 	@Keyword(description = "The size of the window in pixels (width, height).",
 	         exampleList = {"500 300"})
 	private final IntegerListInput windowSize;
@@ -107,6 +111,9 @@ public class View extends Entity {
 
 	private final Vec3d poi = new Vec3d();
 
+	private static final Vec3d DIR_ISO = new Vec3d(-1/Math.sqrt(3), 1/Math.sqrt(3), -1/Math.sqrt(3));
+	private static final Vec3d DIR_2D = new Vec3d(0.0d, 0.0d, -1.0d);
+
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
@@ -127,12 +134,18 @@ public class View extends Entity {
 		center = new Vec3dInput("ViewCenter", GRAPHICS, new Vec3d());
 		center.setUnitType(DistanceUnit.class);
 		center.setPromptReqd(false);
+		center.setHidden(true);
 		this.addInput(center);
 
 		position = new Vec3dInput("ViewPosition", GRAPHICS, new Vec3d(10.0d, -10.0d, 10.0d));
 		position.setUnitType(DistanceUnit.class);
 		position.setPromptReqd(false);
 		this.addInput(position);
+
+		direction = new Vec3dInput("ViewDirection", GRAPHICS, DIR_ISO);
+		direction.setUnitType(DistanceUnit.class);
+		direction.setPromptReqd(false);
+		this.addInput(direction);
 
 		windowSize = new IntegerListInput("WindowSize", GRAPHICS, defSize);
 		windowSize.setValidCount(2);
@@ -212,13 +225,10 @@ public class View extends Entity {
 		defSize.set(1, winDefs.VIEW_HEIGHT);
 	}
 
-	public Vec3d getViewCenter() {
-		return center.getValue();
-	}
-
 	public Vec3d getViewPosition() {
 		return position.getValue();
 	}
+
 
 	public Vec3d getPointOfInterest() {
 		return poi;
@@ -228,23 +238,55 @@ public class View extends Entity {
 		poi.set3(pos);
 	}
 
+	public Vec3d getViewDirection() {
+		if (direction.isDef() && !center.isDef()) {
+			Vec3d ret = new Vec3d();
+			ret.sub3(center.getValue(), getViewPosition());
+			ret.normalize3();
+			return ret;
+		}
+		return direction.getValue();
+	}
+
 	/**
-	 * Returns the point at which the camera is aimed on the x-y plane containing the point of interest.
-	 * @return point on the x-y plane containing the point of interest
+	 * Returns the point on the xy-plane at which the camera is aimed.
+	 * @return point on the xy-plane
 	 */
 	public Vec3d getEffViewCenter() {
 		Vec3d camPos = getViewPosition();
-		Vec3d center = getViewCenter();
-		Vec3d poi = getPointOfInterest(0.0d);
-		Vec3d vec = new Vec3d();
-		vec.sub3(camPos, center);
-		if (MathUtils.near(center.z, poi.z) || MathUtils.near(vec.z, 0.0d))
-			return center;
-		double factor = (center.z - poi.z)/vec.z;
-		vec.scale3(factor);
-		Vec3d ret = new Vec3d(center);
-		ret.sub3(vec);
+		Vec3d camDir = getViewDirection();
+		if (MathUtils.near(camDir.z, 0.0d))
+			return new Vec3d(camPos.x, camPos.y, 0.0d);
+		double factor = camPos.z/camDir.z;
+		Vec3d ret = new Vec3d(camDir);
+		ret.scale3(factor);
+		ret.sub3(camPos, ret);
 		return ret;
+	}
+
+	public Vec3d getGlobalDirection() {
+		return getGlobalDirection(getJaamSimModel().getSimTime());
+	}
+
+	public Vec3d getGlobalDirection(double simTime) {
+		synchronized (setLock) {
+
+			// Check if this is following a script
+			if (centerScriptInput.hasKeys()) {
+				Vec3d ret = new Vec3d();
+				ret.sub3(centerScriptInput.getValueForTime(simTime), getGlobalPosition(simTime));
+				ret.normalize3();
+				return ret;
+			}
+
+			Vec3d tmp = getViewDirection();
+			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
+			if (region.getValue() != null) {
+				Transform regTrans = region.getValue().getRegionTrans();
+				regTrans.apply(ret, ret);
+			}
+			return ret;
+		}
 	}
 
 	public Vec3d getGlobalPosition() {
@@ -267,7 +309,7 @@ public class View extends Entity {
 				return ret;
 			}
 
-			Vec3d tmp = position.getValue();
+			Vec3d tmp = getViewPosition();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
@@ -283,18 +325,7 @@ public class View extends Entity {
 
 	public Vec3d getGlobalCenter(double simTime) {
 		synchronized (setLock) {
-
-			// Check if this is following a script
-			if (centerScriptInput.hasKeys()) {
-				return centerScriptInput.getValueForTime(simTime);
-			}
-
-			DisplayEntity follow = followEntityInput.getValue();
-			if (follow != null) {
-				return follow.getGlobalPosition();
-			}
-
-			Vec3d tmp = center.getValue();
+			Vec3d tmp = getEffViewCenter();
 			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
@@ -307,19 +338,19 @@ public class View extends Entity {
 	/**
 	 * updateCenterAndPos is used only by the mouse interaction code. It takes the camera view center and camera position in global
 	 * coordinates and sets the corresponding inputs (in region coordinates).
-	 * @param center - view center in world coordinates
 	 * @param pos - camera position in world coordinates
+	 * @param dir - camera direction in world coordinates
 	 */
-	public void updateCenterAndPos(Vec3d center, Vec3d pos) {
+	public void updateCenterAndPos(Vec3d pos, Vec3d dir) {
 		synchronized (setLock){
 			Vec3d tempPos = new Vec3d(pos);
-			Vec3d tempCent = new Vec3d(center);
+			Vec3d tempDir = new Vec3d(dir);
 
 			if (region.getValue() != null) {
 				Transform regTrans = region.getValue().getRegionTrans();
 				regTrans.inverse(regTrans);
 				regTrans.multAndTrans(pos, tempPos);
-				regTrans.multAndTrans(center, tempCent);
+				tempDir.mult3(regTrans.getMat4dRef(), dir);
 			}
 
 			// If this is following an entity, subtract that entity's position from the camera position (as it is interpreted as relative)
@@ -328,9 +359,12 @@ public class View extends Entity {
 				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 			}
 
-			KeywordIndex posKw = InputAgent.formatVec3dInput(this, "ViewPosition", tempPos, DistanceUnit.class);
-			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, "ViewCenter", tempCent, DistanceUnit.class);
+			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), tempPos, DistanceUnit.class);
+			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), tempDir, DistanceUnit.class);
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
+
+			// Ignore the 'ViewCenter' input if is was entered as an input
+			center.reset();
 		}
 	}
 
@@ -403,25 +437,31 @@ public class View extends Entity {
 			KeywordIndex kw = KeywordIndex.formatBoolean(lock2D.getKeyword(), bLock2D);
 
 			// Set the camera position
-			Vec3d viewCenter = new Vec3d(getEffViewCenter());
-			Vec3d camPos = new Vec3d(getViewPosition());
+			Vec3d viewCenter = getEffViewCenter();
+			Vec3d camPos = getViewPosition();
 			Vec3d vec = new Vec3d();
 			vec.sub3(viewCenter, camPos);
 			double dist = vec.mag3();
 			Vec3d pos = new Vec3d(viewCenter);
+
+			Vec3d dir;
 			if (bLock2D) {
 				pos.z += dist;
+				dir = DIR_2D;
 			}
 			else {
 				dist = dist/Math.sqrt(3);
 				pos.x += dist;
 				pos.y -= dist;
 				pos.z += dist;
+				dir = DIR_ISO;
 			}
 			KeywordIndex posKw = InputAgent.formatVec3dInput(this, position.getKeyword(), pos, DistanceUnit.class);
-			KeywordIndex ctrKw = InputAgent.formatVec3dInput(this, center.getKeyword(), viewCenter, DistanceUnit.class);
+			KeywordIndex dirKw = InputAgent.formatVec3dInput(this, direction.getKeyword(), dir, DistanceUnit.class);
+			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, dirKw));
 
-			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, ctrKw));
+			// Ignore the 'ViewCenter' input if is was entered as an input
+			center.reset();
 		}
 	}
 

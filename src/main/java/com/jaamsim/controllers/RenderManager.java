@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -699,9 +699,16 @@ public class RenderManager implements DragSourceListener {
 		GUIFrame.updateUI();
 	}
 
+	/**
+	 * Returns the first movable entity for the present mouse position in the specified window.
+	 * If no movable entity is found, the first non-movable entity is returned.
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return first entity under the mouse
+	 */
 	private DisplayEntity pickEntityForMouse(int windowID, boolean precise) {
 		List<PickData> picks = pickForMouse(windowID, false);
-		Collections.sort(picks, new SelectionSorter());
+		Collections.sort(picks, selectionSorter);
 		DisplayEntity ret = null;
 		for (PickData pd : picks) {
 			if (!pd.isEntity)
@@ -721,17 +728,16 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
-	 * Utility, convert a window and mouse coordinate into a list of picking IDs for that pixel
-	 * @param windowID
-	 * @param mouseX
-	 * @param mouseY
-	 * @return
+	 * Returns a list of entities and distances that are under the mouse for the specified window.
+	 * Overlay entities are included in the list
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entities and distances under the mouse
 	 */
 	private List<PickData> pickForMouse(int windowID, boolean precise) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
-		View view = windowToViewMap.get(windowID);
-		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
+		if (mouseInfo == null || !mouseInfo.mouseInWindow) {
 			// The mouse is not actually in the window, or the window was closed along the way
 			return new ArrayList<>(); // empty set
 		}
@@ -739,19 +745,32 @@ public class RenderManager implements DragSourceListener {
 		// Look for overlay entities
 		int x = mouseInfo.getScaledX();
 		int y = mouseInfo.getScaledY();
-		List<PickData> ret = pickForRasterCoord(x, y, view.getID());
+		List<PickData> ret = pickForRasterCoord(x, y, windowID);
 
 		// Look for normal entities
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
-		ret.addAll(pickForRay(pickRay, view.getID(), precise));
+		ret.addAll(pickForRay(pickRay, windowID, precise));
 
 		return ret;
 	}
 
-	private List<PickData> pickForRasterCoord(int x, int y, int viewID) {
+	/**
+	 * Returns a list of the overlay entities at the specified raster position in the
+	 * specified window.
+	 * @param x - horizontal raster position
+	 * @param y - vertical raster position
+	 * @param windowID - view window
+	 * @return list of overlay entities
+	 */
+	private List<PickData> pickForRasterCoord(int x, int y, int windowID) {
 		List<PickData> ret = new ArrayList<>();
+
+		View view = windowToViewMap.get(windowID);
+		if (view == null)
+			return ret;
+
 		Vec2d vec = new Vec2d(x, y);
-		List<Long> overlayList = renderer.overlayPick(vec, viewID);
+		List<Long> overlayList = renderer.overlayPick(vec, view.getID());
 		for (Long id : overlayList) {
 			ret.add(new PickData(id));
 		}
@@ -808,7 +827,6 @@ public class RenderManager implements DragSourceListener {
 	 * This Comparator sorts based on entity selection preference
 	 */
 	private static class SelectionSorter implements Comparator<PickData> {
-
 		@Override
 		public int compare(PickData p0, PickData p1) {
 			if (p0.isEntity && !p1.isEntity) {
@@ -817,27 +835,23 @@ public class RenderManager implements DragSourceListener {
 			if (!p0.isEntity && p1.isEntity) {
 				return 1;
 			}
-
 			return Double.compare(p0.size, p1.size);
 		}
-
 	}
+	private static SelectionSorter selectionSorter = new SelectionSorter();
 
 	/**
 	 * This Comparator sorts based on interaction handle priority
 	 */
 	private static class HandleSorter implements Comparator<PickData> {
-
 		@Override
 		public int compare(PickData p0, PickData p1) {
 			int p0priority = getHandlePriority(p0.id);
 			int p1priority = getHandlePriority(p1.id);
-			if (p0priority == p1priority)
-				return 0;
-
-			return (p0priority < p1priority) ? 1 : -1;
+			return Integer.compare(p0priority, p1priority);
 		}
 	}
+	private static HandleSorter handleSorter = new HandleSorter();
 
 	/**
 	 * This determines the priority for interaction handles if several are selectable at drag time
@@ -845,39 +859,37 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	private static int getHandlePriority(long handleID) {
-		if (handleID == MOVE_PICK_ID) return 1;
-		if (handleID == LINEDRAG_PICK_ID) return 1;
 
-		if (handleID <= LINENODE_PICK_ID) return 2;
+		if (handleID == RESIZE_PXPY_PICK_ID) return 1;
+		if (handleID == RESIZE_PXNY_PICK_ID) return 1;
+		if (handleID == RESIZE_NXPY_PICK_ID) return 1;
+		if (handleID == RESIZE_NXNY_PICK_ID) return 1;
+
+		if (handleID == RESIZE_POSX_PICK_ID) return 2;
+		if (handleID == RESIZE_NEGX_PICK_ID) return 2;
+		if (handleID == RESIZE_POSY_PICK_ID) return 2;
+		if (handleID == RESIZE_NEGY_PICK_ID) return 2;
 
 		if (handleID == ROTATE_PICK_ID) return 3;
 
-		if (handleID == RESIZE_POSX_PICK_ID) return 4;
-		if (handleID == RESIZE_NEGX_PICK_ID) return 4;
-		if (handleID == RESIZE_POSY_PICK_ID) return 4;
-		if (handleID == RESIZE_NEGY_PICK_ID) return 4;
+		if (handleID <= LINENODE_PICK_ID) return 4;
 
-		if (handleID == RESIZE_PXPY_PICK_ID) return 5;
-		if (handleID == RESIZE_PXNY_PICK_ID) return 5;
-		if (handleID == RESIZE_NXPY_PICK_ID) return 5;
-		if (handleID == RESIZE_NXNY_PICK_ID) return 5;
+		if (handleID == MOVE_PICK_ID) return 5;
+		if (handleID == LINEDRAG_PICK_ID) return 5;
 
-		return 0;
+		return 6;
 	}
 
+	/**
+	 * Returns the global position of the point on the surface of the first entity under the mouse.
+	 * @param windowID - identity number for the view window
+	 * @return position on the surface of the entity under the mouse
+	 */
 	public Vec3d getNearestPick(int windowID) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
-		View view = windowToViewMap.get(windowID);
-		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
-			// The mouse is not actually in the window, or the window was closed along the way
-			return null;
-		}
-
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
-
-		List<Renderer.PickResult> picks = renderer.pick(pickRay, view.getID(), true);
-
+		List<Renderer.PickResult> picks = pick(pickRay, windowID, true);
 		if (picks.size() == 0) {
 			return null;
 		}
@@ -898,14 +910,17 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
-	 * Perform a pick from this world space ray
-	 * @param pickRay - the ray
-	 * @return
+	 * Returns a list of entities and distances along with any mouse handles for the specified ray
+	 * in 3d space.
+	 * @param pickRay - ray in 3d space
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entities and distances along with mouse handles
 	 */
-	private List<PickData> pickForRay(Ray pickRay, int viewID, boolean precise) {
-		List<Renderer.PickResult> picks = renderer.pick(pickRay, viewID, precise);
-
+	private List<PickData> pickForRay(Ray pickRay, int windowID, boolean precise) {
 		List<PickData> uniquePicks = new ArrayList<>();
+
+		List<Renderer.PickResult> picks = pick(pickRay, windowID, precise);
 
 		// IDs that have already been added
 		Set<Long> knownIDs = new HashSet<>();
@@ -926,6 +941,26 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		return uniquePicks;
+	}
+
+	/**
+	 * Returns a list of entity numbers and distances for the entities along the specified ray and
+	 * view window.
+	 * @param pickRay - direction from the camera
+	 * @param windowID - view window
+	 * @param precise - determines whether to use the exact shape of each entity or just its bounding box
+	 * @return list of entity numbers and distances
+	 */
+	public List<Renderer.PickResult> pick(Ray pickRay, int windowID, boolean precise) {
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
+
+		View view = windowToViewMap.get(windowID);
+		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
+			// The mouse is not actually in the window, or the window was closed along the way
+			return new ArrayList<>();
+		}
+
+		return renderer.pick(pickRay, view.getID(), precise);
 	}
 
 	/**
@@ -1721,14 +1756,9 @@ public class RenderManager implements DragSourceListener {
 
 		Ray pickRay = getRayForMouse(windowID, x, y);
 
-		View view = windowToViewMap.get(windowID);
-		if (view == null) {
-			return false;
-		}
+		List<PickData> picks = pickForRay(pickRay, windowID, true);
 
-		List<PickData> picks = pickForRay(pickRay, view.getID(), true);
-
-		Collections.sort(picks, new HandleSorter());
+		Collections.sort(picks, handleSorter);
 
 		if (picks.size() == 0) {
 			return false;
@@ -1736,6 +1766,7 @@ public class RenderManager implements DragSourceListener {
 
 		double mouseHandleDist = Double.POSITIVE_INFINITY;
 		double entityDist = Double.POSITIVE_INFINITY;
+		double entitySize = 0.0d;
 		// See if we are hovering over any interaction handles
 		for (PickData pd : picks) {
 			if (isMouseHandleID(pd.id) && mouseHandleDist == Double.POSITIVE_INFINITY) {
@@ -1746,14 +1777,15 @@ public class RenderManager implements DragSourceListener {
 			if (selectedEntity != null && pd.id == selectedEntity.getEntityNumber()) {
 				// We clicked on the selected entity
 				entityDist = pd.dist;
+				entitySize = pd.size;
 			}
 		}
 
 		// The following logical condition effectively checks if we hit the entity first, and did not select
 		// any mouse handle other than the move handle
-		if (entityDist != Double.POSITIVE_INFINITY &&
-		    entityDist < mouseHandleDist &&
-		    (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID)) {
+		if (entityDist != Double.POSITIVE_INFINITY && entityDist < mouseHandleDist
+				&& (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID
+				|| mouseHandleDist - entityDist > 0.01d * entitySize)) {
 
 			// Use the entity collision point for dragging instead of the handle collision point
 			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
@@ -1822,9 +1854,8 @@ public class RenderManager implements DragSourceListener {
 
 	private Region getRegion(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
-		int viewID = _getActiveView().getID();
-		List<PickData> picks = pickForRay(currentRay, viewID, false);
-		Collections.sort(picks, new SelectionSorter());
+		List<PickData> picks = pickForRay(currentRay, windowID, false);
+		Collections.sort(picks, selectionSorter);
 		for (PickData pd : picks) {
 			if (!pd.isEntity)
 				continue;

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +32,6 @@ public class PointProxy implements RenderProxy {
 	private final long _pickingID;
 	private final VisibilityInfo _visInfo;
 
-	private double _collisionAngle = 0.008727; // 0.5 degrees in radians
-
 	private DebugPoints cached;
 
 	public PointProxy(List<Vec4d> points, Color4d colour, double pointWidth, VisibilityInfo visInfo, long pickingID) {
@@ -52,7 +51,7 @@ public class PointProxy implements RenderProxy {
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
 		if (cached == null) {
 			cached = new DebugPoints(_points, _colour, _hoverColour, _pointWidth, _visInfo, _pickingID);
-			cached.setCollisionAngle(_collisionAngle);
+			cached.setCollisionAngle(_pointWidth * r.getPixelAngularSize());
 		}
 
 		outList.add(cached);
@@ -62,9 +61,5 @@ public class PointProxy implements RenderProxy {
 	public void collectOverlayRenderables(Renderer r,
 			ArrayList<OverlayRenderable> outList) {
 		// None
-	}
-
-	public void setCollisionAngle(double angleRad) {
-		_collisionAngle = angleRad;
 	}
 }

@@ -440,16 +440,22 @@ public class ContextMenu {
 				View v = RenderManager.getActiveView();
 				// Move the camera position so that the entity is in the centre of the screen
 				Vec3d viewPos = new Vec3d(v.getViewPosition());
-				Vec3d viewCenter = new Vec3d(v.getEffViewCenter());
-				Vec3d diff = new Vec3d();
-				diff.sub3(ent.getGlobalPosition(), viewCenter);
-				viewPos.add3(diff);
-				viewCenter.add3(diff);
+				Vec3d viewDir = v.getViewDirection();
+				Vec3d pos = ent.getGlobalCentre();
 
-				v.setPointOfInterest(viewCenter);
+				Vec3d vec = new Vec3d();
+				vec.sub3(pos, viewPos);
+				Vec3d viewCenter = new Vec3d(viewDir);
+				viewCenter.scale3(vec.dot3(viewDir));
+				viewCenter.add3(viewPos);
+
+				Vec3d diff = new Vec3d();
+				diff.sub3(pos, viewCenter);
+				viewPos.add3(diff);
+
+				v.setPointOfInterest(pos);
 				KeywordIndex posKw = InputAgent.formatVec3dInput(v, "ViewPosition", viewPos, DistanceUnit.class);
-				KeywordIndex ctrKw = InputAgent.formatVec3dInput(v, "ViewCenter", viewCenter, DistanceUnit.class);
-				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
+				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw));
 			}
 		} );
 		if (RenderManager.getActiveView() == null) {

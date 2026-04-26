@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +47,7 @@ public class DebugPoints implements Renderable {
 		_pickingID = pickingID;
 		_visInfo = visInfo;
 
-		_bounds = new AABB(points, 100000); // TODO, tune this fudge factor by something more real
+		_bounds = new AABB(points, Double.POSITIVE_INFINITY);  // points are always visible
 
 		fb = FloatBuffer.allocate(3 * points.size());
 		for (Vec4d point : points) {
