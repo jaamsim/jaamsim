@@ -959,6 +959,10 @@ public final class EventManager {
 		return name;
 	}
 
+	public static String getImplementation() {
+		return "Native Thread SubClass";
+	}
+
 	private Thread allocateThread() {
 		return Process.allocate(this);
 	}

@@ -68,9 +68,6 @@ public final class EventManager {
 	private EventTimeListener timelistener;
 	private EventTraceListener trcListener;
 
-	static {
-		System.out.println("Java 25 version enabled");
-	}
 	/**
 	 * Allocates a new EventManager with the given parent and name
 	 *
@@ -980,6 +977,10 @@ public final class EventManager {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public static String getImplementation() {
+		return "Virtual Threads-ScopedValues";
 	}
 
 	/**

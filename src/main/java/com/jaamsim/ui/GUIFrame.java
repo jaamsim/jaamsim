@@ -4229,6 +4229,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		Log.format("Java: %s (version: %s)",
 				System.getProperty("java.vendor"), System.getProperty("java.version"));
 		Log.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
+		Log.format("EventManager Implementation: %s%n", EventManager.getImplementation());
 
 		// Create a graphic simulation
 		JaamSimModel simModel = getNextJaamSimModel();
