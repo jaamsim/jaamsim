@@ -4018,10 +4018,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				final Frame window = RenderManager.getOpenWindowForView(v);
 				if (window == null)
 					continue;
-				IntegerVector size = getWindowSize(v);
-				IntegerVector pos = getWindowPos(v);
-				window.setSize(size.get(0), size.get(1));
-				window.setLocation(pos.get(0), pos.get(1));
+				IntegerVector posSize = getWindowPosSize(v);
+				window.setSize(posSize.get(2), posSize.get(3));
+				window.setLocation(posSize.get(0), posSize.get(1));
 			}
 		}
 	}
@@ -4069,47 +4068,36 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 	}
 
-	public IntegerVector getWindowPos(View v) {
+	public IntegerVector getWindowPosSize(View v) {
+		View activeView = RenderManager.getActiveView();
 		OSFix fix = OSFix.get(isResizable(v));
-		IntegerVector ret = new IntegerVector(v.getWindowPos());
+		IntegerVector ret = v.getWindowPosSize();
 
 		// Presentation mode
-		View activeView = RenderManager.getActiveView();
 		if (presentMode.isSelected() && v == activeView) {
 			ret.set(0, winDefs.COL1_START);
 			ret.set(1, winDefs.TOP_START);
+			ret.set(2, winDefs.VIEW_WIDTH + winDefs.COL1_WIDTH);
+			ret.set(3, winDefs.VIEW_HEIGHT + winDefs.LOWER_HEIGHT);
 		}
 
 		Point pt = getGlobalLocation(ret.get(0), ret.get(1));
 		ret.set(0, pt.x + fix.x);
 		ret.set(1, pt.y + fix.y);
+		ret.addAt(fix.width, 2);
+		ret.addAt(fix.height, 3);
+
 		return ret;
 	}
 
-	public IntegerVector getWindowSize(View v) {
-		OSFix fix = OSFix.get(isResizable(v));
-		IntegerVector ret = new IntegerVector(v.getWindowSize());
-
-		// Presentation mode
-		View activeView = RenderManager.getActiveView();
-		if (presentMode.isSelected() && v == activeView) {
-			ret.set(0, winDefs.VIEW_WIDTH + winDefs.COL1_WIDTH);
-			ret.set(1, winDefs.VIEW_HEIGHT + winDefs.LOWER_HEIGHT);
-		}
-
-		ret.addAt(fix.width, 0);
-		ret.addAt(fix.height, 1);
-		return ret;
-	}
-
-	public void setWindowPos(View v, int x, int y, int width, int height) {
+	public void setWindowPosSize(View v, int x, int y, int width, int height) {
 		JaamSimModel simModel = runManager.getJaamSimModel();
 		if (presentMode.isSelected() || simModel.getSimulation().isLockWindows()
 				|| simModel.isConfiguring())
 			return;
 		OSFix fix = OSFix.get(isResizable(v));
 		Point pt = getRelativeLocation(x - fix.x, y - fix.y);
-		v.setWindowPos(pt.x, pt.y, width - fix.width, height - fix.height);
+		v.setWindowPosSize(pt.x, pt.y, width - fix.width, height - fix.height);
 	}
 
 	public boolean isResizable(View v) {

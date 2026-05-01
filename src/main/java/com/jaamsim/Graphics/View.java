@@ -375,7 +375,7 @@ public class View extends Entity {
 		return region.getValue();
 	}
 
-	public void setWindowPos(int x, int y, int width, int height) {
+	public void setWindowPosSize(int x, int y, int width, int height) {
 		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
 
 		IntegerVector pos = windowPos.getValue();
@@ -398,12 +398,16 @@ public class View extends Entity {
 		getJaamSimModel().storeAndExecute(new KeywordCommand(this, kws));
 	}
 
-	public IntegerVector getWindowPos() {
-		return windowPos.getValue();
-	}
+	public IntegerVector getWindowPosSize() {
+		IntegerVector ret = new IntegerVector(4);
+		IntegerVector pos = windowPos.getValue();
+		IntegerVector size = windowSize.getValue();
 
-	public IntegerVector getWindowSize() {
-		return windowSize.getValue();
+		ret.add(pos.get(0));
+		ret.add(pos.get(1));
+		ret.add(size.get(0));
+		ret.add(size.get(1));
+		return ret;
 	}
 
 	public int getID() {

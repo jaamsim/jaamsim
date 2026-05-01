@@ -87,13 +87,12 @@ public class VideoRecorder {
 		for (View v : views) {
 			ViewInfo vi = new ViewInfo();
 
-			IntegerVector windSize = GUIFrame.getInstance().getWindowSize(v);
-			IntegerVector windPos = GUIFrame.getInstance().getWindowPos(v);
+			IntegerVector windPosSize = GUIFrame.getInstance().getWindowPosSize(v);
 
-			vi.x = windPos.get(0);
-			vi.y = windPos.get(1);
-			vi.width = windSize.get(0);
-			vi.height = windSize.get(1);
+			vi.x = windPosSize.get(0);
+			vi.y = windPosSize.get(1);
+			vi.width = windPosSize.get(2);
+			vi.height = windPosSize.get(3);
 
 			vi.renderTarget = RenderManager.inst().createOffscreenTarget(vi.width, vi.height);
 

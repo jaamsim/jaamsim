@@ -406,7 +406,7 @@ public class CameraControl implements WindowInteractionListener {
 		if (x < -30000 || y < - 30000)
 			return;
 
-		GUIFrame.getInstance().setWindowPos(_updateView, x, y, width, height);
+		GUIFrame.getInstance().setWindowPosSize(_updateView, x, y, width, height);
 	}
 
 	public View getView() {
