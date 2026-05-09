@@ -143,4 +143,13 @@ public class KeywordIndex {
 		}
 		return new KeywordIndex(keyword, tokens, null);
 	}
+
+	public static KeywordIndex formatValue(String keyword, double val, String unit) {
+		ArrayList<String> tokens = new ArrayList<>(2);
+		tokens.add(String.format((Locale)null, "%s", val));
+		if (unit != null && !unit.isEmpty())
+			tokens.add(unit);
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
 }

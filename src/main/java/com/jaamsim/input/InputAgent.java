@@ -504,7 +504,7 @@ public class InputAgent {
 	 * @param keyword - the keyword.
 	 * @param args - the input value String for the keyword.
 	 */
-	public static void applyArgs(Entity ent, String keyword, String... args){
+	public static void applyArgs(Entity ent, String keyword, String... args) {
 		KeywordIndex kw = KeywordIndex.formatArgs(keyword, args);
 		InputAgent.apply(ent, kw);
 	}
@@ -519,17 +519,13 @@ public class InputAgent {
 		InputAgent.apply(ent, kw);
 	}
 
-	public static void applyIntegers(Entity ent, String keyword, int... args){
+	public static void applyIntegers(Entity ent, String keyword, int... args) {
 		KeywordIndex kw = KeywordIndex.formatIntegers(keyword, args);
 		InputAgent.apply(ent, kw);
 	}
 
-	public static void applyValue(Entity ent, String keyword, double val, String unit){
-		ArrayList<String> tokens = new ArrayList<>(2);
-		tokens.add(String.format((Locale)null, "%s", val));
-		if (unit != null && !unit.isEmpty())
-			tokens.add(unit);
-		KeywordIndex kw = new KeywordIndex(keyword, tokens, null);
+	public static void applyValue(Entity ent, String keyword, double val, String unit) {
+		KeywordIndex kw = KeywordIndex.formatValue(keyword, val, unit);
 		InputAgent.apply(ent, kw);
 	}
 
