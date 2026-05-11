@@ -249,9 +249,6 @@ public class RunManager {
 			// Start the next simulation run for the present scenario
 			if (presentScenario.hasRunsToStart()) {
 				presentScenario.startNextRun(sm);
-				if (sm == simModel && GUIFrame.getInstance() != null) {
-					GUIFrame.getInstance().initSpeedUp(0.0d);
-				}
 			}
 		}
 	}

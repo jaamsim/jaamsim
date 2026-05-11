@@ -450,9 +450,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		sm.setGUIListener(gui);
 
 		// Pass the simulation time for the new model to the user interface
-		gui.initSpeedUp(sm.getSimTime());
+		gui.gui_timeRunning();
 		gui.gui_tickUpdate(sm.getSimTicks());
-		gui.updateForSimulationState();
 	}
 
 	private static JaamSimModel getNextJaamSimModel() {
@@ -3062,12 +3061,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	private int lastProgress = -1;
 	private double speedUp;
 
-	public void initSpeedUp(double simTime) {
-		resumeSystemTime = System.currentTimeMillis();
-		lastSystemTime = resumeSystemTime;
-		lastSimTime = simTime;
-	}
-
 	/**
 	 * Sets the values for the simulation time, run progress, speedup factor,
 	 * and remaining run time in the Control Panel's status bar.
@@ -3227,8 +3220,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			if (RunProgressBox.hasInstance())
 				RunProgressBox.getInstance().dispose();
 			FrameBox.stop();
-			updateForSimulationState();
-			initSpeedUp(0.0d);
+			gui_timeRunning();
 			gui_tickUpdate(0L);
 		}
 		else
@@ -4423,6 +4415,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	@Override
 	public void gui_timeRunning() {
+		JaamSimModel sim = getJaamSimModel();
+		if (sim.isRunning()) {
+			resumeSystemTime = System.currentTimeMillis();
+			lastSystemTime = resumeSystemTime;
+			lastSimTime = sim.getSimTime();
+		}
 		updateForSimulationState();
 	}
 
