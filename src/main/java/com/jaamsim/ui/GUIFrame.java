@@ -2896,16 +2896,32 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (getJaamSimModel().isRunning())
+				JaamSimModel sim = getJaamSimModel();
+				if (sim.isRunning())
 					runManager.pause();
 
 				controlStartResume.requestFocusInWindow();
-				boolean confirmed = GUIFrame.showConfirmStopDialog();
-				if (!confirmed) {
+
+				if (RunProgressBox.hasInstance())
+					RunProgressBox.getInstance().setShow(false);
+				int userOption = JOptionPane.showConfirmDialog( null,
+						"WARNING: Are you sure you want to reset the simulation time to 0?",
+						"Confirm Reset",
+						JOptionPane.YES_OPTION,
+						JOptionPane.WARNING_MESSAGE );
+
+				if (userOption != JOptionPane.YES_OPTION) {
 					return;
 				}
 
-				GUIFrame.this.stopSimulation();
+				if (sim.isStarted()) {
+					runManager.reset();
+					if (RunProgressBox.hasInstance())
+						RunProgressBox.getInstance().dispose();
+					FrameBox.stop();
+					GUIFrame.this.gui_timeRunning();
+					GUIFrame.this.gui_tickUpdate(0L);
+				}
 			}
 		} );
 		mainToolBar.add( controlStop );
@@ -3208,23 +3224,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
-	}
-
-	/**
-	 * Stops the simulation run.
-	 */
-	public void stopSimulation() {
-		JaamSimModel sim = getJaamSimModel();
-		if (sim.isStarted()) {
-			runManager.reset();
-			if (RunProgressBox.hasInstance())
-				RunProgressBox.getInstance().dispose();
-			FrameBox.stop();
-			gui_timeRunning();
-			gui_tickUpdate(0L);
-		}
-		else
-			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
 	void updateForSimulationState() {
@@ -5195,21 +5194,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				"Confirm Save",
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
-		return (userOption == JOptionPane.YES_OPTION);
-	}
-
-	/**
-	 * Shows the "Confirm Stop" dialog box.
-	 * @return true if the run is to be stopped.
-	 */
-	public static boolean showConfirmStopDialog() {
-		if (RunProgressBox.hasInstance())
-			RunProgressBox.getInstance().setShow(false);
-		int userOption = JOptionPane.showConfirmDialog( null,
-				"WARNING: Are you sure you want to reset the simulation time to 0?",
-				"Confirm Reset",
-				JOptionPane.YES_OPTION,
-				JOptionPane.WARNING_MESSAGE );
 		return (userOption == JOptionPane.YES_OPTION);
 	}
 
