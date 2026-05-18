@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2023-2025 JaamSim Software Inc.
+ * Copyright (C) 2023-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
  */
 package com.jaamsim.DisplayModels;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
@@ -24,6 +27,7 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
@@ -108,5 +112,22 @@ public abstract class DisplayModel extends Entity {
 
 	public Vec3d getModelScale() {
 		return modelScale.getValue();
+	}
+
+	public ArrayList<DisplayEntity> getUserList() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			if (ent.getDisplayModelList().contains(this)) {
+				ret.add(ent);
+			}
+		}
+		return ret;
+	}
+
+	@Output(name = "UserList",
+	 description = "List of entities that use this DisplayModel for their graphical displays.",
+	    sequence = 1)
+	public ArrayList<DisplayEntity> getUserList(double simTime) {
+		return getUserList();
 	}
 }
