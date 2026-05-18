@@ -3501,6 +3501,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		// Execute the delete command
 		sim.storeAndExecute(new DeleteCommand(ent));
+
+		// Option to delete the DisplayModel if it is unused
+		if (ent instanceof DisplayEntity) {
+			ArrayList<DisplayModel> dmList = ((DisplayEntity) ent).getDisplayModelList();
+			deleteUnusedDisplayModels(dmList);
+		}
 	}
 
 
@@ -5206,6 +5212,43 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 						+ "saved configuration file and to modify the inputs to reference that "
 						+ "file?", fileName),
 				"Confirm Save",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		return (userOption == JOptionPane.YES_OPTION);
+	}
+
+	/**
+	 * Checks whether a DisplayModel in the specified list is unused, and if so, provides an
+	 * option to delete it.
+	 * @param dmList - list of DispayModels to check
+	 */
+	public static void deleteUnusedDisplayModels(ArrayList<DisplayModel> dmList) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				for (DisplayModel dm : dmList) {
+					if (dm.isAdded() && dm.getUserList().isEmpty()) {
+						if (showDeleteDisplayModelDialog(dm)) {
+							getJaamSimModel().storeAndExecute(new DeleteCommand(dm));
+						}
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Shows the "Confirm Deletion" dialog box for a DisplayModel.
+	 * @param dmName - name of the DisplayModel to be deleted
+	 * @return true if the DisplayModel is to be deleted.
+	 */
+	public static boolean showDeleteDisplayModelDialog(DisplayModel dm) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
+		int userOption = JOptionPane.showConfirmDialog(null,
+				String.format("DisplayModel '%s' is unused by any entities.\n"
+						+ "Do you want to delete this DisplayModel?", dm),
+				"Confirm Deletion",
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 		return (userOption == JOptionPane.YES_OPTION);
