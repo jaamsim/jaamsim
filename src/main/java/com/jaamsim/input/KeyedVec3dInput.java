@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021-2022 JaamSim Software Inc.
+ * Copyright (C) 2021-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,24 @@ public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 	public boolean hasKeys() {
 		KeyedVec3dCurve val = getValue();
 		return val != null && val.hasKeys();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		if (getValue() == null)
+			return null;
+		return (V) getValueForTime(simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return Vec3d.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 
 }
