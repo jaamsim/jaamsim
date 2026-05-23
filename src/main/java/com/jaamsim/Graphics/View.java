@@ -190,6 +190,7 @@ public class View extends Entity {
 
 		directionScriptInput = new KeyedVec3dInput("ScriptedViewDirection", GRAPHICS);
 		directionScriptInput.setUnitType(DistanceUnit.class);
+		directionScriptInput.setSphericalInterpolation(true);
 		this.addInput(directionScriptInput);
 
 		skyboxImage = new FileInput("SkyboxImage", GRAPHICS, null);

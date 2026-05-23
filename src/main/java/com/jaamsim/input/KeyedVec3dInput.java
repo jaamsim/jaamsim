@@ -29,6 +29,7 @@ import com.jaamsim.units.Unit;
 
 public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
+	private boolean sphericalInterpolation = false;
 
 	public KeyedVec3dInput(String key, String cat) {
 		super(key, cat, null);
@@ -36,6 +37,10 @@ public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 
 	public void setUnitType(Class<? extends Unit> units) {
 		unitType = units;
+	}
+
+	public void setSphericalInterpolation(boolean bool) {
+		sphericalInterpolation = bool;
 	}
 
 	@Override
@@ -83,7 +88,8 @@ public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 	}
 
 	public Vec3d getValueForTime(double time) {
-		return getValue().getValAtTime(time);
+		int arg = sphericalInterpolation ? 1 : 0;
+		return getValue().getValAtTime(time, arg);
 	}
 
 	public boolean hasKeys() {
