@@ -268,7 +268,7 @@ public class Entity {
 		boolean ret = true;
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
-			if (in.isSynonym())
+			if (in.isSynonym() || in == nameInput || in == parentInput)
 				continue;
 			if (InputAgent.isGraphicsInput(in))  //FIXME resetGraphics clears the Position/Points inputs
 				continue;
