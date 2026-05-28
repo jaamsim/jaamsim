@@ -87,11 +87,8 @@ public class FileInput extends Input<URI> {
 		ArrayList<ArrayList<String>> tokens = new ArrayList<>();
 		ArrayList<String> rec = new ArrayList<>();
 
-		BufferedReader b = null;
-		try {
-			InputStream r = uri.toURL().openStream();
-			b = new BufferedReader(new InputStreamReader(r));
-
+		try (InputStream r = uri.toURL().openStream();
+		     BufferedReader b = new BufferedReader(new InputStreamReader(r))) {
 			while (true) {
 				String line = null;
 				line = b.readLine();
@@ -106,16 +103,10 @@ public class FileInput extends Input<URI> {
 				tokens.add(rec);
 				rec = new ArrayList<>();
 			}
-			b.close();
 			return tokens;
 		}
 		catch (MalformedURLException e) {}
-		catch (IOException e) {
-			try {
-				if (b != null) b.close();
-			}
-			catch (IOException e2) {}
-		}
+		catch (IOException e) {}
 
 		return null;
 
