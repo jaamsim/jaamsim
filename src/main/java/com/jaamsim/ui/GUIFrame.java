@@ -5111,38 +5111,39 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	public static ArrayList<String> getResourceFileNames(String folder) {
 		ArrayList<String> ret = new ArrayList<>();
 
+		URI uri;
 		try {
-			URI uri = GUIFrame.class.getResource(folder).toURI();
+			uri = GUIFrame.class.getResource(folder).toURI();
+		}
+		catch (URISyntaxException e) {
+			return ret;
+		}
 
-			// When developing in an IDE
-			if (uri.getScheme().equals("file")) {
-				File dir = new File(uri.getPath());
-				for (File file : dir.listFiles()) {
-					ret.add(file.getName());
+		// When developing in an IDE
+		if (uri.getScheme().equals("file")) {
+			File dir = new File(uri.getPath());
+			for (File file : dir.listFiles()) {
+				ret.add(file.getName());
+			}
+		}
+
+		// When running in a built jar or executable
+		if (uri.getScheme().equals("jar")) {
+			try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+					Stream<Path> walk = Files.walk(fs.getPath(folder), 1)) {
+				for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
+					Path each = it.next();
+					String file = each.toString();
+					if (file.length() > folder.length()) {
+						file = file.substring(folder.length() + 1);
+						if (file.endsWith("/"))
+							file = file.substring(0, file.length() - 1);
+						ret.add(file);
+					}
 				}
 			}
-
-			// When running in a built jar or executable
-			if (uri.getScheme().equals("jar")) {
-				try {
-					FileSystem fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-					Path path = fs.getPath(folder);
-					Stream<Path> walk = Files.walk(path, 1);
-					for (Iterator<Path> it = walk.iterator(); it.hasNext();){
-						Path each = it.next();
-						String file = each.toString();
-						if (file.length() > folder.length()) {
-							file = file.substring(folder.length() + 1);
-							if (file.endsWith("/"))
-								file = file.substring(0, file.length() - 1);
-							ret.add(file);
-						}
-					}
-					walk.close();
-					fs.close();
-				} catch (IOException e) {}
-			}
-		} catch (URISyntaxException e) {}
+			catch (IOException e) {}
+		}
 
 		return ret;
 	}

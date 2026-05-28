@@ -1935,10 +1935,7 @@ public class InputAgent {
 	 * @return true if the file exists, false if it does not.
 	 */
 	public static boolean fileExists(URI filePath) {
-
-		try {
-			InputStream in = filePath.toURL().openStream();
-			in.close();
+		try (InputStream in = filePath.toURL().openStream()) {
 			return true;
 		}
 		catch (MalformedURLException ex) {
