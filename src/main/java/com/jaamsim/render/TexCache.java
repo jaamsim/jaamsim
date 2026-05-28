@@ -377,16 +377,13 @@ public class TexCache {
 	}
 
 	public static Dimension getImageDimension(InputStream dataStream) {
-		ImageInputStream inStream = null;
-		try {
-			inStream = ImageIO.createImageInputStream(dataStream);
+		try (ImageInputStream inStream = ImageIO.createImageInputStream(dataStream)) {
 			Iterator<ImageReader> it = ImageIO.getImageReaders(inStream);
 			if (it.hasNext()) {
 				ImageReader reader = it.next();
 				reader.setInput(inStream);
 				Dimension ret = new Dimension(reader.getWidth(0), reader.getHeight(0));
 				reader.dispose();
-				inStream.close();
 				return ret;
 			}
 		} catch (IOException ex) {

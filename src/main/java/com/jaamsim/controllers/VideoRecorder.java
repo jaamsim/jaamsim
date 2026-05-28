@@ -155,14 +155,9 @@ public class VideoRecorder {
 		}
 
 		if (_saveImages) {
-			try {
-				FileOutputStream out = new FileOutputStream(String.format("%s%04d.png", _filenamePrefix, _sampleNumber));
-
+			try (FileOutputStream out = new FileOutputStream(String.format("%s%04d.png", _filenamePrefix, _sampleNumber))){
 				// Finally write the image to disk
 				ImageIO.write(img, "PNG", out);
-
-				out.close();
-
 			} catch (FileNotFoundException ex) {
 				Log.logException(ex);
 			} catch (IOException ex) {

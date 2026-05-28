@@ -37,10 +37,7 @@ public class YUVImage {
 
 
 	public static YUVImage fromFile(String filename) {
-		FileInputStream in;
-
-		try {
-			in = new FileInputStream(filename);
+		try (FileInputStream in = new FileInputStream(filename)) {
 			int w = in.read() + (in.read() << 8) + (in.read() << 16) + (in.read() << 24);
 			int h = in.read() + (in.read() << 8) + (in.read() << 16) + (in.read() << 24);
 
@@ -64,9 +61,6 @@ public class YUVImage {
 				in.close();
 				return null;
 			}
-
-			in.close();
-
 			return ret;
 
 		} catch (FileNotFoundException ex) {
