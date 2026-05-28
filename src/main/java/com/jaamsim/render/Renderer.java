@@ -682,16 +682,13 @@ public class Renderer implements GLAnimatorControl {
 		URL res = Renderer.class.getResource(file);
 
 		StringBuilder source = new StringBuilder();
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(res.openStream()));
-
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(res.openStream()))) {
 			while (true) {
 				String line = reader.readLine();
 				if (line == null) break;
 
 				source.append(line).append("\n");
 			}
-			reader.close();
 		}
 		catch (IOException e) {}
 
