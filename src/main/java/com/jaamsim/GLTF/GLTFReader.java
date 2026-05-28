@@ -834,16 +834,13 @@ public class GLTFReader {
 
 		//Path buffPath = FileSystems.getDefault().getPath(buffURL.getPath());
 		ByteBuffer byteBuff;
-		try {
-			File buffFile = new File(buffURI);
-			FileInputStream buffStream = new FileInputStream(buffFile);
+		try (FileInputStream buffStream = new FileInputStream(new File(buffURI))) {
 			FileChannel buffChann = buffStream.getChannel();
 
 			//FileChannel buffChann = FileChannel.open(buffPath, StandardOpenOption.READ);
 			long fileSize = buffChann.size();
 			if (fileSize < byteLen) {
 				String msg = String.format("Buffer file (%s) too small. The file is %d bytes, but must be at least %d", uri, byteLen);
-				buffStream.close();
 				throw new RenderException(msg);
 			}
 			byteBuff = ByteBuffer.allocateDirect(byteLen);
@@ -851,9 +848,6 @@ public class GLTFReader {
 
 			// GLTF buffers are little endian
 			byteBuff.order(ByteOrder.LITTLE_ENDIAN);
-
-			buffStream.close();
-
 		} catch (IOException io) {
 			throw new RenderException(io.getMessage());
 		}
@@ -1371,25 +1365,22 @@ public class GLTFReader {
 
 		ByteBuffer gltfBuff = null;
 		ByteBuffer defaultBuff = null;
-		try {
-			if (asset.getScheme() != null && !asset.getScheme().equals("file")) {
-				throw new RenderException("GLB assets must be files");
-			}
 
-			File buffFile = new File(asset);
-			FileInputStream buffStream = new FileInputStream(buffFile);
+		if (asset.getScheme() != null && !asset.getScheme().equals("file")) {
+			throw new RenderException("GLB assets must be files");
+		}
+
+		try (FileInputStream buffStream = new FileInputStream(new File(asset))) {
 			FileChannel buffChann = buffStream.getChannel();
 
 			long fileSize = buffChann.size();
 			if (fileSize > (1 << 30)) {
 				// Arbitrary file size limit. We most likely do not want to support assets > 1GB
-				buffStream.close();
 				throw new RenderException("GLB asset is too large");
 			}
 
 			if (fileSize < 256) {
 				// Arbitrary file size limit. It is likely impossible to have a meaningful GLB asset this small
-				buffStream.close();
 				throw new RenderException("GLB asset is too small");
 			}
 
@@ -1405,27 +1396,22 @@ public class GLTFReader {
 			int length = headerBuff.getInt();
 
 			if (magic != 0x46546C67) {
-				buffStream.close();
 				throw new RenderException("Asset is not a GLB file");
 			}
 			if (version != 2) {
-				buffStream.close();
 				throw new RenderException("Unsupport GLTF version");
 			}
 
 			if (length != fileSize) {
-				buffStream.close();
 				throw new RenderException(String.format("GLB asset is incorrect size. Expected: %d, got: %d", length, fileSize));
 			}
 
 			int gltfChunkLength = headerBuff.getInt();
 			int gltfChunkType = headerBuff.getInt();
 			if (gltfChunkType != 0x4E4F534A) {
-				buffStream.close();
 				throw new RenderException("GLTF chunk missing in GLB file");
 			}
 			if (fileSize < gltfChunkLength + 20) {
-				buffStream.close();
 				throw new RenderException("GLTF chuck reported size is too large for GLB file");
 			}
 			gltfBuff = ByteBuffer.allocateDirect(gltfChunkLength);
@@ -1444,11 +1430,9 @@ public class GLTFReader {
 				int binChunkLength = binHeaderBuff.getInt();
 				int binChunkType = binHeaderBuff.getInt();
 				if (binChunkType != 0x004E4942) {
-					buffStream.close();
 					throw new RenderException("Unknown second GLB chunk type");
 				}
 				if (binChunkLength > fileSize - buffChann.position()) {
-					buffStream.close();
 					throw new RenderException("GLB chunk size is too large");
 				}
 				defaultBuff = ByteBuffer.allocateDirect(binChunkLength);
@@ -1456,9 +1440,6 @@ public class GLTFReader {
 				defaultBuff.order(ByteOrder.LITTLE_ENDIAN);
 				defaultBuff.flip();
 			}
-
-			buffStream.close();
-
 		} catch(RenderException ex) {
 			throw ex;
 		} catch (Exception ex) {
