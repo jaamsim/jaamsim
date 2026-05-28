@@ -24,11 +24,8 @@ import java.nio.channels.FileChannel;
 public class DecoderTester {
 
 	public static void main(String[] args) {
-		try {
+		try (FileInputStream inStream = new FileInputStream(new File(args[0]))) {
 			Decoder dec = new Decoder();
-
-			File f = new File(args[0]);
-			FileInputStream inStream = new FileInputStream(f);
 			FileChannel fc = inStream.getChannel();
 			ByteBuffer frame = ByteBuffer.allocate((int)fc.size());
 			fc.read(frame);
@@ -38,9 +35,8 @@ public class DecoderTester {
 
 			dec.currentFrame.show(1, true, "");
 
-			inStream.close();
-
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		}

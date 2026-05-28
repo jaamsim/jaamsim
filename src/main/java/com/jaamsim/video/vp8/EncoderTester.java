@@ -37,22 +37,21 @@ public class EncoderTester {
 
 			Encoder enc = new Encoder();
 
-//			long startTime = System.nanoTime();
 			ByteBuffer frame = enc.encodeFrame(intImg, true);
-//			long endTime = System.nanoTime();
-
-//			long time = (endTime - startTime) / 1000000;
-//			System.out.print(String.format("Encode time %d ms\n", time));
-
-			FileOutputStream out = new FileOutputStream(args[1]+"Key.vp8");
-			out.getChannel().write(frame);
-			out.close();
+			try (FileOutputStream out = new FileOutputStream(args[1]+"Key.vp8")) {
+				out.getChannel().write(frame);
+			}
+			catch (IOException ex) {
+				throw ex;
+			}
 
 			frame = enc.encodeFrame(intImg, false);
-
-			out = new FileOutputStream(args[1]+"Inter.vp8");
-			out.getChannel().write(frame);
-			out.close();
+			try (FileOutputStream out = new FileOutputStream(args[1]+"Inter.vp8")) {
+				out.getChannel().write(frame);
+			}
+			catch (IOException ex) {
+				throw ex;
+			}
 
 			System.out.println("Success!");
 
