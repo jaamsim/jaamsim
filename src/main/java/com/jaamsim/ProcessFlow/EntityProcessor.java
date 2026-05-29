@@ -418,14 +418,6 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		return (int) capacity.getNextSample(this, simTime);
 	}
 
-	@Output(name = "UnitsInUse",
-	 description = "The present number of capacity units that are being used.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 1)
-	public int getUnitsInUse(double simTime) {
-		return getUnitsInUse();
-	}
-
 	@Output(name = "EntityList",
 	 description = "The entities being processed at present.",
 	    sequence = 2)
@@ -453,6 +445,14 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			ret[i] = Math.max(0L, ret[i]);
 		}
 		return ret;
+	}
+
+	@Output(name = "UnitsInUse",
+	 description = "The present number of capacity units that are being used.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public int getUnitsInUse(double simTime) {
+		return getUnitsInUse();
 	}
 
 	@Output(name = "AvailableUnits",
