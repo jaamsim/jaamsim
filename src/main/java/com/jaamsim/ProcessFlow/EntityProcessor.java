@@ -108,11 +108,13 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	private static class ProcessorEntry {
 		final DisplayEntity entity;
 		final int[] resourceUnits;
+		long durationTicks;
 		long remainingTicks;
 
 		public ProcessorEntry(DisplayEntity ent, int[] units, long ticks) {
 			entity = ent;
 			resourceUnits = units;
+			durationTicks = ticks;
 			remainingTicks = ticks;
 		}
 
@@ -420,7 +422,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Output(name = "EntityList",
 	 description = "The entities being processed at present.",
-	    sequence = 2)
+	    sequence = 1)
 	public ArrayList<DisplayEntity> getEntityList(double simTime) {
 		ArrayList<DisplayEntity> ret = new ArrayList<>(entryList.size());
 		for (ProcessorEntry entry : entryList) {
@@ -429,10 +431,37 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		return ret;
 	}
 
-	@Output(name = "RemainingTime",
-	 description = "The remaining processing time for the entities being processed at present.",
+	@Output(name = "ServiceDuration",
+	 description = "The total working time required for each entity being processed.",
+	    unitType = TimeUnit.class,
+	    sequence = 2)
+	public double[] getServiceDurationList(double simTime) {
+		EventManager evt = getJaamSimModel().getEventManager();
+		double[] ret = new double[entryList.size()];
+		for (int i = 0; i < entryList.size(); i++) {
+			ret[i] = evt.ticksToSeconds(entryList.get(i).durationTicks);
+		}
+		return ret;
+	}
+
+	@Output(name = "ServicePerformed",
+	 description = "The working time that has been completed for each entity being processed.",
 	    unitType = TimeUnit.class,
 	    sequence = 3)
+	public double[] getServicePerformedList(double simTime) {
+		double[] ret = new double[entryList.size()];
+		double[] remainingTime = getRemainingTime(simTime);
+		double[] serviceDuration = getServiceDurationList(simTime);
+		for (int i = 0; i < entryList.size(); i++) {
+			ret[i] = serviceDuration[i] - remainingTime[i];
+		}
+		return ret;
+	}
+
+	@Output(name = "RemainingTime",
+	 description = "The remaining working time required for each entity being processed.",
+	    unitType = TimeUnit.class,
+	    sequence = 4)
 	public double[] getRemainingTime(double simTime) {
 		double[] ret = new double[entryList.size()];
 		double dt = 0.0d;
@@ -447,10 +476,28 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		return ret;
 	}
 
+	@Output(name = "FractionCompleted",
+	 description = "The portion of the total service time for the present service activity that "
+	             + "has been completed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 5)
+	public double[] getFractionCompletedList(double simTime) {
+		double[] ret = new double[entryList.size()];
+		double[] remainingTime = getRemainingTime(simTime);
+		double[] serviceDuration = getServiceDurationList(simTime);
+		for (int i = 0; i < entryList.size(); i++) {
+			ret[i] = 0.0d;
+			if (serviceDuration[i] > 0.0d) {
+				ret[i] = 1.0d - remainingTime[i]/serviceDuration[i];
+			}
+		}
+		return ret;
+	}
+
 	@Output(name = "UnitsInUse",
 	 description = "The present number of capacity units that are being used.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 1)
+	    sequence = 6)
 	public int getUnitsInUse(double simTime) {
 		return getUnitsInUse();
 	}
@@ -458,7 +505,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	@Output(name = "AvailableUnits",
 	 description = "The number of processor units that are not in use.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 4)
+	    sequence = 7)
 	public int getAvailableUnits(double simTime) {
 		return getCapacity(simTime) - getUnitsInUse();
 	}
@@ -467,7 +514,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "The average number of processor units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 5)
+	    sequence = 8)
 	public double getUnitsInUseAverage(double simTime) {
 		return stats.getMean(simTime);
 	}
@@ -476,7 +523,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "The standard deviation of the number of processor units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 6)
+	    sequence = 9)
 	public double getUnitsInUseStandardDeviation(double simTime) {
 		return stats.getStandardDeviation(simTime);
 	}
@@ -485,7 +532,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "The minimum number of processor units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 10)
 	public int getUnitsInUseMinimum(double simTime) {
 		return (int) stats.getMin();
 	}
@@ -494,7 +541,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "The maximum number of processor units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 8)
+	    sequence = 11)
 	public int getUnitsInUseMaximum(double simTime) {
 		int ret = (int) stats.getMax();
 		// A unit that is seized and released immediately
@@ -508,7 +555,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "The total time that the number of processor units in use was 0, 1, 2, etc.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 9)
+	    sequence = 12)
 	public double[] getUnitsInUseDistribution(double simTime) {
 		return freq.getBinTimes(simTime, 0, freq.getMax());
 	}
@@ -517,7 +564,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "Fraction of total time that the number of processor units in use was 0, 1, 2, "
 	             + "etc.",
 	  reportable = true,
-	    sequence = 10)
+	    sequence = 13)
 	public double[] getUnitsInUseFractions(double simTime) {
 		return freq.getBinFractions(simTime, 0, freq.getMax());
 	}
@@ -526,7 +573,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	 description = "Fraction of total time that the number of processor units in use was less than "
 	             + "or equal to 0, 1, 2, etc.",
 	  reportable = true,
-	    sequence = 11)
+	    sequence = 14)
 	public double[] getUnitsInUseCumulativeFractions(double simTime) {
 		return freq.getBinCumulativeFractions(simTime, 0, freq.getMax());
 	}
