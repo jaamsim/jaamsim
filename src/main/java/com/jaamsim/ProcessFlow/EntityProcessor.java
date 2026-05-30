@@ -442,7 +442,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		for (int i = 0; i < entryList.size(); i++) {
 			ret[i] = evt.ticksToSeconds(entryList.get(i).remainingTicks) - dt;
-			ret[i] = Math.max(0L, ret[i]);
+			ret[i] = Math.max(0.0d, ret[i]);
 		}
 		return ret;
 	}
