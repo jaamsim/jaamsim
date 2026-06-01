@@ -29,6 +29,7 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
@@ -682,7 +683,9 @@ public class Renderer implements GLAnimatorControl {
 		URL res = Renderer.class.getResource(file);
 
 		StringBuilder source = new StringBuilder();
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(res.openStream()))) {
+		try (InputStream is = res.openStream();
+		     InputStreamReader isr = new InputStreamReader(is);
+		     BufferedReader reader = new BufferedReader(isr)) {
 			while (true) {
 				String line = reader.readLine();
 				if (line == null) break;

@@ -916,7 +916,8 @@ public class InputAgent {
 		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
 		ArrayList<String> preAddedRecordLines = new ArrayList<>();
 		if( simModel.getConfigFile() != null ) {
-			try (BufferedReader in = new BufferedReader(new FileReader(simModel.getConfigFile()))) {
+			try (FileReader fr = new FileReader(simModel.getConfigFile());
+			     BufferedReader in = new BufferedReader(fr)) {
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
 					preAddedRecordLines.add( line );

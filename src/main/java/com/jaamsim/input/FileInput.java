@@ -88,7 +88,8 @@ public class FileInput extends Input<URI> {
 		ArrayList<String> rec = new ArrayList<>();
 
 		try (InputStream r = uri.toURL().openStream();
-		     BufferedReader b = new BufferedReader(new InputStreamReader(r))) {
+		     InputStreamReader isr = new InputStreamReader(r);
+		     BufferedReader b = new BufferedReader(isr)) {
 			while (true) {
 				String line = null;
 				line = b.readLine();
