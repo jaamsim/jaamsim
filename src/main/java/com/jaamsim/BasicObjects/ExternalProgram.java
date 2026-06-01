@@ -83,33 +83,34 @@ public class ExternalProgram extends AbstractExternalProgram {
 			process.waitFor((long) timeOut.getNextSample(this, simTime), TimeUnit.MILLISECONDS);
 
 			// Check for an error in the external program
-			InputStream es = process.getErrorStream();
-			BufferedReader er = new BufferedReader(new InputStreamReader(es));
-			String str = er.readLine();
-			if (str != null) {
-				StringBuilder sb = new StringBuilder(str);
-				while (true) {
-					String line = er.readLine();
-					if (line == null)
-						break;
-					sb.append("\n").append(line);
+			try (InputStream es = process.getErrorStream();
+			     InputStreamReader isr = new InputStreamReader(es);
+			     BufferedReader reader = new BufferedReader(isr)) {
+				String str = reader.readLine();
+				if (str != null) {
+					StringBuilder sb = new StringBuilder(str);
+					while (true) {
+						String line = reader.readLine();
+						if (line == null)
+							break;
+						sb.append("\n").append(line);
+					}
+					throw new Exception(sb.toString());
 				}
-				er.close();
-				throw new Exception(sb.toString());
 			}
-			er.close();
 
 			// Collect the outputs from the program
-			InputStream is = process.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			ArrayList<String> list = new ArrayList<>();
-			while (true) {
-				String line = reader.readLine();
-				if (line == null)
-					break;
-				Parser.tokenize(list, line, false);
+			try (InputStream is = process.getInputStream();
+			     InputStreamReader isr = new InputStreamReader(is);
+			     BufferedReader reader = new BufferedReader(isr)) {
+				while (true) {
+					String line = reader.readLine();
+					if (line == null)
+						break;
+					Parser.tokenize(list, line, false);
+				}
 			}
-			reader.close();
 
 			// Set the new output value
 			ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, simTime);
