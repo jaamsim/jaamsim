@@ -175,8 +175,7 @@ public class TestDistributionFunctions implements RunListener {
 		);
 
 		// Start the simulation run on a new thread
-		if(!simModel.start(this, null))
-			Assert.fail("validation failed");
+		simModel.start(this, null);
 
 		// Wait for the run to finish
 		long timeoutMS = 5000L;
@@ -223,6 +222,7 @@ public class TestDistributionFunctions implements RunListener {
 		System.out.println(t.getMessage());
 		t.printStackTrace();
 		countDownLatch.countDown();
+		Assert.fail("Error during simulation run");
 	}
 
 }

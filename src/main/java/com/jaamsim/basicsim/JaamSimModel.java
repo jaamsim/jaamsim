@@ -437,7 +437,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
-	public final boolean start(RunListener l, EventTraceListener trc) {
+	public final void start(RunListener l, EventTraceListener trc) {
 		if (l == null)
 			throw new NullPointerException("A runlistener must be provided to start a run");
 		runListener = l;
@@ -452,7 +452,6 @@ public class JaamSimModel implements EventTimeListener {
 		eventManager.setTickLength(getSimulation().getTickLength());
 		eventManager.scheduleProcessExternal(0, Entity.PRI_HIGHEST, Entity.EVT_LIFO, new InitModelTarget(this), null);
 		resume();
-		return true;
 	}
 
 	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);
