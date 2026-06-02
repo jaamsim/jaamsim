@@ -202,7 +202,7 @@ public class TestExpParser {
 
 	}
 
-	static JaamSimModel sim = new JaamSimModel();
+	static JaamSimModel sim = new JaamSimModel("TestExpParser");
 	static Entity mapEnt = sim.createInstance(Entity.class);
 	static Entity arrayEnt = sim.createInstance(Entity.class);
 	static Entity dummyEnt = sim.createInstance(Entity.class);
@@ -696,7 +696,7 @@ public class TestExpParser {
 	@Test
 	public void testString() throws ExpError {
 		// This is needed since we do not initialize the rest of the unit system
-		JaamSimModel mod = new JaamSimModel();
+		JaamSimModel mod = new JaamSimModel("TestExpParser");
 		mod.createInstance(DimensionlessUnit.class);
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "\"stringly\"");
@@ -948,7 +948,7 @@ public class TestExpParser {
 
 	@Test
 	public void testAssignment() throws ExpError {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestExpParser");
 		simModel.autoLoad();
 
 		simModel.defineEntity("DisplayEntity", "foo");

@@ -37,7 +37,7 @@ public class TestFileToMatrix {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestFileToHashMap");
 		simModel.createInstance(Simulation.class);
 	}
 

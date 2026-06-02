@@ -33,7 +33,7 @@ public class TestBooleanSelector {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestBooleanSelector");
 		simModel.createInstance(Simulation.class);
 	}
 

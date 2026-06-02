@@ -34,7 +34,7 @@ public class TestDistributionFunctions implements RunListener {
 
 	@Test
 	public void testFunctions() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestDistributionFunctions");
 		simModel.autoLoad();
 		simModel.setInput("Simulation", "RunDuration", "10 s");
 

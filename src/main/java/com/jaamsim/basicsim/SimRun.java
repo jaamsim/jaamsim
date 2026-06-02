@@ -70,6 +70,7 @@ public class SimRun implements RunListener {
 	 * @param sm - pre-configured simulation model
 	 */
 	public void start(JaamSimModel sm) {
+		new Throwable().printStackTrace();
 		simModel = sm;
 		// Reset the scenario and replication numbers
 		simModel.setScenarioNumber(scen.getScenarioNumber());

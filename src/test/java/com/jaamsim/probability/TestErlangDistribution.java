@@ -35,7 +35,7 @@ public class TestErlangDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestErlangDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

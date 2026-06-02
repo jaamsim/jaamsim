@@ -39,7 +39,7 @@ public class TestContinuousDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestContinuousDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

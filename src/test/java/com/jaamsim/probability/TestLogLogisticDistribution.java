@@ -35,7 +35,7 @@ public class TestLogLogisticDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestLogLogisticDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

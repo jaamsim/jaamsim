@@ -34,7 +34,7 @@ public class TestPoissonDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestPoissonDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

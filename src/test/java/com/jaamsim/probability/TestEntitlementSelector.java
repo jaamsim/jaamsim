@@ -33,7 +33,7 @@ public class TestEntitlementSelector {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestEntitlementSelector");
 	}
 
 	@Test

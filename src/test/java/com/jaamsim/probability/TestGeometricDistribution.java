@@ -34,7 +34,7 @@ public class TestGeometricDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestGeometricDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

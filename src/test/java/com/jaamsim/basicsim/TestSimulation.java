@@ -38,7 +38,7 @@ public class TestSimulation {
 
 	@Test
 	public void testAllDefineableTypes() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSimulation");
 		simModel.autoLoad();
 
 		// Define an instance of every drag-and-drop type
@@ -53,7 +53,7 @@ public class TestSimulation {
 
 	@Test
 	public void testAllEditableInputs() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSimulation");
 		simModel.autoLoad();
 
 		int numErrors = 0;
@@ -90,7 +90,7 @@ public class TestSimulation {
 
 	@Test
 	public void testAllOutputs() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSimulation");
 		simModel.autoLoad();
 
 		int numErrors = 0;
@@ -127,7 +127,7 @@ public class TestSimulation {
 
 	@Test
 	public void testSimpleInputFile() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSimulation");
 		simModel.autoLoad();
 
 		System.out.println();
@@ -140,7 +140,7 @@ public class TestSimulation {
 
 	@Test
 	public void testAPI() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSimulation");
 		simModel.autoLoad();
 
 		// Definitions

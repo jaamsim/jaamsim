@@ -35,7 +35,7 @@ public class TestGammaDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestGammaDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

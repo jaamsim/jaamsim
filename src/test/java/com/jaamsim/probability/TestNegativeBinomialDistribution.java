@@ -34,7 +34,7 @@ public class TestNegativeBinomialDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestNegativeBinomialDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

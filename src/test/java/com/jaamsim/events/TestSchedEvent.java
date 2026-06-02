@@ -25,7 +25,7 @@ public class TestSchedEvent {
 
 	@Test
 	public void testEntityCreate() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSchedEvent");
 
 		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
@@ -45,7 +45,7 @@ public class TestSchedEvent {
 
 	@Test
 	public void testEntityKillFirst() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSchedEvent");
 
 		for (int i = 0; i <= 1000000; i++) {
 			simModel.createInstance(Entity.class);
@@ -68,7 +68,7 @@ public class TestSchedEvent {
 
 	@Test
 	public void testEntityKillLast() {
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("TestSchedEvent");
 
 		for (int i = 0; i <= 1000000; i++) {
 			simModel.createInstance(Entity.class);

@@ -38,7 +38,7 @@ public class TestFileToVector {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestFileToVector");
 		simModel.createInstance(Simulation.class);
 	}
 

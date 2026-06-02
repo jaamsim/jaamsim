@@ -45,7 +45,7 @@ public class PreviewCache {
 
 	public PreviewCache() {
 		_imageCache = new HashMap<>();
-		JaamSimModel simModel = new JaamSimModel();
+		JaamSimModel simModel = new JaamSimModel("PreviewCache");
 		simModel.autoLoad();
 		dummyEntity = simModel.createInstance(DisplayEntity.class);
 	}

@@ -35,7 +35,7 @@ public class TestWeibullDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestWeibullDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

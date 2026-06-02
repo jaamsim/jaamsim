@@ -35,7 +35,7 @@ public class TestEntityDefinitions {
 
 	@Test
 	public void testDefinitions() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestEntityDefinitions");
 		simModel.autoLoad();
 
 		// Chain of sub-models:

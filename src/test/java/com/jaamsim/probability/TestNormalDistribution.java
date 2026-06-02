@@ -35,7 +35,7 @@ public class TestNormalDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestNormalDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 

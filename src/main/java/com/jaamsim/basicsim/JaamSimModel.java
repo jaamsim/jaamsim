@@ -109,10 +109,6 @@ public class JaamSimModel implements EventTimeListener {
 	final AtomicBoolean hasEnded = new AtomicBoolean();
 	final AtomicBoolean isConfiguring = new AtomicBoolean();
 
-	public JaamSimModel() {
-		this("");
-	}
-
 	public JaamSimModel(String name) {
 		eventManager = new EventManager("DefaultEventManager");
 		eventManager.setTimeListener(this);

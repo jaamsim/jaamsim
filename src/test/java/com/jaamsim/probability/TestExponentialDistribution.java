@@ -35,7 +35,7 @@ public class TestExponentialDistribution {
 
 	@Before
 	public void setupTests() {
-		simModel = new JaamSimModel();
+		simModel = new JaamSimModel("TestExponentialDistribution");
 		simModel.createInstance(Simulation.class);
 	}
 
