@@ -4430,31 +4430,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	@Override
-	public void handleInputError(Throwable t, Entity ent) {
-		String msg = t.getLocalizedMessage();
-		if (msg == null)
-			msg = "null";
-		String source = "";
-		int pos = -1;
-		String message = String.format("%s:%n%s", ent.getName(), msg);
-		if (t instanceof InputErrorException) {
-			source = ((InputErrorException) t).source;
-			pos = ((InputErrorException) t).position;
-		}
-		if (t instanceof ErrorException) {
-			source = ((ErrorException) t).source;
-			pos = ((ErrorException) t).position;
-			message = msg;
-		}
-		GUIFrame.invokeErrorDialog("Input Error",
-				source,
-				pos,
-				"JaamSim has detected the following input error during validation:",
-				message,
-				"The error must be corrected before the simulation can be started.");
-	}
-
-	@Override
 	public void gui_handleError(JaamSimModel sm, Throwable t) {
 		String msg = t.getLocalizedMessage();
 		if (msg == null)

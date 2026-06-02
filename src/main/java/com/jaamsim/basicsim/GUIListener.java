@@ -19,8 +19,6 @@ package com.jaamsim.basicsim;
 import com.jaamsim.Graphics.View;
 
 public interface GUIListener {
-
-	public void handleInputError(Throwable t, Entity ent);
 	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector(Entity ent);
 	public void updateModelBuilder();
