@@ -440,29 +440,7 @@ public class JaamSimModel implements EventTimeListener {
 	public final boolean start(RunListener l, EventTraceListener trc) {
 		if (l == null)
 			throw new NullPointerException("A runlistener must be provided to start a run");
-
 		runListener = l;
-
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			if (each.hasClone())
-				continue;
-
-			try {
-				each.validate();
-			}
-			catch (Throwable t) {
-				String msg = String.format("Validation Error - %s: %s%n", each, t.getMessage());
-				if (t instanceof ErrorException)
-					msg = String.format("Validation Error - %s%n", t.getMessage());
-				this.logMessage(msg);
-				if (t.getMessage() == null || t.getMessage().equals("null"))
-					this.logStackTrace(t);
-				if (gui != null) {
-					gui.handleInputError(t, each);
-				}
-				return false;
-			}
-		}
 
 		prepareReportDirectory();
 		killGeneratedEntities();
@@ -538,6 +516,23 @@ public class JaamSimModel implements EventTimeListener {
 		hasStarted.set(true);
 		//System.out.format("%ninit%n");
 		Simulation simulation = this.getSimulation();
+
+		// Early Initialization
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (each.hasClone())
+				continue;
+
+			try {
+				each.validate();
+			}
+			catch (Throwable t) {
+				String msg = String.format("Validation Error - %s: %s%n", each, t.getMessage());
+				if (t instanceof ErrorException)
+					msg = String.format("Validation Error - %s%n", t.getMessage());
+
+				throw new ErrorException(msg);
+			}
+		}
 
 		// Early Initialization
 		this.thresholdChangedTarget.users.clear();
