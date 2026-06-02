@@ -197,9 +197,9 @@ public class TestSimulation {
 		WaitForPauseListener listener2 = new WaitForPauseListener(simModel2);
 
 		// Start both runs
-		if (!simModel.start(listener))
+		if (!simModel.start(listener, null))
 			Assert.fail("validation failed");
-		if (!simModel2.start(listener2))
+		if (!simModel2.start(listener2, null))
 			Assert.fail("validation failed");
 
 		// Wait for both runs to finish
@@ -251,7 +251,7 @@ public class TestSimulation {
 	static void runTestCase(JaamSimModel sm, long timeoutMS) {
 		long nanos = System.nanoTime();
 		WaitForPauseListener listener = new WaitForPauseListener(sm);
-		if (!sm.start(listener))
+		if (!sm.start(listener, null))
 			Assert.fail("validation failed");
 		listener.waitForPause(timeoutMS);
 		nanos = System.nanoTime() - nanos;

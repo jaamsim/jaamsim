@@ -19,6 +19,7 @@ package com.jaamsim.basicsim;
 import java.util.ArrayList;
 
 import com.jaamsim.Statistics.SampleStatistics;
+import com.jaamsim.events.EventTraceListener;
 
 /**
  * A set of simulation runs that are replications of a given model.
@@ -113,13 +114,13 @@ public class Scenario {
 		}
 	}
 
-	public void startNextRun(JaamSimModel simModel) {
+	public void startNextRun(JaamSimModel simModel, EventTraceListener trc) {
 		synchronized (this) {
 			if (runsToStart.isEmpty())
 				return;
 			SimRun run = runsToStart.remove(0);
 			runsInProgress.add(run);
-			run.start(simModel);
+			run.start(simModel, trc);
 			//System.out.format("Replication %s of Scenario %s started%n",
 			//		run.getReplicationNumber(), run.getScenarioNumber());
 		}

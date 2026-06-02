@@ -22,8 +22,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
 
 /**
@@ -88,6 +90,34 @@ public class RunManager {
 					return;
 				}
 			}
+
+			EventTraceListener trc = null;
+			// Set up any tracing to be performed
+			if (getNumberOfThreads() == 1) {
+				try {
+					if (simulation.traceEvents()) {
+						String evtName = simModel.getConfigFile().getParentFile() + File.separator + simModel.getRunName() + ".evt";
+						trc = new EventRecorder(evtName);
+					}
+					else if (simulation.verifyEvents()) {
+						String evtName = simModel.getConfigFile().getParentFile() + File.separator + simModel.getRunName() + ".evt";
+						trc = new EventTracer(evtName);
+					}
+					else if (simulation.isEventViewerVisible() && GUIFrame.getInstance() != null) {
+						trc = EventViewer.getInstance();
+					}
+				}
+				catch (Exception e) {
+					pause();
+					GUIFrame.invokeErrorDialog("Tracing Error",
+							"The following runtime error has occurred while starting the model event tracing",
+							e.getMessage(),
+							"More information about the error can be found in the Log Viewer.");
+					Log.logException(e);
+					return;
+				}
+			}
+
 			//System.out.format("hasRunsToStart=%s%n", hasRunsToStart());
 			if (!hasRunsToStart())
 				return;
@@ -97,7 +127,7 @@ public class RunManager {
 			}
 
 			// Start the next simulation run for the present scenario
-			startNextRun(sm);
+			startNextRun(sm, trc);
 		}
 	}
 
@@ -222,10 +252,10 @@ public class RunManager {
 
 		// Start the next run
 		JaamSimModel sm = run.getJaamSimModel();
-		startNextRun(sm);
+		startNextRun(sm, null);
 	}
 
-	private void startNextRun(JaamSimModel sm) {
+	private void startNextRun(JaamSimModel sm, EventTraceListener trc) {
 		synchronized (scenarioList) {
 			Simulation simulation = simModel.getSimulation();
 
@@ -248,7 +278,7 @@ public class RunManager {
 
 			// Start the next simulation run for the present scenario
 			if (presentScenario.hasRunsToStart()) {
-				presentScenario.startNextRun(sm);
+				presentScenario.startNextRun(sm, trc);
 			}
 		}
 	}

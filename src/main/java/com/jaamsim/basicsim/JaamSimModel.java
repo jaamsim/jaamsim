@@ -42,6 +42,7 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
+import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityNameInput;
 import com.jaamsim.input.ExpError;
@@ -52,7 +53,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ParentEntityInput;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.rng.MRG1999a;
-import com.jaamsim.ui.EventViewer;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -437,7 +437,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
-	public final boolean start(RunListener l) {
+	public final boolean start(RunListener l, EventTraceListener trc) {
 		if (l == null)
 			throw new NullPointerException("A runlistener must be provided to start a run");
 
@@ -470,29 +470,7 @@ public class JaamSimModel implements EventTimeListener {
 		hasStarted.set(false);
 		hasEnded.set(false);
 
-		// Set up any tracing to be performed
-		try {
-			if (getSimulation().traceEvents()) {
-				String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
-				EventRecorder rec = new EventRecorder(evtName);
-				eventManager.setTraceListener(rec);
-			}
-			else if (getSimulation().verifyEvents()) {
-				String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
-				EventTracer trc = new EventTracer(evtName);
-				eventManager.setTraceListener(trc);
-			}
-			else if (getSimulation().isEventViewerVisible() && gui != null) {
-				eventManager.setTraceListener(EventViewer.getInstance());
-			}
-		}
-		catch (Exception e) {
-			if (gui != null) {
-				gui.handleInputError(e, getSimulation());
-			}
-			return false;
-		}
-
+		eventManager.setTraceListener(trc);
 		eventManager.setTickLength(getSimulation().getTickLength());
 		eventManager.scheduleProcessExternal(0, Entity.PRI_HIGHEST, Entity.EVT_LIFO, new InitModelTarget(this), null);
 		resume();

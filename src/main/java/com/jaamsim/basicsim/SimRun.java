@@ -18,6 +18,8 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventTraceListener;
+
 /**
  * An individual run for a simulation model.
  * @author Harry King
@@ -69,15 +71,14 @@ public class SimRun implements RunListener {
 	 *
 	 * @param sm - pre-configured simulation model
 	 */
-	public void start(JaamSimModel sm) {
-		new Throwable().printStackTrace();
+	public void start(JaamSimModel sm, EventTraceListener trc) {
 		simModel = sm;
 		// Reset the scenario and replication numbers
 		simModel.setScenarioNumber(scen.getScenarioNumber());
 		simModel.setReplicationNumber(getReplicationNumber());
 
 		// Start the run
-		simModel.start(this);
+		simModel.start(this, trc);
 	}
 
 	@Override

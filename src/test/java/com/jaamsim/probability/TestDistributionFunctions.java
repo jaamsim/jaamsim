@@ -175,7 +175,7 @@ public class TestDistributionFunctions implements RunListener {
 		);
 
 		// Start the simulation run on a new thread
-		if(!simModel.start(this))
+		if(!simModel.start(this, null))
 			Assert.fail("validation failed");
 
 		// Wait for the run to finish
