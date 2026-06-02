@@ -240,6 +240,11 @@ public class TestSimulation {
 			assertTrue(!simModel.getSimulation().getPrintReport());
 
 			runTestCase(simModel, 5000l);
+
+			// Ensure that the JaamSimModel can be copied for execution on multiple threads
+			@SuppressWarnings("unused")
+			JaamSimModel simModel2 = new JaamSimModel(simModel, simModel.getName() +"(2)");
+			System.out.println("Copied successfully");
 		}
 		System.out.println();
 	}

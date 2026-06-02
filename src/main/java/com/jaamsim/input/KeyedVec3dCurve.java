@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +22,16 @@ import com.jaamsim.math.Vec3d;
 public class KeyedVec3dCurve extends KeyedCurve<Vec3d> {
 
 	@Override
-	protected Vec3d interpVal(Vec3d val0, Vec3d val1, double ratio) {
+	protected Vec3d interpVal(Vec3d val0, Vec3d val1, double ratio, int arg) {
 		Vec3d ret = new Vec3d();
-		double oneMinus = 1 - ratio;
-		ret.x = val0.x*oneMinus + val1.x*ratio;
-		ret.y = val0.y*oneMinus + val1.y*ratio;
-		ret.z = val0.z*oneMinus + val1.z*ratio;
+		switch (arg) {
+		case 0:
+			ret.interpolate3(val0, val1, ratio);
+			break;
+		case 1:
+			ret.slerp(val0, val1, ratio);
+			break;
+		}
 		return ret;
 	}
 

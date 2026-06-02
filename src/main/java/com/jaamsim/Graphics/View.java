@@ -103,6 +103,10 @@ public class View extends Entity {
 	         exampleList = {"{{ 0 h } { 0 0 0 m }} {{ 100 h } { 100 0 0 m }}"})
 	private final KeyedVec3dInput centerScriptInput;
 
+	@Keyword(description = "The (optional) scripted curve for the view direction to follow.",
+	         exampleList = {"{{ 0 h } { 0 0 -1 m }} {{ 100 h } { 0 0.707107 -0.707107 m }}"})
+	private final KeyedVec3dInput directionScriptInput;
+
 	@Keyword(description = "The image file to use as the background for this view.",
 	         exampleList = {"'<res>/images/sky_map_2048x1024.jpg'"})
 	private final FileInput skyboxImage;
@@ -181,7 +185,13 @@ public class View extends Entity {
 
 		centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", GRAPHICS);
 		centerScriptInput.setUnitType(DistanceUnit.class);
+		centerScriptInput.setHidden(true);
 		this.addInput(centerScriptInput);
+
+		directionScriptInput = new KeyedVec3dInput("ScriptedViewDirection", GRAPHICS);
+		directionScriptInput.setUnitType(DistanceUnit.class);
+		directionScriptInput.setSphericalInterpolation(true);
+		this.addInput(directionScriptInput);
 
 		skyboxImage = new FileInput("SkyboxImage", GRAPHICS, null);
 		this.addInput(skyboxImage);
@@ -268,6 +278,11 @@ public class View extends Entity {
 		synchronized (setLock) {
 
 			// Check if this is following a script
+			if (directionScriptInput.hasKeys()) {
+				Vec3d ret = directionScriptInput.getValueForTime(simTime);
+				ret.normalize3();
+				return ret;
+			}
 			if (centerScriptInput.hasKeys()) {
 				Vec3d ret = new Vec3d();
 				ret.sub3(centerScriptInput.getValueForTime(simTime), getGlobalPosition(simTime));
@@ -423,7 +438,8 @@ public class View extends Entity {
 	}
 
 	public boolean isScripted() {
-		return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
+		return positionScriptInput.hasKeys() || directionScriptInput.hasKeys()
+				|| centerScriptInput.hasKeys();
 	}
 
 	public void setLock2D(boolean bLock2D) {

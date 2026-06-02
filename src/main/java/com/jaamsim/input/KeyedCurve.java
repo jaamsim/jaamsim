@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +44,10 @@ public abstract class KeyedCurve<T> {
 	}
 
 	public T getValAtTime(double time) {
+		return getValAtTime(time, 0);
+	}
+
+	public T getValAtTime(double time, int arg) {
 		if (!isSorted) {
 			sortKeys();
 		}
@@ -86,14 +91,14 @@ public abstract class KeyedCurve<T> {
 		double endTime = keys.get(end).time;
 		double ratio = (time - startTime) / (endTime - startTime);
 
-		return interpVal(keys.get(start).val, keys.get(end).val, ratio);
+		return interpVal(keys.get(start).val, keys.get(end).val, ratio, arg);
 	}
 
 	public boolean hasKeys() {
 		return keys.size() != 0;
 	}
 
-	protected abstract T interpVal(T val0, T val1, double ratio);
+	protected abstract T interpVal(T val0, T val1, double ratio, int arg);
 
 	private void sortKeys() {
 		Collections.sort(keys, sorter);

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -302,6 +303,30 @@ public void interpolate3(Vec3d a, Vec3d b, double ratio) {
 	this.x = temp * a.x + ratio * b.x;
 	this.y = temp * a.y + ratio * b.y;
 	this.z = temp * a.z + ratio * b.z;
+}
+
+/**
+ * Spherical linear interpolation between initial and final unit vectors, with the result returned
+ * in this vector.
+ * @param a - initial vector
+ * @param b - final vector
+ * @param ratio - fraction between initial and final vectors
+ */
+public void slerp(Vec3d a, Vec3d b, double ratio) {
+	double cosTheta = a.dot3(b);
+	if (cosTheta > 0.95d) {
+		interpolate3(a, b, ratio);
+		normalize3();
+		return;
+	}
+	cosTheta = Math.max(Math.min(cosTheta, 1.0d), 0.0d);
+	double theta = Math.acos(cosTheta);
+	double sinTheta = Math.sin(theta);
+	double weight0 = Math.sin((1.0d - ratio)*theta) / sinTheta;
+	double weight1 = Math.sin(ratio*theta) / sinTheta;
+	this.x = (weight0 * a.x) + (weight1 * b.x);
+	this.y = (weight0 * a.y) + (weight1 * b.y);
+	this.z = (weight0 * a.z) + (weight1 * b.z);
 }
 
 /**

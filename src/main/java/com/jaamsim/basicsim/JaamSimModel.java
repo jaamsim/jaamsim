@@ -43,11 +43,13 @@ import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.EntityNameInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.ParentEntityInput;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.ui.EventViewer;
@@ -209,7 +211,9 @@ public class JaamSimModel implements EventTimeListener {
 			if (newEnt == null)
 				throw new ErrorException("New entity not found: %s", ent.getName());
 			for (Input<?> in : ent.getEditableInputs()) {
-				if (in.isSynonym() || InputAgent.isEarlyInput(in))
+				if (in.isSynonym() || InputAgent.isEarlyInput(in)
+						|| in instanceof EntityNameInput
+						|| in instanceof ParentEntityInput)
 					continue;
 				String key = in.getKeyword();
 				//System.out.format("Normal Keyword - ent=%s, key=%s%n", ent, key);
