@@ -242,9 +242,8 @@ public class TestSimulation {
 			runTestCase(simModel, 5000l);
 
 			// Ensure that the JaamSimModel can be copied for execution on multiple threads
-			@SuppressWarnings("unused")
 			JaamSimModel simModel2 = new JaamSimModel(simModel, simModel.getName() +"(2)");
-			System.out.println("Copied successfully");
+			runTestCase(simModel2, 5000l);
 		}
 		System.out.println();
 	}
@@ -254,7 +253,7 @@ public class TestSimulation {
 		WaitForPauseListener listener = new WaitForPauseListener(sm);
 		if (!sm.start(listener))
 			Assert.fail("validation failed");
-		listener.waitForPause(5000L);
+		listener.waitForPause(timeoutMS);
 		nanos = System.nanoTime() - nanos;
 		System.out.format("completed at simTime=%s, millis=%s%n", sm.getSimTime(), nanos/1000000L);
 	}
