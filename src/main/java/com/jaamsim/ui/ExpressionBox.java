@@ -381,6 +381,8 @@ public class ExpressionBox extends JDialog {
 
 				// Find the word over which the mouse is positioned
 				String text = editArea.getText();
+				// TODO: replace with viewToModel2D once we no longer support java 8
+				@SuppressWarnings("deprecation")
 				int ind = editArea.viewToModel(e.getPoint());
 				if (ind >= 0 && ind < text.length() && Character.isLetter(text.charAt(ind))) {
 
