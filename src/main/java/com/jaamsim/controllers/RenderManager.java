@@ -511,7 +511,7 @@ public class RenderManager implements DragSourceListener {
 
 	}
 
-	public void updateGraphics(JaamSimModel simModel, double simTime) {
+	private void updateGraphics(JaamSimModel simModel, double simTime) {
 		for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
 			try {
 				de.updateGraphics(simTime);
