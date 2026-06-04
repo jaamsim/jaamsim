@@ -516,7 +516,7 @@ public class JaamSimModel implements EventTimeListener {
 		//System.out.format("%ninit%n");
 		Simulation simulation = this.getSimulation();
 
-		// Early Initialization
+		// Validation
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			if (each.hasClone())
 				continue;
