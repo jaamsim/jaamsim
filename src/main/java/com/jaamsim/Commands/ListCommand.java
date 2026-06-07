@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.jaamsim.Commands;
 
 import java.util.ArrayList;
+
+import com.jaamsim.basicsim.Entity;
 
 public class ListCommand implements Command {
 
@@ -69,6 +71,20 @@ public class ListCommand implements Command {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Command tryRepeat(Entity ent) {
+		if (ent == null)
+			return null;
+		ArrayList<Command> newList = new ArrayList<>(list.size());
+		for (int i = 0; i < list.size(); i++) {
+			Command cmd = list.get(i).tryRepeat(ent);
+			if (cmd == null)
+				return null;
+			newList.add(cmd);
+		}
+		return new ListCommand(newList);
 	}
 
 	@Override

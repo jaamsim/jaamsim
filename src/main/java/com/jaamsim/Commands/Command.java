@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.Commands;
+
+import com.jaamsim.basicsim.Entity;
 
 public interface Command {
 
@@ -40,4 +42,11 @@ public interface Command {
 	 * @return true if one or more inputs are changed
 	 */
 	public boolean isChange();
+
+	/**
+	 * Attempts to apply this command to a different entity.
+	 * @param cmd - command to repeat
+	 * @return repeated command or null if the command is incompatible with the new entity
+	 */
+	public Command tryRepeat(Entity ent);
 }

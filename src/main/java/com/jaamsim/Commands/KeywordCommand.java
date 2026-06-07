@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,19 @@ public class KeywordCommand implements Command {
 	@Override
 	public boolean isChange() {
 		return !Arrays.equals(newKws, oldKws);
+	}
+
+	@Override
+	public Command tryRepeat(Entity ent) {
+		if (ent == null)
+			return null;
+		for (KeywordIndex kw : newKws) {
+			Input<?> in = ent.getInput(kw.keyword);
+			if (in == null || in.getHidden() || in.isLocked()) {
+				return null;
+			}
+		}
+		return new KeywordCommand(ent, newKws);
 	}
 
 	@Override

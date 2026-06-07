@@ -17,6 +17,7 @@
 package com.jaamsim.Commands;
 
 import com.jaamsim.Graphics.View;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -83,6 +84,11 @@ public class DefineViewCommand implements Command {
 	@Override
 	public boolean isChange() {
 		return true;
+	}
+
+	@Override
+	public Command tryRepeat(Entity ent) {
+		return null;
 	}
 
 	@Override
