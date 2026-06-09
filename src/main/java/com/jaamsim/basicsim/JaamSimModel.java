@@ -1914,6 +1914,26 @@ public class JaamSimModel implements EventTimeListener {
 			gui.updateAll();
 	}
 
+	private Command getRepeatCommand(Entity ent) {
+		synchronized (undoList) {
+			if (undoList.isEmpty() || !redoList.isEmpty())
+				return null;
+			Command cmd = undoList.get(undoList.size() - 1);
+			return cmd.tryRepeat(ent);
+		}
+	}
+
+	public boolean canRepeat(Entity ent) {
+		return getRepeatCommand(ent) != null;
+	}
+
+	public void repeat(Entity ent) {
+		Command cmd = getRepeatCommand(ent);
+		if (cmd == null)
+			return;
+		storeAndExecute(cmd);
+	}
+
 	public void showTemporaryLabels() {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
 			if (!ent.canLabel())
