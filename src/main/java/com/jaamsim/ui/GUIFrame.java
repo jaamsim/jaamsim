@@ -1575,12 +1575,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		redo.setFocusPainted(false);
 		redo.setRequestFocusEnabled(false);
 		redo.setToolTipText(formatToolTip("Redo (Ctrl+Y)", "Re-performs the last change to the model that was undone."));
-		redo.setEnabled(getJaamSimModel().canRedo());
+		redo.setEnabled(getJaamSimModel().canRedoOrRepeat(selectedEntity));
 		redo.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				getJaamSimModel().redo();
+				getJaamSimModel().redoOrRepeat(selectedEntity);
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -3519,15 +3519,25 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		});
 	}
 
+	public void invokeRedoOrRepeat() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getJaamSimModel().redoOrRepeat(selectedEntity);
+			}
+		});
+	}
+
 	public void updateUndoButtons() {
 		boolean canUndo = getJaamSimModel().canUndo();
 		boolean canRedo = getJaamSimModel().canRedo();
+		boolean canRepeat = getJaamSimModel().canRepeat(selectedEntity);
 
 		undo.setEnabled(canUndo);
 		undoDropdown.setEnabled(canUndo);
 		undoMenuItem.setEnabled(canUndo);
 
-		redo.setEnabled(canRedo);
+		redo.setEnabled(canRedo || canRepeat);
 		redoDropdown.setEnabled(canRedo);
 		redoMenuItem.setEnabled(canRedo);
 	}

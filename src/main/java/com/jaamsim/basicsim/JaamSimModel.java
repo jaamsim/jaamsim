@@ -1934,6 +1934,17 @@ public class JaamSimModel implements EventTimeListener {
 		storeAndExecute(cmd);
 	}
 
+	public boolean canRedoOrRepeat(Entity ent) {
+		return canRedo() || canRepeat(ent);
+	}
+
+	public void redoOrRepeat(Entity ent) {
+		if (canRedo())
+			redo();
+		else if (canRepeat(ent))
+			repeat(ent);
+	}
+
 	public void showTemporaryLabels() {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
 			if (!ent.canLabel())
