@@ -196,6 +196,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	private JMenuItem undoMenuItem;
 	private JMenuItem redoMenuItem;
+	private JMenuItem repeatMenuItem;
 	private JMenuItem copyMenuItem;
 	private JMenuItem pasteMenuItem;
 	private JMenuItem deleteMenuItem;
@@ -709,9 +710,25 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			}
 		} );
 		editMenu.add( redoMenuItem );
+
+		// 3) "Repeat" menu item
+		repeatMenuItem = new JMenuItem("Repeat");
+		repeatMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Repeat-16.png")) );
+		repeatMenuItem.setMnemonic(KeyEvent.VK_R);
+		repeatMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_F4, 0));
+		repeatMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				getJaamSimModel().repeat(selectedEntity);
+			}
+		} );
+		editMenu.add( repeatMenuItem );
 		editMenu.addSeparator();
 
-		// 3) "Copy" menu item
+		// 4) "Copy" menu item
 		copyMenuItem = new JMenuItem("Copy");
 		copyMenuItem.setIcon( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Copy-16.png")) );
@@ -727,7 +744,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		} );
 		editMenu.add( copyMenuItem );
 
-		// 4) "Paste" menu item
+		// 5) "Paste" menu item
 		pasteMenuItem = new JMenuItem("Paste");
 		pasteMenuItem.setIcon( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Paste-16.png")) );
@@ -743,7 +760,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		} );
 		editMenu.add( pasteMenuItem );
 
-		// 5) "Delete" menu item
+		// 6) "Delete" menu item
 		deleteMenuItem = new JMenuItem("Delete");
 		deleteMenuItem.setMnemonic(KeyEvent.VK_D);
 		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -758,7 +775,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		editMenu.add( deleteMenuItem );
 		editMenu.addSeparator();
 
-		// 6) "Find" menu item
+		// 7) "Find" menu item
 		JMenuItem findMenuItem = new JMenuItem("Find");
 		findMenuItem.setIcon( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Find-16.png")) );
@@ -3535,11 +3552,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		undo.setEnabled(canUndo);
 		undoDropdown.setEnabled(canUndo);
-		undoMenuItem.setEnabled(canUndo);
 
 		redo.setEnabled(canRedo || canRepeat);
 		redoDropdown.setEnabled(canRedo);
+
+		undoMenuItem.setEnabled(canUndo);
 		redoMenuItem.setEnabled(canRedo);
+		repeatMenuItem.setEnabled(canRepeat);
 	}
 
 	private void updateForSnapGridSpacing(String str) {
