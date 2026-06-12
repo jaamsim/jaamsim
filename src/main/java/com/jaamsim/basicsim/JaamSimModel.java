@@ -1919,7 +1919,10 @@ public class JaamSimModel implements EventTimeListener {
 			if (undoList.isEmpty() || !redoList.isEmpty())
 				return null;
 			Command cmd = undoList.get(undoList.size() - 1);
-			return cmd.tryRepeat(ent);
+			cmd = cmd.tryRepeat(ent);
+			if (cmd == null || !cmd.isChange())
+				return null;
+			return cmd;
 		}
 	}
 
