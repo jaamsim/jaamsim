@@ -210,6 +210,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	private JButton undoDropdown;
 	private JButton redoDropdown;
 
+	private ImageIcon redoIcon;
+	private ImageIcon repeatIcon;
+
 	private JToggleButton showLabels;
 	private JToggleButton showSubModels;
 	private JToggleButton presentMode;
@@ -287,6 +290,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run (space key)", "Starts or resumes the simulation run.");
 	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
+
+	private static final String REDO_TOOLTIP = formatToolTip("Redo (Ctrl+Y)", "Re-performs the last change to the model that was undone.");
+	private static final String REPEAT_TOOLTIP = formatToolTip("Repeat (Ctrl+Y or F4)", "Re-performs the last change to the model for a different entity.");
 
 	static {
 		try {
@@ -1586,12 +1592,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		buttonBar.add( undoDropdown );
 
 		// Redo button
-		redo = new JButton( new ImageIcon(
-				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
+		redoIcon = new ImageIcon(GUIFrame.class.getResource("/resources/images/Redo-16.png"));
+		repeatIcon = new ImageIcon(GUIFrame.class.getResource("/resources/images/Repeat-16.png"));
+		redo = new JButton(redoIcon);
 		redo.setMargin(margin);
 		redo.setFocusPainted(false);
 		redo.setRequestFocusEnabled(false);
-		redo.setToolTipText(formatToolTip("Redo (Ctrl+Y)", "Re-performs the last change to the model that was undone."));
+		redo.setToolTipText(REDO_TOOLTIP);
 		redo.setEnabled(getJaamSimModel().canRedoOrRepeat(selectedEntity));
 		redo.addActionListener( new ActionListener() {
 
@@ -3559,12 +3566,25 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		boolean canRedo = getJaamSimModel().canRedo();
 		boolean canRepeat = getJaamSimModel().canRepeat(selectedEntity);
 
+		// Undo button
 		undo.setEnabled(canUndo);
 		undoDropdown.setEnabled(canUndo);
 
+		// Redo button
 		redo.setEnabled(canRedo || canRepeat);
 		redoDropdown.setEnabled(canRedo);
 
+		// Redo/Repeat icon and tooltip
+		if (canRedo) {
+			redo.setIcon(redoIcon);
+			redo.setToolTipText(REDO_TOOLTIP);
+		}
+		else {
+			redo.setIcon(repeatIcon);
+			redo.setToolTipText(REPEAT_TOOLTIP);
+		}
+
+		// Edit menu
 		undoMenuItem.setEnabled(canUndo);
 		redoMenuItem.setEnabled(canRedo);
 		repeatMenuItem.setEnabled(canRepeat);
