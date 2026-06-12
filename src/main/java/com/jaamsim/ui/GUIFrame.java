@@ -3536,6 +3536,15 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		});
 	}
 
+	public void invokeRepeat() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getJaamSimModel().repeat(selectedEntity);
+			}
+		});
+	}
+
 	public void invokeRedoOrRepeat() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

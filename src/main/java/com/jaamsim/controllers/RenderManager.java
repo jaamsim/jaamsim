@@ -2227,6 +2227,10 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeRedoOrRepeat();
 			return true;
 		}
+		if (!alt && keyCode == KeyEvent.VK_F4) {
+			GUIFrame.getInstance().invokeRepeat();
+			return true;
+		}
 		if (control && keyCode == KeyEvent.VK_N) {
 			GUIFrame.getInstance().invokeNew();
 			return true;
