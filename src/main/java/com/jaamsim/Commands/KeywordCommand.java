@@ -115,7 +115,7 @@ public class KeywordCommand implements Command {
 
 	@Override
 	public Command tryRepeat(Entity ent) {
-		if (ent == null || ent == entity)
+		if (ent == null || ent == entity || index != 0)
 			return null;
 		for (KeywordIndex kw : newKws) {
 			Input<?> in = ent.getInput(kw.keyword);
