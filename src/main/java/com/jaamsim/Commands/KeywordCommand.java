@@ -28,7 +28,7 @@ public class KeywordCommand implements Command {
 	private final Entity entity;
 	private final String entityName;
 	private final KeywordIndex[] oldKws;
-	private final KeywordIndex[] newKws;
+	protected final KeywordIndex[] newKws;
 	private final int index;
 
 	public KeywordCommand(Entity ent, KeywordIndex... kws) {

@@ -74,6 +74,9 @@ public class CoordinateCommand extends KeywordCommand {
 
 	@Override
 	public Command tryRepeat(Entity ent) {
+		if (ent instanceof DisplayEntity) {
+			return new CoordinateCommand((DisplayEntity) ent, newKws);
+		}
 		return null;
 	}
 
