@@ -712,7 +712,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				getJaamSimModel().redo();
+				// Allow Ctrl+Y to perform both the 'redo' and 'repeat' actions
+				getJaamSimModel().redoOrRepeat(selectedEntity);
 			}
 		} );
 		editMenu.add( redoMenuItem );
@@ -3586,7 +3587,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		// Edit menu
 		undoMenuItem.setEnabled(canUndo);
-		redoMenuItem.setEnabled(canRedo);
+		redoMenuItem.setEnabled(canRedo || canRepeat);  // Allow both F4 and Ctrl+Y to be used for 'repeat'
 		repeatMenuItem.setEnabled(canRepeat);
 	}
 
