@@ -18,10 +18,12 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.SubjectEntity;
@@ -119,6 +121,13 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "processing for each new entity, after any resources have been seized.")
 	protected final AssignmentListInput assignmentsAtStart;
 
+	@Keyword(description = "Optional values for the fraction of service time completed at which "
+	                     + "to update this object and to notify the watchers of this object. "
+	                     + "Each entry must be a dimensionless number between 0.0 and 1.0, and be "
+	                     + "entered in order of increasing value.",
+	         exampleList = {"0.5 0.8"})
+	protected final SampleListInput triggerPointList;
+
 	private String matchValue;
 
 	{
@@ -153,6 +162,13 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 		assignmentsAtStart = new AssignmentListInput("AssignmentsAtStart", OPTIONS, new ArrayList<ExpParser.Assignment>());
 		this.addInput(assignmentsAtStart);
+
+		triggerPointList = new SampleListInput("TriggerPointList", OPTIONS, new ArrayList<>());
+		triggerPointList.setUnitType(DimensionlessUnit.class);
+		triggerPointList.setDimensionless(true);
+		triggerPointList.setValidRange(0.0d, 1.0d);
+		triggerPointList.setHidden(true);
+		this.addInput(triggerPointList);
 	}
 
 	public LinkedService() {}
@@ -369,6 +385,43 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	@Override
 	protected void setProcessStopped() {}
+
+	/**
+	 * Return the time in clock ticks until the next trigger point is reached.
+	 * @param dur - service time for the process
+	 * @param pos - fraction of the process that has been completed
+	 * @return clock ticks until the next trigger point
+	 */
+	protected long getNextTriggerTicks(double dur, double pos) {
+		if (triggerPointList.isDefault() || dur <= 0.0d)
+			return -1L;
+		double simTime = getJaamSimModel().getSimTime();
+		EventManager evt = getJaamSimModel().getEventManager();
+
+		// Service completed in clock ticks
+		long ticks = evt.secondsToNearestTick(pos * dur);
+
+		// Construct an array of trigger points in clock ticks
+		int n = triggerPointList.getListSize();
+		long[] triggerTicks = new long[n];
+		for (int i = 0; i < n; i++) {
+			double triggerPoint = triggerPointList.getNextSample(i, this, simTime);
+			triggerTicks[i] = evt.secondsToNearestTick(triggerPoint * dur);
+		}
+
+		// Find the index for the next trigger point
+		int index = Arrays.binarySearch(triggerTicks, ticks);
+		if (index >= 0) {
+			index++;
+		}
+		else {
+			index = -index - 1;
+		}
+
+		if (index >= n)
+			return -1L;
+		return triggerTicks[index] - ticks;
+	}
 
 	// ********************************************************************************************
 	// GRAPHICS
