@@ -36,6 +36,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -563,10 +564,27 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		return ret;
 	}
 
+	@Output(name = "FractionCompleted",
+	 description = "The fraction of the conveyor length (or travel time) that has been completed "
+	             + "by each entity being processed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public double[] getFractionCompletedList(double simTime) {
+		double[] ret = new double[entryList.size()];
+		double frac = 0.0d;
+		if (isBusy() && presentTravelTime > 0.0d) {
+			frac = (simTime - getLastUpdateTime())/presentTravelTime;
+		}
+		for (int i = 0; i < entryList.size(); i++) {
+			ret[i] = entryList.get(i).position + frac;
+		}
+		return ret;
+	}
+
 	@Output(name = "ReadyForNextEntity",
 	 description = "Returns true if there is enough space on the conveyor to accept the next "
 	             + "entity.",
-	    sequence = 2)
+	    sequence = 3)
 	public boolean readyForNextEntity(double simTime) {
 		return readyForNext;
 	}
@@ -577,7 +595,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	             + "has not been updated by the arrival or exit of an entity, or been triggered "
 	             + "by an entry in its WatchList.",
 	    unitType = TimeUnit.class,
-	    sequence = 3)
+	    sequence = 4)
 	public double getPresentTravelTime(double simTime) {
 		return presentTravelTime;
 	}
