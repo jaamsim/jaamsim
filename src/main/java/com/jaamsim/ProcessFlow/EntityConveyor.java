@@ -110,12 +110,15 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	private boolean exitFlag;
 	private boolean nextEntFlag;
+	private boolean nextTriggerFlag;
 
 	{
 		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(PolylineModel.class);
 
+		triggerPointList.setHidden(false);
 		releaseThresholdList.setHidden(false);
+
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);
 		match.setHidden(true);
@@ -290,6 +293,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		long nextEntTicks = Long.MAX_VALUE;
 		long exitTicks = Long.MAX_VALUE;
 		long accumTicks = Long.MAX_VALUE;
+		long nextTriggerTicks = Long.MAX_VALUE;
 		EventManager evt = EventManager.current();
 
 		// Time for the conveyor to be ready for the next entity
@@ -325,10 +329,19 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			exitTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
 		}
 
+		// Time for the next trigger point
+		for (ConveyorEntry entry : entryList) {
+			long ticks = getNextTriggerTicks(presentTravelTime, entry.position);
+			if (ticks == -1L)
+				continue;
+			nextTriggerTicks = Math.min(ticks, nextTriggerTicks);
+		}
+
 		// Determine the type of event to occur at the end of the time step
-		long durTicks = Math.min(nextEntTicks, Math.min(exitTicks, accumTicks));
+		long durTicks = Math.min(Math.min(nextEntTicks, nextTriggerTicks), Math.min(exitTicks, accumTicks));
 		exitFlag = (exitTicks == durTicks);
 		nextEntFlag = (nextEntTicks == durTicks);
+		nextTriggerFlag = (nextTriggerTicks == durTicks);
 		nextDuration = evt.ticksToSeconds(durTicks);
 
 		if (isTraceFlag()) {
@@ -361,9 +374,15 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			readyForNext = true;
 		}
 
+		// Notify the observers
+		if (nextTriggerFlag) {
+			notifyObservers();
+		}
+
 		// Reset all flags
 		exitFlag = false;
 		nextEntFlag = false;
+		nextTriggerFlag = false;
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
