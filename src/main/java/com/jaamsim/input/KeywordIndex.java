@@ -121,6 +121,17 @@ public class KeywordIndex {
 		return input.subList(start, end).toString();
 	}
 
+
+	public static KeywordIndex formatInput(String keyword, String str) {
+		return KeywordIndex.formatInput(keyword, str, null);
+	}
+
+	public static KeywordIndex formatInput(String keyword, String str, ParseContext pc) {
+		ArrayList<String> tokens = new ArrayList<>();
+		Parser.tokenize(tokens, str, true);
+		return new KeywordIndex(keyword, tokens, pc);
+	}
+
 	public static KeywordIndex formatArgs(String keyword, String... args) {
 		ArrayList<String> tokens = new ArrayList<>(args.length);
 		for (String each : args) {

@@ -179,7 +179,7 @@ public class JaamSimModel implements EventTimeListener {
 				Entity newEnt = getNamedEntity(ent.getName());
 				if (newEnt == null)
 					throw new ErrorException("New entity not found: %s", ent.getName());
-				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), stub);
+				KeywordIndex kw = KeywordIndex.formatInput(in.getKeyword(), stub);
 				InputAgent.apply(newEnt, kw);
 			}
 		}
@@ -714,7 +714,7 @@ public class JaamSimModel implements EventTimeListener {
 		Entity ent = getNamedEntity(entName);
 		if (ent == null)
 			throw new ErrorException("Entity '%s' not found", entName);
-		KeywordIndex kw = InputAgent.formatInput(keyword, arg);
+		KeywordIndex kw = KeywordIndex.formatInput(keyword, arg);
 		InputAgent.apply(ent, kw);
 	}
 

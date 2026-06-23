@@ -24,7 +24,6 @@ import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -98,7 +97,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 	public void acceptEdits() {
 		try {
 			suppressUpdate = true;
-			KeywordIndex kw = InputAgent.formatInput(valInput.getKeyword(), getText());
+			KeywordIndex kw = KeywordIndex.formatInput(valInput.getKeyword(), getText());
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw));
 			super.acceptEdits();
 		}

@@ -599,7 +599,7 @@ public class Entity {
 				String stub = in.getStubDefinition();
 				if (stub == null || in.isDef())
 					continue;
-				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), stub);
+				KeywordIndex kw = KeywordIndex.formatInput(in.getKeyword(), stub);
 				InputAgent.apply(this, kw);
 			}
 		}

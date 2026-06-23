@@ -21,7 +21,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -63,7 +62,7 @@ public class InputBox extends TextBasics {
 			return;
 		}
 		try {
-			KeywordIndex kw = InputAgent.formatInput(target.getValue(), getText());
+			KeywordIndex kw = KeywordIndex.formatInput(target.getValue(), getText());
 			getJaamSimModel().storeAndExecute(new KeywordCommand(target.getTargetEntity(), kw));
 			super.acceptEdits();
 		}

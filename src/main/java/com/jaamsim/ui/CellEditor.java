@@ -50,7 +50,6 @@ import javax.swing.table.TableCellEditor;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ParseContext;
@@ -452,7 +451,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			pc = new ParseContext(configDirURI, null);
 		}
 		Entity ent = table.getEntity();
-		KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str, pc);
+		KeywordIndex kw = KeywordIndex.formatInput(input.getKeyword(), str, pc);
 		ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, kw));
 		input.setValid(true);
 	}

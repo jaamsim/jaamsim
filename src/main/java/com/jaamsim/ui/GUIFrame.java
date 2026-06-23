@@ -2377,7 +2377,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					public void showPreview(String str) {
 						String name = Parser.addQuotesIfNeeded(str);
 						ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
-						kwList.add( InputAgent.formatInput("FontName", name) );
+						kwList.add( KeywordIndex.formatInput("FontName", name) );
 						if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 							Text t = (Text) textEnt;
 							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight(0.0d));
@@ -2459,7 +2459,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				String str = String.format(format, height);
 				textHeight.setText(str);
 				ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
-				kwList.add( InputAgent.formatInput("TextHeight", str) );
+				kwList.add( KeywordIndex.formatInput("TextHeight", str) );
 				if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 					Text t = (Text) textEnt;
 					Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), height);
@@ -2527,7 +2527,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 					@Override
 					public void showPreview(String colStr) {
-						KeywordIndex kw = InputAgent.formatInput("FontColour", colStr);
+						KeywordIndex kw = KeywordIndex.formatInput("FontColour", colStr);
 						selectedEntity.getJaamSimModel().storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
 
@@ -2692,7 +2692,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 					@Override
 					public void showPreview(String colStr) {
-						KeywordIndex kw = InputAgent.formatInput("LineColour", colStr);
+						KeywordIndex kw = KeywordIndex.formatInput("LineColour", colStr);
 						selectedEntity.getJaamSimModel().storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
 
@@ -2763,7 +2763,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 					@Override
 					public void showPreview(String colStr) {
-						KeywordIndex kw = InputAgent.formatInput("FillColour", colStr);
+						KeywordIndex kw = KeywordIndex.formatInput("FillColour", colStr);
 						selectedEntity.getJaamSimModel().storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
 
@@ -3610,7 +3610,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 
 		try {
-			KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", str);
+			KeywordIndex kw = KeywordIndex.formatInput("SnapGridSpacing", str);
 			sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 		catch (InputErrorException e) {
@@ -3850,7 +3850,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		try {
 			ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
-			kwList.add( InputAgent.formatInput("TextHeight", str) );
+			kwList.add( KeywordIndex.formatInput("TextHeight", str) );
 			if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 				Text t = (Text) textEnt;
 				double textHeight = Input.parseDoubles(getJaamSimModel(), kwList.get(0), 0.0d, Double.POSITIVE_INFINITY, DistanceUnit.class).get(0);

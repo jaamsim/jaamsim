@@ -488,7 +488,7 @@ public class ExpressionBox extends JDialog {
 
 		// Load the input
 		try {
-			KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
+			KeywordIndex kw = KeywordIndex.formatInput(input.getKeyword(), str);
 			ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, kw));
 			acceptButton.setEnabled(true);
 		}
