@@ -39,6 +39,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private boolean integerValue = false;
+	private int monotonic = 0;  // -1 = monotonically decreasing, +1 = monotonically increasing
 
 	public SampleListInput(String key, String cat, ArrayList<SampleProvider> def) {
 		super(key, cat, def);
@@ -86,6 +87,10 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 
 	public void setIntegerValue(boolean bool) {
 		integerValue = bool;
+	}
+
+	public void setMonotonic(int dir) {
+		monotonic = dir;
 	}
 
 	/**
@@ -146,6 +151,9 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 					throw new InputErrorException(e.position, e.source, msg, e);
 				}
 			}
+			if (monotonic != 0 && isConstant(temp)) {
+				Input.assertMonotonic(getConstantValues(temp), monotonic);
+			}
 			value = temp;
 			this.setValid(true);
 			return;
@@ -167,6 +175,9 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 					msg = String.format(INP_ERR_ELEMENT, i + 1, e.getMessage());
 				throw new InputErrorException(e.position, e.source, msg, e);
 			}
+		}
+		if (monotonic != 0 && isConstant(temp)) {
+			Input.assertMonotonic(getConstantValues(temp), monotonic);
 		}
 		value = temp;
 		this.setValid(true);
@@ -304,6 +315,29 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		return sb.toString();
 	}
 
+	public boolean isConstant() {
+		return isConstant(getValue());
+	}
+
+	public static boolean isConstant(ArrayList<SampleProvider> list) {
+		boolean ret = true;
+		for (SampleProvider sp : list) {
+			ret = ret && (sp instanceof SampleConstant);
+		}
+		return ret;
+	}
+
+	public double[] getConstantValues(ArrayList<SampleProvider> list) {
+		double[] ret = new double[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			SampleProvider sp = list.get(i);
+			if (sp instanceof SampleConstant) {
+				ret[i] = sp.getNextSample(null, 0.0d);
+			}
+		}
+		return ret;
+	}
+
 	public double getNextSample(int i, Entity thisEnt, double simTime) {
 		try {
 			return getValue().get(i).getNextSample(thisEnt, simTime);
@@ -327,6 +361,9 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 			ret[i] = getNextSample(i, thisEnt, simTime);
 			if (integerValue)
 				ret[i] = (int) ret[i];
+		}
+		if (monotonic != 0 && !isConstant()) {
+			Input.assertMonotonic(ret, monotonic);
 		}
 		return ret;
 	}

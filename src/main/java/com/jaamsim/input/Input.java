@@ -74,7 +74,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_TIMEVALUE = "Expected a numeric value, 12 numeric values, or a probabilty distribution, received: %s";
 	protected static final String INP_ERR_BADSUM = "List must sum to %f, received:%f";
 	protected static final String INP_ERR_SUMRANGE = "Sum of list must be between %s and %s, sum: %s";
-	protected static final String INP_ERR_MONOTONIC = "List must %s monotonically. Values starting at index %s are %s s, %s s, ...";
+	protected static final String INP_ERR_MONOTONIC = "List must %s monotonically. Values starting at index %s are %s, %s, ...";
 	protected static final String INP_ERR_BADCHOICE = "Expected one of %s, received: %s";
 	protected static final String INP_ERR_ELEMENT = "Error parsing element %d: %s";
 	protected static final String INP_ERR_ENTNAME = "Could not find an Entity named: %s";
@@ -964,17 +964,22 @@ public abstract class Input<T> {
 
 	public static void assertMonotonic(DoubleVector vec, int direction)
 	throws InputErrorException {
+		assertMonotonic(vec.toArray(), direction);
+	}
+
+	public static void assertMonotonic(double[] vals, int direction)
+	throws InputErrorException {
 		if (direction == 0)
 			return;
 
-		for (int i=1; i<vec.size(); i++) {
-			double diff = vec.get(i) - vec.get(i-1);
+		for (int i = 1; i < vals.length; i++) {
+			double diff = vals[i] - vals[i - 1];
 
 			if (direction > 0 && diff < 0.0)
-				throw new InputErrorException(INP_ERR_MONOTONIC, "increase", i-1, vec.get(i-1), vec.get(i));
+				throw new InputErrorException(INP_ERR_MONOTONIC, "increase", i, vals[i - 1], vals[i]);
 
 			if (direction < 0 && diff > 0.0)
-				throw new InputErrorException(INP_ERR_MONOTONIC, "decrease", i-1, vec.get(i-1), vec.get(i));
+				throw new InputErrorException(INP_ERR_MONOTONIC, "decrease", i, vals[i - 1], vals[i]);
 		}
 	}
 
