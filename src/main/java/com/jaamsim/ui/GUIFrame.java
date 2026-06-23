@@ -4337,11 +4337,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 		// If no configuration files were specified on the command line, then load the default configuration file
 		if (configFiles.size() == 0 && !scriptMode) {
-			simModel.setConfiguring(true);
-			if (gui != null) gui.updateForSimulationState();
-			InputAgent.loadDefault(simModel);
-			simModel.setConfiguring(false);
-			if (gui != null) gui.updateForSimulationState();
+			GUIFrame.loadDefault(gui, simModel);
 		}
 
 		// If in batch or quiet mode, close the any tools that were opened
@@ -4515,6 +4511,26 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 						+ "can be restarted.", simTime));
 	}
 
+	/**
+	 * Loads the default configuration file.
+	 */
+	private static void loadDefault(GUIFrame gui, JaamSimModel simModel) {
+		simModel.setConfiguring(true);
+		if (gui != null) gui.updateForSimulationState();
+
+		simModel.setRecordEdits(true);
+		// Read the default configuration file
+		InputAgent.readResource(simModel, "<res>/inputs/default.cfg");
+
+		// A RecordEdits marker in the default configuration must be ignored
+		simModel.setRecordEditsFound(false);
+
+		// Set the model state to unedited
+		simModel.setSessionEdited(false);
+		simModel.setConfiguring(false);
+		if (gui != null) gui.updateForSimulationState();
+	}
+
 	void newModel() {
 
 		// Create the new JaamSimModel and load the default objects and inputs
@@ -4526,12 +4542,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setRunManager(runMgr);
 
-		simModel.setConfiguring(true);
-		this.updateForSimulationState();
 		// Load the default model
-		InputAgent.loadDefault(simModel);
-		simModel.setConfiguring(false);
-		this.updateForSimulationState();
+		GUIFrame.loadDefault(this, simModel);
 
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}

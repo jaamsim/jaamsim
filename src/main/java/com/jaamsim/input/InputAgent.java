@@ -1823,21 +1823,6 @@ public class InputAgent {
 		return ret;
 	}
 
-	/**
-	 * Loads the default configuration file.
-	 */
-	public static void loadDefault(JaamSimModel simModel) {
-		simModel.setRecordEdits(true);
-		// Read the default configuration file
-		InputAgent.readResource(simModel, "<res>/inputs/default.cfg");
-
-		// A RecordEdits marker in the default configuration must be ignored
-		simModel.setRecordEditsFound(false);
-
-		// Set the model state to unedited
-		simModel.setSessionEdited(false);
-	}
-
 	public static KeywordIndex formatInput(String keyword, String str) {
 		return formatInput(keyword, str, null);
 	}
