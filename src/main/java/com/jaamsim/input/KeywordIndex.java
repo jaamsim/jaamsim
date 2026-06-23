@@ -17,9 +17,16 @@
  */
 package com.jaamsim.input;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.Unit;
 
 
 public class KeywordIndex {
@@ -121,6 +128,48 @@ public class KeywordIndex {
 		return input.subList(start, end).toString();
 	}
 
+	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
+	static {
+		coordFormat.applyPattern("0.0#####");
+	}
+
+	public static KeywordIndex formatVec3dInput(Entity ent, String keyword, Vec3d point, Class<? extends Unit> ut) {
+		double factor = 1.0d;
+		String unitStr = Unit.getSIUnit(ut);
+		Unit u = ent.getJaamSimModel().getPreferredUnit(ut);
+		if (u != null) {
+			factor = u.getConversionFactorToSI();
+			unitStr = u.getName();
+		}
+		ArrayList<String> tokens = new ArrayList<>(4);
+		tokens.add(coordFormat.format(point.x/factor));
+		tokens.add(coordFormat.format(point.y/factor));
+		tokens.add(coordFormat.format(point.z/factor));
+		if (!unitStr.isEmpty()) {
+			tokens.add(unitStr);
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
+	public static KeywordIndex formatPointsInputs(Entity ent, String keyword, ArrayList<Vec3d> points, Vec3d offset) {
+		double factor = 1.0d;
+		String unitStr = Unit.getSIUnit(DistanceUnit.class);
+		Unit u = ent.getJaamSimModel().getPreferredUnit(DistanceUnit.class);
+		if (u != null) {
+			factor = u.getConversionFactorToSI();
+			unitStr = u.getName();
+		}
+		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
+		for (Vec3d v : points) {
+			tokens.add("{");
+			tokens.add(coordFormat.format((v.x + offset.x)/factor));
+			tokens.add(coordFormat.format((v.y + offset.y)/factor));
+			tokens.add(coordFormat.format((v.z + offset.z)/factor));
+			tokens.add(unitStr);
+			tokens.add("}");
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
 
 	public static KeywordIndex formatInput(String keyword, String str) {
 		return KeywordIndex.formatInput(keyword, str, null);

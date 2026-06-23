@@ -160,7 +160,7 @@ public class Text extends TextBasics {
 		kwList.add( KeywordIndex.formatArgs("Format", getText()) );
 		if (isAutoSize()) {
 			Vec3d size = getAutoSize(getFontName(), getStyle(), getTextHeight(0.0d));
-			kwList.add( InputAgent.formatVec3dInput(this, "Size", size, DistanceUnit.class) );
+			kwList.add( KeywordIndex.formatVec3dInput(this, "Size", size, DistanceUnit.class) );
 		}
 		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 		kwList.toArray(kws);

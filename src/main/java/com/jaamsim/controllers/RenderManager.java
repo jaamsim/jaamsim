@@ -1339,14 +1339,14 @@ public class RenderManager implements DragSourceListener {
 		// Move the selected entity
 		ArrayList<Command> cmdList = new ArrayList<>();
 		if (!selectedEntity.usePointsInput()) {
-			KeywordIndex kw = InputAgent.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
+			KeywordIndex kw = KeywordIndex.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
 			cmdList.add(new KeywordCommand(selectedEntity, kw));
 		}
 		else {
 			ArrayList<Vec3d> points = selectedEntity.getPoints();
 			Vec3d offset = new Vec3d(localPos);
 			offset.sub3(selectedEntity.getPosition());
-			KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, offset);
+			KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(selectedEntity, "Points", points, offset);
 			cmdList.add(new KeywordCommand(selectedEntity, ptsKw));
 		}
 
@@ -1360,7 +1360,7 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(globalOffset);
 			localPos = ent.getLocalPosition(pos);
 			if (!ent.usePointsInput()) {
-				KeywordIndex kw = InputAgent.formatVec3dInput(ent, "Position", localPos, DistanceUnit.class);
+				KeywordIndex kw = KeywordIndex.formatVec3dInput(ent, "Position", localPos, DistanceUnit.class);
 				cmdList.add(new KeywordCommand(ent, kw));
 			}
 			else {
@@ -1369,7 +1369,7 @@ public class RenderManager implements DragSourceListener {
 				globalPos.add3(globalOffset);
 				Vec3d offset = ent.getLocalPosition(globalPos);
 				offset.sub3(points.get(0));
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs(ent, "Points", points, offset);
+				KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(ent, "Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
 		}
@@ -1458,8 +1458,8 @@ public class RenderManager implements DragSourceListener {
 		pos.add3(posAdjust);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 
-		KeywordIndex sizeKw = InputAgent.formatVec3dInput(selectedEntity, "Size", scale, DistanceUnit.class);
-		KeywordIndex posKw = InputAgent.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
+		KeywordIndex sizeKw = KeywordIndex.formatVec3dInput(selectedEntity, "Size", scale, DistanceUnit.class);
+		KeywordIndex posKw = KeywordIndex.formatVec3dInput(selectedEntity, "Position", localPos, DistanceUnit.class);
 		simModel.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
 		return true;
 	}
@@ -1499,7 +1499,7 @@ public class RenderManager implements DragSourceListener {
 		if (simulation.isSnapToGrid())
 			orient = Simulation.getSnapGridPosition(orient, dragEntityOrientation, true, ANGLE_SPACING);
 
-		KeywordIndex kw = InputAgent.formatVec3dInput(selectedEntity, "Orientation", orient, AngleUnit.class);
+		KeywordIndex kw = KeywordIndex.formatVec3dInput(selectedEntity, "Orientation", orient, AngleUnit.class);
 		simModel.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
@@ -1543,7 +1543,7 @@ public class RenderManager implements DragSourceListener {
 		}
 		ArrayList<Vec3d> localPts = selectedEntity.getLocalPosition(globalPts);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", localPts, new Vec3d());
+		KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(selectedEntity, "Points", localPts, new Vec3d());
 		ArrayList<Command> cmdList = new ArrayList<>();
 		cmdList.add(new KeywordCommand(selectedEntity, -1, ptsKw));
 
@@ -1557,7 +1557,7 @@ public class RenderManager implements DragSourceListener {
 				Vec3d pos = ent.getGlobalPosition();
 				pos.add3(globalOffset);
 				Vec3d localPos = ent.getLocalPosition(pos);
-				KeywordIndex posKw = InputAgent.formatVec3dInput(ent, "Position", localPos, DistanceUnit.class);
+				KeywordIndex posKw = KeywordIndex.formatVec3dInput(ent, "Position", localPos, DistanceUnit.class);
 				cmdList.add(new KeywordCommand(ent, posKw));
 			}
 			else {
@@ -1566,7 +1566,7 @@ public class RenderManager implements DragSourceListener {
 				globalPos.add3(globalOffset);
 				Vec3d offset = ent.getLocalPosition(globalPos);
 				offset.sub3(points.get(0));
-				ptsKw = InputAgent.formatPointsInputs(ent, "Points", points, offset);
+				ptsKw = KeywordIndex.formatPointsInputs(ent, "Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
 		}
@@ -1618,7 +1618,7 @@ public class RenderManager implements DragSourceListener {
 		// Set the new position for the node
 		newPoints.set(nodeIndex, localPos);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", newPoints, new Vec3d());
+		KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(selectedEntity, "Points", newPoints, new Vec3d());
 		simModel.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
 		return true;
 	}
@@ -1661,7 +1661,7 @@ public class RenderManager implements DragSourceListener {
 		// Insert the new node
 		points.add(splitInd + 1, selectedEntity.getLocalPosition(nearPoint));
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
+		KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
 		simModel.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
 	}
 
@@ -1680,7 +1680,7 @@ public class RenderManager implements DragSourceListener {
 		// Remove the selected node
 		points.remove(removeInd);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
+		KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(selectedEntity, "Points", points, new Vec3d());
 		simModel.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 

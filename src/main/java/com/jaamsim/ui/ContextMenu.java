@@ -454,7 +454,7 @@ public class ContextMenu {
 				viewPos.add3(diff);
 
 				v.setPointOfInterest(pos);
-				KeywordIndex posKw = InputAgent.formatVec3dInput(v, "ViewPosition", viewPos, DistanceUnit.class);
+				KeywordIndex posKw = KeywordIndex.formatVec3dInput(v, "ViewPosition", viewPos, DistanceUnit.class);
 				v.getJaamSimModel().storeAndExecute(new KeywordCommand(v, posKw));
 			}
 		} );
@@ -486,7 +486,7 @@ public class ContextMenu {
 				}
 				int ind = PolylineInfo.getInsertionIndex(pts, localPos);
 				pts.add(ind, localPos);
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs(ent, "Points", pts, new Vec3d());
+				KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(ent, "Points", pts, new Vec3d());
 				ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, ind, ptsKw));
 			}
 		} );
@@ -503,7 +503,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<Vec3d> pts = ent.getPoints();
 				pts.remove(nodeIndex);
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs(ent, "Points", pts, new Vec3d());
+				KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(ent, "Points", pts, new Vec3d());
 				ent.getJaamSimModel().storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
 			}
 		} );
@@ -549,7 +549,7 @@ public class ContextMenu {
 				for (int i = 0; i <= ind; i++) {
 					pts0.add(pts.get(i));
 				}
-				KeywordIndex ptsKw0 = InputAgent.formatPointsInputs(ent, "Points", pts0, new Vec3d());
+				KeywordIndex ptsKw0 = KeywordIndex.formatPointsInputs(ent, "Points", pts0, new Vec3d());
 				simModel.storeAndExecute(new KeywordCommand(ent, ind, ptsKw0));
 
 				// New entity receives the remaining portion of the nodes
@@ -557,7 +557,7 @@ public class ContextMenu {
 				for (int i = ind; i < pts.size(); i++) {
 					pts1.add(pts.get(i));
 				}
-				KeywordIndex ptsKw1 = InputAgent.formatPointsInputs(splitEnt, "Points", pts1, new Vec3d());
+				KeywordIndex ptsKw1 = KeywordIndex.formatPointsInputs(splitEnt, "Points", pts1, new Vec3d());
 				InputAgent.processKeyword(splitEnt, ptsKw1);
 
 				// Change any other object specific inputs for the split

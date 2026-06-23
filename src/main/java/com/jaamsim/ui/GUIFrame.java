@@ -2237,10 +2237,10 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				align.x = alignRight.isSelected() ? 0.5d : align.x;
 				if (align.x == textEnt.getAlignment().x)
 					return;
-				KeywordIndex kw = InputAgent.formatVec3dInput(textEnt, "Alignment", align, DimensionlessUnit.class);
+				KeywordIndex kw = KeywordIndex.formatVec3dInput(textEnt, "Alignment", align, DimensionlessUnit.class);
 
 				Vec3d pos = textEnt.getPositionForAlignment(align);
-				KeywordIndex posKw = InputAgent.formatVec3dInput(textEnt, "Position", pos, DistanceUnit.class);
+				KeywordIndex posKw = KeywordIndex.formatVec3dInput(textEnt, "Position", pos, DistanceUnit.class);
 
 				textEnt.getJaamSimModel().storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
 				controlStartResume.requestFocusInWindow();
@@ -2309,7 +2309,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					int style = (bold.isSelected() ? Font.BOLD : 0) + (italic.isSelected() ? Font.ITALIC : 0);
 					Vec3d size = t.getAutoSize(t.getFontName(), style, t.getTextHeight(0.0d));
 					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-						kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
+						kwList.add( KeywordIndex.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 					}
 				}
 				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
@@ -2382,7 +2382,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 							Text t = (Text) textEnt;
 							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight(0.0d));
 							if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-								kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
+								kwList.add( KeywordIndex.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 							}
 						}
 						KeywordIndex[] kws = new KeywordIndex[kwList.size()];
@@ -2464,7 +2464,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					Text t = (Text) textEnt;
 					Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), height);
 					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-						kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
+						kwList.add( KeywordIndex.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 					}
 				}
 				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
@@ -2566,14 +2566,14 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 				// Normal object
 				if (!dispEnt.usePointsInput()) {
-					KeywordIndex posKw = InputAgent.formatVec3dInput(dispEnt, "Position", pos, DistanceUnit.class);
+					KeywordIndex posKw = KeywordIndex.formatVec3dInput(dispEnt, "Position", pos, DistanceUnit.class);
 					dispEnt.getJaamSimModel().storeAndExecute(new KeywordCommand(dispEnt, posKw));
 					controlStartResume.requestFocusInWindow();
 					return;
 				}
 
 				// Polyline object
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs(dispEnt, "Points", points, offset);
+				KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(dispEnt, "Points", points, offset);
 				dispEnt.getJaamSimModel().storeAndExecute(new KeywordCommand(dispEnt, ptsKw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -3856,7 +3856,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				double textHeight = Input.parseDoubles(getJaamSimModel(), kwList.get(0), 0.0d, Double.POSITIVE_INFINITY, DistanceUnit.class).get(0);
 				Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), textHeight);
 				if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
-					kwList.add( InputAgent.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
+					kwList.add( KeywordIndex.formatVec3dInput(selectedEntity, "Size", size, DistanceUnit.class) );
 				}
 			}
 			KeywordIndex[] kws = new KeywordIndex[kwList.size()];

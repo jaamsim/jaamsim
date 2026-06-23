@@ -1156,7 +1156,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		Vec3d dist = new Vec3d(newPos);
 		ArrayList<Vec3d> pts = pointsInput.getValue();
 		dist.sub3(pts.get(0));
-		KeywordIndex kw = InputAgent.formatPointsInputs(this, pointsInput.getKeyword(), pts, dist);
+		KeywordIndex kw = KeywordIndex.formatPointsInputs(this, pointsInput.getKeyword(), pts, dist);
 		InputAgent.apply(this, kw);
 	}
 
@@ -1213,7 +1213,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 			if (getSimulation().isSnapToGrid())
 				pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 			String posKey = positionInput.getKeyword();
-			KeywordIndex posKw = InputAgent.formatVec3dInput(this, posKey, pos, DistanceUnit.class);
+			KeywordIndex posKw = KeywordIndex.formatVec3dInput(this, posKey, pos, DistanceUnit.class);
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw));
 			return true;
 		}
@@ -1227,7 +1227,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 			offset.sub3(getPoints().get(0));
 		}
 		String ptsKey = pointsInput.getKeyword();
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(this, ptsKey, getPoints(), offset);
+		KeywordIndex ptsKw = KeywordIndex.formatPointsInputs(this, ptsKey, getPoints(), offset);
 
 		getJaamSimModel().storeAndExecute(new KeywordCommand(this, ptsKw));
 		return true;
