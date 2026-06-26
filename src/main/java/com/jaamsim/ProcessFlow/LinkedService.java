@@ -167,6 +167,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		triggerPointList.setUnitType(DimensionlessUnit.class);
 		triggerPointList.setDimensionless(true);
 		triggerPointList.setValidRange(0.0d, 1.0d);
+		triggerPointList.setMonotonic(1);
 		triggerPointList.setHidden(true);
 		this.addInput(triggerPointList);
 	}
@@ -404,9 +405,9 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		// Construct an array of trigger points in clock ticks
 		int n = triggerPointList.getListSize();
 		long[] triggerTicks = new long[n];
+		double[] triggerPoints = triggerPointList.getNextDoubles(this, simTime);
 		for (int i = 0; i < n; i++) {
-			double triggerPoint = triggerPointList.getNextSample(i, this, simTime);
-			triggerTicks[i] = evt.secondsToNearestTick(triggerPoint * dur);
+			triggerTicks[i] = evt.secondsToNearestTick(triggerPoints[i] * dur);
 		}
 
 		// Find the index for the next trigger point
