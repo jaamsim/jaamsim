@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2025 JaamSim Software Inc.
+ * Copyright (C) 2020-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,14 +35,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -59,9 +62,13 @@ public class ExampleBox extends JDialog {
 
 	private String presentExample;
 	private final ArrayList<String> exampleList;
-	private JList<String> list;
 	private final SearchField exampleSearch;
 	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
+
+	private final DefaultMutableTreeNode top;
+	private final DefaultTreeModel treeModel;
+	private final JTree tree;
+	private final JScrollPane treeScroller;
 
 	private final JLabel previewLabel;
 	private final ImageIcon previewIcon = new ImageIcon();
@@ -118,46 +125,48 @@ public class ExampleBox extends JDialog {
 		getContentPane().add(textPanel, BorderLayout.NORTH);
 
 		// Example selector
-		String[] topics = new String[exampleList.size()];
-		topics = exampleList.toArray(topics);
-		list = new JList<>(topics);
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.addListSelectionListener(new ListSelectionListener() {
+		top = new DefaultMutableTreeNode();
+		createNodes(top);
+		treeModel = new DefaultTreeModel(top);
+		tree = new JTree(top);
+		tree.setModel(treeModel);
+		tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+		tree.setRootVisible(false);
+		tree.setShowsRootHandles(true);
+
+		treeScroller = new JScrollPane(tree);
+		treeScroller.setBorder(new EmptyBorder(5, 5, 5, 0));
+		treeScroller.setPreferredSize(new Dimension(400, 200));
+		getContentPane().add(treeScroller, BorderLayout.WEST);
+
+		tree.addTreeSelectionListener( new TreeSelectionListener() {
 			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int ind = list.getSelectedIndex();
-				if (ind == -1)
-					return;
-				showTopic(exampleList.get(ind));
+			public void valueChanged(TreeSelectionEvent e) {
+				String topicName = getSelectedTopic();
+				showTopic(topicName);
 				exampleSearch.setText("");
 			}
 		});
-		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setBorder(new EmptyBorder(5, 5, 5, 0));
-		listScroller.setPreferredSize(new Dimension(350, 200));
-		getContentPane().add(listScroller, BorderLayout.WEST);
 
 		// Double click opens the indicated example
-		list.addMouseListener(new MouseAdapter() {
+		tree.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() > 1) {
-					int ind = list.locationToIndex(evt.getPoint());
-					if (ind == -1)
-						return;
-					openExample(exampleList.get(ind) + ".cfg");
+					String topicName = getSelectedTopic();
+					openExample(topicName + ".cfg");
 					exampleSearch.setText("");
 				}
 			}
 		});
 
 		// Enter key opens the selected example
-		list.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enter");
-		list.getActionMap().put("enter", new AbstractAction() {
+		tree.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enter");
+		tree.getActionMap().put("enter", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int ind = list.getSelectedIndex();
-				openExample(exampleList.get(ind) + ".cfg");
+				String topicName = getSelectedTopic();
+				openExample(topicName + ".cfg");
 				exampleSearch.setText("");
 			}
 		});
@@ -197,8 +206,8 @@ public class ExampleBox extends JDialog {
 		setLocationRelativeTo(null);
 
 		// Focus on the list and select the first example
-		list.requestFocusInWindow();
-		list.setSelectedIndex(0);
+		tree.requestFocusInWindow();
+		showTopic(exampleList.get(0));
 	}
 
 	public synchronized static ExampleBox getInstance() {
@@ -235,6 +244,85 @@ public class ExampleBox extends JDialog {
 		}
 		Collections.sort(ret, Input.uiSortOrder);
 		return ret;
+	}
+
+	private void createNodes(DefaultMutableTreeNode top) {
+
+		// Folders of topics
+		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
+			DefaultMutableTreeNode folder = new DefaultMutableTreeNode(subfolderName);
+			top.add(folder);
+			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
+			ArrayList<String> list = new ArrayList<>();
+			for (String fileName : GUIFrame.getResourceFileNames(folderName)) {
+				if (fileName.endsWith(".cfg")) {
+					String topicName = fileName.substring(0, fileName.length() - 4);
+					list.add(topicName);
+				}
+			}
+			Collections.sort(list, Input.uiSortOrder);
+			for (String topicName : list) {
+				DefaultMutableTreeNode topic = new DefaultMutableTreeNode(topicName);
+				folder.add(topic);
+			}
+		}
+
+		// Individual topics
+		ArrayList<String> list = new ArrayList<>();
+		for (String fileName : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
+			if (fileName.endsWith(".cfg")) {
+				String topicName = fileName.substring(0, fileName.length() - 4);
+				list.add(topicName);
+			}
+		}
+		Collections.sort(list, Input.uiSortOrder);
+		for (String topicName : list) {
+			DefaultMutableTreeNode topic = new DefaultMutableTreeNode(topicName);
+			top.add(topic);
+		}
+	}
+
+	private String getSelectedTopic() {
+		String ret = "";
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		if (node == null)
+			return ret;
+		Object userObj = node.getUserObject();
+		if (userObj instanceof String) {
+			ret = (String) userObj;
+			DefaultMutableTreeNode subfolderNode = (DefaultMutableTreeNode) node.getParent();
+			if (subfolderNode != top && subfolderNode != null
+					&& subfolderNode.getUserObject() instanceof String) {
+				String subfolderName = (String) subfolderNode.getUserObject();
+				ret = subfolderName + "/" + ret;
+			}
+		}
+		return ret;
+	}
+
+	private TreePath getPathToTopic(String topic, DefaultMutableTreeNode root) {
+
+		// Topic located in a subfolder
+		int index = topic.indexOf('/');
+		if (index >= 0) {
+			String subfolderName = topic.substring(0, index);
+			String modelName = topic.substring(index + 1);
+			DefaultMutableTreeNode folderNode = ObjectSelector.getNodeFor_In(subfolderName, root);
+			if (folderNode == null)
+				return null;
+			DefaultMutableTreeNode modelNode = ObjectSelector.getNodeFor_In(modelName, folderNode);
+			if (modelNode == null)
+				return null;
+			Object[] nodeList = {root, folderNode, modelNode};
+			return new TreePath(nodeList);
+		}
+
+		// Topic located under the root
+		DefaultMutableTreeNode modelNode = ObjectSelector.getNodeFor_In(topic, root);
+		if (modelNode == null)
+			return null;
+		Object[] nodeList = {root, modelNode};
+		return new TreePath(nodeList);
 	}
 
 	/**
@@ -296,9 +384,11 @@ public class ExampleBox extends JDialog {
 			if (url == null)
 				return false;
 			presentExample = topic;
-			int ind = exampleList.indexOf(topic);
-			list.setSelectedIndex(ind);
-			list.ensureIndexIsVisible(ind);
+			TreePath path = getPathToTopic(topic, top);
+			if (path != null) {
+				tree.setSelectionPath(path);
+				tree.scrollPathToVisible(path);
+			}
 
 			// Clear the old preview image
 			previewLabel.setIcon(null);

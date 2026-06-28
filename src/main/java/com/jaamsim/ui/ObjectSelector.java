@@ -429,7 +429,7 @@ public class ObjectSelector extends FrameBox {
 	 * @param parent - object's parent
 	 * @return tree node for the object.
 	 */
-	private static DefaultMutableTreeNode getNodeFor_In(Object userObject, DefaultMutableTreeNode parent) {
+	public static DefaultMutableTreeNode getNodeFor_In(Object userObject, DefaultMutableTreeNode parent) {
 
 		// Loop through the parent's children
 		Enumeration<?> enumeration = parent.children();
