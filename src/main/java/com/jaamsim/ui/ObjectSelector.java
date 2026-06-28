@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -567,11 +567,20 @@ public class ObjectSelector extends FrameBox {
 			if (control && keyCode == KeyEvent.VK_V) {
 				GUIFrame.getInstance().pasteAction(currentEntity);
 			}
+			if (control && keyCode == KeyEvent.VK_Z) {
+				GUIFrame.getJaamSimModel().undo();
+			}
+			if (control && keyCode == KeyEvent.VK_Y) {
+				GUIFrame.getJaamSimModel().redoOrRepeat(currentEntity);
+			}
 			if (keyCode == KeyEvent.VK_F1) {
 				String topic = "";
 				if (currentEntity != null)
 					topic = currentEntity.getObjectType().getName();
 				HelpBox.getInstance().showDialog(topic);
+			}
+			if (keyCode == KeyEvent.VK_F4) {
+				GUIFrame.getJaamSimModel().repeat(currentEntity);
 			}
 		}
 
