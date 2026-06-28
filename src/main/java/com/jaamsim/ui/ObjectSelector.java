@@ -560,26 +560,24 @@ public class ObjectSelector extends FrameBox {
 			int keyCode = e.getKeyCode();
 			boolean control = e.isControlDown();
 			if (control && keyCode == KeyEvent.VK_C) {
-				if (currentEntity != null) {
-					GUIFrame.getInstance().copyAction(currentEntity);
-				}
+				GUIFrame.getInstance().copyAction(currentEntity);
 			}
-			if (control && keyCode == KeyEvent.VK_V) {
+			else if (control && keyCode == KeyEvent.VK_V) {
 				GUIFrame.getInstance().pasteAction(currentEntity);
 			}
-			if (control && keyCode == KeyEvent.VK_Z) {
+			else if (control && keyCode == KeyEvent.VK_Z) {
 				GUIFrame.getJaamSimModel().undo();
 			}
-			if (control && keyCode == KeyEvent.VK_Y) {
+			else if (control && keyCode == KeyEvent.VK_Y) {
 				GUIFrame.getJaamSimModel().redoOrRepeat(currentEntity);
 			}
-			if (keyCode == KeyEvent.VK_F1) {
+			else if (keyCode == KeyEvent.VK_F1) {
 				String topic = "";
 				if (currentEntity != null)
 					topic = currentEntity.getObjectType().getName();
 				HelpBox.getInstance().showDialog(topic);
 			}
-			if (keyCode == KeyEvent.VK_F4) {
+			else if (keyCode == KeyEvent.VK_F4) {
 				GUIFrame.getJaamSimModel().repeat(currentEntity);
 			}
 		}
