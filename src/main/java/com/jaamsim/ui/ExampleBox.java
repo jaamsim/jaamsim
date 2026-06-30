@@ -250,7 +250,8 @@ public class ExampleBox extends JDialog {
 
 		// Folders of topics
 		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
-			DefaultMutableTreeNode folder = new DefaultMutableTreeNode(subfolderName);
+			String subfolderLabel = subfolderName.replaceAll("_", " ");
+			DefaultMutableTreeNode folder = new DefaultMutableTreeNode(subfolderLabel);
 			top.add(folder);
 			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
 			ArrayList<String> list = new ArrayList<>();
@@ -294,6 +295,7 @@ public class ExampleBox extends JDialog {
 			if (subfolderNode != top && subfolderNode != null
 					&& subfolderNode.getUserObject() instanceof String) {
 				String subfolderName = (String) subfolderNode.getUserObject();
+				subfolderName = subfolderName.replaceAll(" ", "_");
 				ret = subfolderName + "/" + ret;
 			}
 		}
@@ -306,8 +308,9 @@ public class ExampleBox extends JDialog {
 		int index = topic.indexOf('/');
 		if (index >= 0) {
 			String subfolderName = topic.substring(0, index);
+			String subfolderLabel = subfolderName.replaceAll("_", " ");
 			String modelName = topic.substring(index + 1);
-			DefaultMutableTreeNode folderNode = ObjectSelector.getNodeFor_In(subfolderName, root);
+			DefaultMutableTreeNode folderNode = ObjectSelector.getNodeFor_In(subfolderLabel, root);
 			if (folderNode == null)
 				return null;
 			DefaultMutableTreeNode modelNode = ObjectSelector.getNodeFor_In(modelName, folderNode);
