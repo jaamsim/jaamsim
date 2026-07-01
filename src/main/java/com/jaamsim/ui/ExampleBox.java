@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
@@ -49,6 +50,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.CameraControl;
@@ -248,11 +250,40 @@ public class ExampleBox extends JDialog {
 
 	private void createNodes(DefaultMutableTreeNode top) {
 
-		// Folders of topics
+		// List of library names
+		ArrayList<String> libraryNames = new ArrayList<>();
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (ObjectType ot : simModel.getClonesOfIterator(ObjectType.class)) {
+			String name = ot.getLibraryName();
+			if (libraryNames.contains(name))
+				continue;
+			libraryNames.add(name);
+		}
+
+		// List of subfolder names
+		ArrayList<String> subfolderList = new ArrayList<>();
 		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
 			String subfolderLabel = subfolderName.replaceAll("_", " ");
+			subfolderList.add(subfolderLabel);
+		}
+
+		// Sort the subfolder list into the same sequence as the library names
+		Collections.sort(subfolderList, new Comparator<String>() {
+			@Override
+			public int compare(String str1, String str2) {
+				int ind1 = libraryNames.indexOf(str1);
+				int ind2 = libraryNames.indexOf(str2);
+				if (ind1 == -1) ind1 = Integer.MAX_VALUE;
+				if (ind2 == -1) ind2 = Integer.MAX_VALUE;
+				return Integer.compare(ind1, ind2);
+			}
+		});
+
+		// Folders of topics
+		for (String subfolderLabel : subfolderList) {
 			DefaultMutableTreeNode folder = new DefaultMutableTreeNode(subfolderLabel);
 			top.add(folder);
+			String subfolderName = subfolderLabel.replaceAll(" ", "_");
 			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
 			ArrayList<String> list = new ArrayList<>();
 			for (String fileName : GUIFrame.getResourceFileNames(folderName)) {
