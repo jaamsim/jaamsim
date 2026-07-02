@@ -80,7 +80,7 @@ public class ExampleBox extends JDialog {
 	private static ExampleBox myInstance;
 
 	private static final String DIALOG_NAME = "Examples - JaamSim";
-	private static final String DEFAULT_TOPIC = "";
+	private static final String DEFAULT_TOPIC = "Factory Example";
 	private static final String EXAMPLES_FOLDER_NAME = "/resources/examples";
 
 	private ExampleBox() {
@@ -209,7 +209,7 @@ public class ExampleBox extends JDialog {
 
 		// Focus on the list and select the first example
 		tree.requestFocusInWindow();
-		showTopic(exampleList.get(0));
+		showTopic(DEFAULT_TOPIC);
 	}
 
 	public synchronized static ExampleBox getInstance() {
