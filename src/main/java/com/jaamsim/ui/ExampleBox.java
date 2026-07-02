@@ -485,7 +485,11 @@ public class ExampleBox extends JDialog {
 		}
 	}
 
-	private void openExample(String name) {
+	private void openExample(String topic) {
+
+		// Model name
+		int index = topic.indexOf('/');
+		String name = (index >= 0) ? topic.substring(index + 1) : topic;
 
 		// Create the new simulation model
 		JaamSimModel simModel = new JaamSimModel(name);
@@ -499,7 +503,7 @@ public class ExampleBox extends JDialog {
 		GUIFrame.setRunManager(runMgr);
 
 		// Load the specified model file
-		InputAgent.readResource(simModel, "<res>/examples/" + name);
+		InputAgent.readResource(simModel, "<res>/examples/" + topic);
 		simModel.postLoad();
 		simModel.setConfiguring(false);
 		gui.updateForSimulationState();
