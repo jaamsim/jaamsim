@@ -24,11 +24,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -63,7 +64,7 @@ import com.jaamsim.render.Future;
 public class ExampleBox extends JDialog {
 
 	private String presentExample;
-	private final ArrayList<String> exampleList;
+	private static final LinkedHashMap<String, ExampleModel> examplesMap = new LinkedHashMap<>();
 	private final SearchField exampleSearch;
 	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
 
@@ -93,8 +94,8 @@ public class ExampleBox extends JDialog {
 		setMinimumSize(new Dimension(300, 300));
 		setPreferredSize(new Dimension(1100, 800));
 
-		// Example List
-		exampleList = getExampleList();
+		// Example Map
+		populateExampleMap();
 
 		// Example search
 		exampleSearch = new SearchField(50) {
@@ -105,7 +106,7 @@ public class ExampleBox extends JDialog {
 			@Override
 			public ArrayList<String> getTopicList(String str) {
 				ArrayList<String> ret = new ArrayList<>();
-				for (String topic : exampleList) {
+				for (String topic : getExampleList()) {
 					if (!topic.toUpperCase().contains(str.toUpperCase()))
 						continue;
 					ret.add(topic);
@@ -228,24 +229,78 @@ public class ExampleBox extends JDialog {
 		super.dispose();
 	}
 
-	public static ArrayList<String> getExampleList() {
-		ArrayList<String> ret = new ArrayList<>();
-		for (String name : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
-			if (name.endsWith(".cfg")) {
-				ret.add(name.substring(0, name.length() - 4));
+	private static class ExampleModel {
+		final String modelName;
+		final ArrayList<String> subfolderNames;
+		final ArrayList<String> subfolderLabels;
+
+		public ExampleModel(String name, ArrayList<String> folders) {
+			modelName = name;
+			subfolderNames = folders;
+			subfolderLabels = new ArrayList<String>(folders.size());
+			for (String folderName : folders) {
+				String folderLabel = folderName.replaceAll("_", " ");
+				subfolderLabels.add(folderLabel);
 			}
 		}
+	}
+
+	private String getFilePath(String topic) {
+		ExampleModel ex = examplesMap.get(topic);
+		if (ex == null)
+			return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append("<res>/examples/");
+		for (String subfolderName : ex.subfolderNames) {
+			sb.append(subfolderName).append("/");
+		}
+		sb.append(ex.modelName).append(".cfg");
+		return sb.toString();
+	}
+
+	public static ArrayList<String> getExampleList() {
+		if (examplesMap.isEmpty())
+			populateExampleMap();
+		return new ArrayList<String>(examplesMap.keySet());
+	}
+
+	public static void populateExampleMap() {
+		ArrayList<ExampleModel> list = new ArrayList<>();
+
+		// Models in the examples folder
+		for (String name : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
+			if (name.endsWith(".cfg")) {
+				String modelName = name.substring(0, name.length() - 4);
+				ArrayList<String> folders = new ArrayList<String>(0);
+				list.add(new ExampleModel(modelName, folders));
+			}
+		}
+
+		// Models in subfolders
 		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
 			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
 			for (String name : GUIFrame.getResourceFileNames(folderName)) {
 				if (name.endsWith(".cfg")) {
-					String topic = subfolderName + "/" + name.substring(0, name.length() - 4);
-					ret.add(topic);
+					String modelName = name.substring(0, name.length() - 4);
+					ArrayList<String> folders = new ArrayList<String>(1);
+					folders.add(subfolderName);
+					list.add(new ExampleModel(modelName, folders));
 				}
 			}
 		}
-		Collections.sort(ret, Input.uiSortOrder);
-		return ret;
+
+		// Sort the models alphabetically by model name
+		Collections.sort(list, new Comparator<ExampleModel>() {
+			@Override
+			public int compare(ExampleModel ex1, ExampleModel ex2) {
+				return Input.uiSortOrder.compare(ex1.modelName, ex1.modelName);
+			}
+		});
+
+		// Add the models to the examples hashmap
+		for (ExampleModel ex : list) {
+			examplesMap.put(ex.modelName, ex);
+		}
 	}
 
 	private void createNodes(DefaultMutableTreeNode top) {
@@ -262,9 +317,11 @@ public class ExampleBox extends JDialog {
 
 		// List of subfolder names
 		ArrayList<String> subfolderList = new ArrayList<>();
-		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
-			String subfolderLabel = subfolderName.replaceAll("_", " ");
-			subfolderList.add(subfolderLabel);
+		for (Map.Entry<String, ExampleModel> entry : examplesMap.entrySet()) {
+			ArrayList<String> subfolderLabels = entry.getValue().subfolderLabels;
+			if (subfolderLabels.isEmpty() || subfolderList.contains(subfolderLabels.get(0)))
+				continue;
+			subfolderList.add(subfolderLabels.get(0));
 		}
 
 		// Sort the subfolder list into the same sequence as the library names
@@ -281,82 +338,58 @@ public class ExampleBox extends JDialog {
 
 		// Folders of topics
 		for (String subfolderLabel : subfolderList) {
+
+			// Add a node for the folder
 			DefaultMutableTreeNode folder = new DefaultMutableTreeNode(subfolderLabel);
 			top.add(folder);
-			String subfolderName = subfolderLabel.replaceAll(" ", "_");
-			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
-			ArrayList<String> list = new ArrayList<>();
-			for (String fileName : GUIFrame.getResourceFileNames(folderName)) {
-				if (fileName.endsWith(".cfg")) {
-					String topicName = fileName.substring(0, fileName.length() - 4);
-					list.add(topicName);
+
+			// Add a node for each model in the folder
+			for (Map.Entry<String, ExampleModel> entry : examplesMap.entrySet()) {
+				ArrayList<String> subfolderLabels = entry.getValue().subfolderLabels;
+				if (!subfolderLabels.isEmpty() && subfolderLabels.get(0).equals(subfolderLabel)) {
+					DefaultMutableTreeNode topic = new DefaultMutableTreeNode(entry.getValue().modelName);
+					folder.add(topic);
 				}
-			}
-			Collections.sort(list, Input.uiSortOrder);
-			for (String topicName : list) {
-				DefaultMutableTreeNode topic = new DefaultMutableTreeNode(topicName);
-				folder.add(topic);
 			}
 		}
 
 		// Individual topics
-		ArrayList<String> list = new ArrayList<>();
-		for (String fileName : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
-			if (fileName.endsWith(".cfg")) {
-				String topicName = fileName.substring(0, fileName.length() - 4);
-				list.add(topicName);
+		for (Map.Entry<String, ExampleModel> entry : examplesMap.entrySet()) {
+			if (entry.getValue().subfolderLabels.isEmpty()) {
+				DefaultMutableTreeNode topic = new DefaultMutableTreeNode(entry.getValue().modelName);
+				top.add(topic);
 			}
-		}
-		Collections.sort(list, Input.uiSortOrder);
-		for (String topicName : list) {
-			DefaultMutableTreeNode topic = new DefaultMutableTreeNode(topicName);
-			top.add(topic);
 		}
 	}
 
 	private String getSelectedTopic() {
 		String ret = "";
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-		if (node == null)
-			return ret;
-		Object userObj = node.getUserObject();
-		if (userObj instanceof String) {
-			ret = (String) userObj;
-			DefaultMutableTreeNode subfolderNode = (DefaultMutableTreeNode) node.getParent();
-			if (subfolderNode != top && subfolderNode != null
-					&& subfolderNode.getUserObject() instanceof String) {
-				String subfolderName = (String) subfolderNode.getUserObject();
-				subfolderName = subfolderName.replaceAll(" ", "_");
-				ret = subfolderName + "/" + ret;
-			}
+		if (node != null && node.getUserObject() instanceof String) {
+			ret = (String) node.getUserObject();
 		}
 		return ret;
 	}
 
 	private TreePath getPathToTopic(String topic, DefaultMutableTreeNode root) {
-
-		// Topic located in a subfolder
-		int index = topic.indexOf('/');
-		if (index >= 0) {
-			String subfolderName = topic.substring(0, index);
-			String subfolderLabel = subfolderName.replaceAll("_", " ");
-			String modelName = topic.substring(index + 1);
-			DefaultMutableTreeNode folderNode = ObjectSelector.getNodeFor_In(subfolderLabel, root);
-			if (folderNode == null)
-				return null;
-			DefaultMutableTreeNode modelNode = ObjectSelector.getNodeFor_In(modelName, folderNode);
-			if (modelNode == null)
-				return null;
-			Object[] nodeList = {root, folderNode, modelNode};
-			return new TreePath(nodeList);
-		}
-
-		// Topic located under the root
-		DefaultMutableTreeNode modelNode = ObjectSelector.getNodeFor_In(topic, root);
-		if (modelNode == null)
+		ExampleModel ex = examplesMap.get(topic);
+		if (ex == null)
 			return null;
-		Object[] nodeList = {root, modelNode};
-		return new TreePath(nodeList);
+
+		ArrayList<DefaultMutableTreeNode> nodeList = new ArrayList<>();
+		nodeList.add(root);
+		DefaultMutableTreeNode node = root;
+		for (String subfolderLabel : ex.subfolderLabels) {
+			node = ObjectSelector.getNodeFor_In(subfolderLabel, node);
+			if (node == null)
+				return null;
+			nodeList.add(node);
+		}
+		node = ObjectSelector.getNodeFor_In(ex.modelName, node);
+		if (node == null)
+			return null;
+		nodeList.add(node);
+		return new TreePath(nodeList.toArray());
 	}
 
 	/**
@@ -384,6 +417,7 @@ public class ExampleBox extends JDialog {
 	 */
 	public void showDialog(String str) {
 		String topic = "";  // displays the present topic
+		ArrayList<String> exampleList = getExampleList();
 
 		// Present topic or default topic
 		if (str.isEmpty()) {
@@ -414,8 +448,7 @@ public class ExampleBox extends JDialog {
 
 	private boolean showTopic(String topic) {
 		try {
-			URL url = GUIFrame.class.getResource(EXAMPLES_FOLDER_NAME + "/" + topic + ".cfg");
-			if (url == null)
+			if (examplesMap.get(topic) == null)
 				return false;
 			presentExample = topic;
 			TreePath path = getPathToTopic(topic, top);
@@ -454,10 +487,15 @@ public class ExampleBox extends JDialog {
 				return cached;
 			}
 
+			// Find the example model
+			String filePath = getFilePath(example);
+			if (filePath == null)
+				return null;
+
 			// Create the new model
 			JaamSimModel simModel = new JaamSimModel(example + ".cfg");
 			simModel.autoLoad();
-			InputAgent.readResource(simModel, "<res>/examples/" + example + ".cfg");
+			InputAgent.readResource(simModel, filePath);
 			simModel.postLoad();
 
 			// Add labels and sub-models
@@ -487,12 +525,13 @@ public class ExampleBox extends JDialog {
 
 	private void openExample(String topic) {
 
-		// Model name
-		int index = topic.indexOf('/');
-		String name = (index >= 0) ? topic.substring(index + 1) : topic;
+		// Find the example model
+		String filePath = getFilePath(topic);
+		if (filePath == null)
+			return;
 
 		// Create the new simulation model
-		JaamSimModel simModel = new JaamSimModel(name + ".cfg");
+		JaamSimModel simModel = new JaamSimModel(topic + ".cfg");
 		simModel.autoLoad();
 		GUIFrame gui = GUIFrame.getInstance();
 
@@ -503,7 +542,7 @@ public class ExampleBox extends JDialog {
 		GUIFrame.setRunManager(runMgr);
 
 		// Load the specified model file
-		InputAgent.readResource(simModel, "<res>/examples/" + topic + ".cfg");
+		InputAgent.readResource(simModel, filePath);
 		simModel.postLoad();
 		simModel.setConfiguring(false);
 		gui.updateForSimulationState();
