@@ -156,7 +156,7 @@ public class ExampleBox extends JDialog {
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() > 1) {
 					String topicName = getSelectedTopic();
-					openExample(topicName + ".cfg");
+					openExample(topicName);
 					exampleSearch.setText("");
 				}
 			}
@@ -168,7 +168,7 @@ public class ExampleBox extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String topicName = getSelectedTopic();
-				openExample(topicName + ".cfg");
+				openExample(topicName);
 				exampleSearch.setText("");
 			}
 		});
@@ -183,7 +183,7 @@ public class ExampleBox extends JDialog {
 		openButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				openExample(presentExample + ".cfg");
+				openExample(presentExample);
 			}
 		});
 
@@ -492,7 +492,7 @@ public class ExampleBox extends JDialog {
 		String name = (index >= 0) ? topic.substring(index + 1) : topic;
 
 		// Create the new simulation model
-		JaamSimModel simModel = new JaamSimModel(name);
+		JaamSimModel simModel = new JaamSimModel(name + ".cfg");
 		simModel.autoLoad();
 		GUIFrame gui = GUIFrame.getInstance();
 
@@ -503,7 +503,7 @@ public class ExampleBox extends JDialog {
 		GUIFrame.setRunManager(runMgr);
 
 		// Load the specified model file
-		InputAgent.readResource(simModel, "<res>/examples/" + topic);
+		InputAgent.readResource(simModel, "<res>/examples/" + topic + ".cfg");
 		simModel.postLoad();
 		simModel.setConfiguring(false);
 		gui.updateForSimulationState();
