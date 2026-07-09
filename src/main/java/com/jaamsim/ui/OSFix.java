@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2024 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ package com.jaamsim.ui;
  */
 public class OSFix {
 	private static final String OS_NAME;
-	private static final OSFix resizeAdjust;
-	private static final OSFix noresizeAdjust;
+	private static final OSFix fix;
 
 	static {
 		OS_NAME = System.getProperty("os.name");
@@ -30,13 +29,10 @@ public class OSFix {
 		case "Windows 10":
 		case "Windows 11":
 			// Drop shadow border in Windows 10 and above: 7,0,7,7 (left, top, right, bottom)
-			resizeAdjust = new OSFix(-7, 0, 15, 8);
-			// Non-resizable drop shadow border in Windows 10 and above: 2,0,2,2 (left, top, right, bottom)
-			noresizeAdjust = new OSFix(-2, 0, 5, 3);
+			fix = new OSFix(-7, 0, 15, 8);
 			break;
 		default:
-			resizeAdjust = new OSFix(0, 0, 0, 0);
-			noresizeAdjust = new OSFix(0, 0, 0, 0);
+			fix = new OSFix(0, 0, 0, 0);
 			break;
 		}
 	}
@@ -57,10 +53,7 @@ public class OSFix {
 		return OS_NAME.startsWith("Win");
 	}
 
-	public static final OSFix get(boolean resizable) {
-		if (resizable)
-			return resizeAdjust;
-		else
-			return noresizeAdjust;
+	public static final OSFix get() {
+		return fix;
 	}
 }

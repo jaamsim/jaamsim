@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2024 JaamSim Software Inc.
+ * Copyright (C) 2017-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,25 +36,25 @@ public class OSFixJFrame extends JFrame {
 
 	@Override
 	public synchronized void setLocation(int x, int y) {
-		OSFix fix = OSFix.get(isResizable());
+		OSFix fix = OSFix.get();
 		super.setLocation(x+fix.x, y+fix.y);
 	}
 
 	@Override
 	public synchronized Point getLocation() {
-		OSFix fix = OSFix.get(isResizable());
+		OSFix fix = OSFix.get();
 		return new Point(super.getX()-fix.x, super.getY()-fix.y);
 	}
 
 	@Override
 	public synchronized void setSize(int x, int y) {
-		OSFix fix = OSFix.get(isResizable());
+		OSFix fix = OSFix.get();
 		super.setSize(x+fix.width, y+fix.height);
 	}
 
 	@Override
 	public synchronized Dimension getSize() {
-		OSFix fix = OSFix.get(isResizable());
+		OSFix fix = OSFix.get();
 		return new Dimension(super.getSize().width-fix.width, super.getSize().height-fix.height);
 	}
 

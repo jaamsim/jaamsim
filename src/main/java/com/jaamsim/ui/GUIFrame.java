@@ -470,7 +470,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	@Override
 	public Dimension getPreferredSize() {
-		OSFix fix = OSFix.get(isResizable());
+		OSFix fix = OSFix.get();
 		return new Dimension(winDefs.DEFAULT_GUI_WIDTH + fix.width, super.getPreferredSize().height);
 	}
 
@@ -4126,7 +4126,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	public IntegerVector getWindowPosSize(View v) {
 		View activeView = RenderManager.getActiveView();
-		OSFix fix = OSFix.get(isResizable(v));
+		OSFix fix = OSFix.get();
 		IntegerVector ret = v.getWindowPosSize();
 
 		// Presentation mode
@@ -4151,7 +4151,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (presentMode.isSelected() || simModel.getSimulation().isLockWindows()
 				|| simModel.isConfiguring())
 			return;
-		OSFix fix = OSFix.get(isResizable(v));
+		OSFix fix = OSFix.get();
 		Point pt = getRelativeLocation(x - fix.x, y - fix.y);
 		v.setWindowPosSize(pt.x, pt.y, width - fix.width, height - fix.height);
 	}
