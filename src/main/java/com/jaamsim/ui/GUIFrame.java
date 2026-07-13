@@ -171,6 +171,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 	private final ArrayList<View> views = new ArrayList<>();
 
+	private Point windowOffset;
+	private Point initLocation;
+
 	// global shutdown flag
 	static private AtomicBoolean shuttingDown;
 
@@ -346,6 +349,11 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		setResizable(false);
 		pack();
 
+		// Adjust the window location for the correction in OSFix
+		setLocation(0, 0);
+		initLocation = getLocation();
+		windowOffset = new Point();
+
 		controlStartResume.requestFocusInWindow();
 
 		controlStartResume.setSelected( false );
@@ -394,9 +402,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			}
 		});
 	}
-
-	private Point windowOffset = new Point();
-	private Point initLocation = new Point(getX(), getY()); // bypass the OSFix correction
 
 	public Point getRelativeLocation(int x, int y) {
 		return new Point(x - windowOffset.x, y - windowOffset.y);
