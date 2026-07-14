@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
@@ -106,7 +105,7 @@ public class FrameBox extends OSFixJFrame {
 		}
 	}
 
-	public static ComponentAdapter getSizePosAdapter(JFrame frame, String sizeKey, String posKey) {
+	public static ComponentAdapter getSizePosAdapter(OSFixJFrame frame, String sizeKey, String posKey) {
 		return new SizePosAdapter(frame, sizeKey, posKey);
 	}
 
@@ -114,11 +113,11 @@ public class FrameBox extends OSFixJFrame {
 	 * Listens for re-size and re-position events and sets the appropriate keywords.
 	 */
 	private static class SizePosAdapter extends ComponentAdapter {
-		final JFrame tool;
+		final OSFixJFrame tool;
 		final String sizeKeyword;
 		final String posKeyword;
 
-		public SizePosAdapter(JFrame frame, String sizeKey, String posKey) {
+		public SizePosAdapter(OSFixJFrame frame, String sizeKey, String posKey) {
 			tool = frame;
 			sizeKeyword = sizeKey;
 			posKeyword = posKey;
