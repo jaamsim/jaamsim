@@ -488,7 +488,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		// a workaround to calls to getPreferredSize from within the GUIFrame constructor
 		winDefs = new WindowDefaults(winSize.width, winSize.height, 100, 0, 0);
 		instance = new GUIFrame();
-		winDefs = new WindowDefaults(winSize.width, winSize.height, instance.getSize().height, instance.getX(), instance.getY());
+		Point loc = instance.getLocation();  // use the OSFixJFrame method
+		winDefs = new WindowDefaults(winSize.width, winSize.height, instance.getSize().height, loc.x, loc.y);
 		View.setDefaults(winDefs);
 		Simulation.setDefaults(winDefs);
 		GUIFrame.registerCallback(new UIUpdater(instance));
