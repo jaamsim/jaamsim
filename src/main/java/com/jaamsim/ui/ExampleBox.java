@@ -243,6 +243,11 @@ public class ExampleBox extends JDialog {
 				subfolderLabels.add(folderLabel);
 			}
 		}
+
+		@Override
+		public String toString() {
+			return modelName;
+		}
 	}
 
 	private String getFilePath(String topic) {
@@ -290,12 +295,7 @@ public class ExampleBox extends JDialog {
 		}
 
 		// Sort the models alphabetically by model name
-		Collections.sort(list, new Comparator<ExampleModel>() {
-			@Override
-			public int compare(ExampleModel ex1, ExampleModel ex2) {
-				return Input.uiSortOrder.compare(ex1.modelName, ex1.modelName);
-			}
-		});
+		Collections.sort(list, Input.uiSortOrder);
 
 		// Add the models to the examples hashmap
 		for (ExampleModel ex : list) {
