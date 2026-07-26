@@ -29,6 +29,7 @@ import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FileInput;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.input.Keyword;
@@ -207,6 +208,21 @@ public class View extends Entity {
 	}
 
 	@Override
+	public void postLoad() {
+		// If the deprecated ViewCenter input is set, replace it with a ViewDirection input
+		if (!center.isDef()) {
+			if (direction.isDef()) {
+				Vec3d dir = new Vec3d();
+				dir.sub3(center.getValue(), getViewPosition());
+				dir.normalize3();
+				KeywordIndex kw = KeywordIndex.formatVec3dInput(this, direction.getKeyword(), dir, DistanceUnit.class);
+				InputAgent.apply(this, direction, kw);
+			}
+			center.reset();
+		}
+	}
+
+	@Override
 	public void kill() {
 		super.kill();
 		GUIListener gui = getJaamSimModel().getGUIListener();
@@ -248,12 +264,6 @@ public class View extends Entity {
 	}
 
 	public Vec3d getViewDirection() {
-		if (direction.isDef() && !center.isDef()) {
-			Vec3d ret = new Vec3d();
-			ret.sub3(center.getValue(), getViewPosition());
-			ret.normalize3();
-			return ret;
-		}
 		return direction.getValue();
 	}
 
@@ -368,9 +378,6 @@ public class View extends Entity {
 			KeywordIndex posKw = KeywordIndex.formatVec3dInput(this, position.getKeyword(), tempPos, DistanceUnit.class);
 			KeywordIndex ctrKw = KeywordIndex.formatVec3dInput(this, direction.getKeyword(), tempDir, DistanceUnit.class);
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
-
-			// Ignore the 'ViewCenter' input if is was entered as an input
-			center.reset();
 		}
 	}
 
@@ -470,9 +477,6 @@ public class View extends Entity {
 			KeywordIndex posKw = KeywordIndex.formatVec3dInput(this, position.getKeyword(), pos, DistanceUnit.class);
 			KeywordIndex dirKw = KeywordIndex.formatVec3dInput(this, direction.getKeyword(), dir, DistanceUnit.class);
 			getJaamSimModel().storeAndExecute(new KeywordCommand(this, kw, posKw, dirKw));
-
-			// Ignore the 'ViewCenter' input if is was entered as an input
-			center.reset();
 		}
 	}
 
