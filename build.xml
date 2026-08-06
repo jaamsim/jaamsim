@@ -23,12 +23,14 @@ limitations under the License.
   <property name="src.dir"       location="src/main/java"/>
   <property name="src25.dir"     location="src/main/java25"/>
   <property name="res.dir"       location="src/main/resources"/>
+  <property name="testsrc.dir"   location="src/test/java"/>
   <property name="make.dir"      location="make"/>
   <property name="build.dir"     location="build"/>
   <property name="jogl.lib"      location="jar/jogl-all.jar"/>
   <property name="gluegen.lib"   location="jar/gluegen-rt.jar"/>
   <property name="class.dir"     location="${build.dir}/classes"/>
   <property name="class25.dir"   location="${build.dir}/classes-25"/>
+  <property name="testclass.dir" location="${build.dir}/testclasses"/>
   <property name="jars.dir"      location="${build.dir}/jars"/>
 
   <target name="clean">
@@ -78,6 +80,20 @@ limitations under the License.
     </javac>
   </target>
 
+  <target name="compile-test" depends="compile">
+    <mkdir dir="${testclass.dir}"/>
+
+    <javac srcdir="${testsrc.dir}" destdir="${testclass.dir}"
+           release="8"
+           debug="true"
+           debuglevel="lines,source"
+           deprecation="on"
+           includeantruntime="false"
+           classpath="${jogl.lib}:${gluegen.lib}:${class.dir}:jar/junit-platform-console-standalone-6.1.2.jar">
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
+  </target>
+  
   <target name="jar" depends="compile">
     <jar jarfile="${jars.dir}/${exe_prefix}${ver}-bare.jar" compress="true">
       <manifest>
