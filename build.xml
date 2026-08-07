@@ -80,7 +80,7 @@ limitations under the License.
     </javac>
   </target>
 
-  <target name="compile-test" depends="compile">
+  <target name="compile-test" depends="jar">
     <mkdir dir="${testclass.dir}"/>
 
     <javac srcdir="${testsrc.dir}" destdir="${testclass.dir}"
@@ -92,8 +92,23 @@ limitations under the License.
            classpath="${jogl.lib}:${gluegen.lib}:${class.dir}:jar/junit-platform-console-standalone-6.1.2.jar">
       <compilerarg value="-Xlint:-serial"/>
     </javac>
+
+    <jar jarfile="${jars.dir}/${exe_prefix}${ver}-test.jar" compress="true">
+      <fileset dir="${testclass.dir}"/>
+      <fileset dir="${testsrc.dir}"/>
+    </jar>
+
+    <junit>
+      <classpath>
+        <pathelement location="jar/junit-platform-console-standalone-6.1.2.jar"/>
+        <pathelement location="${jars.dir}/${exe_prefix}${ver}.jar"/>
+        <pathelement location="${jars.dir}/${exe_prefix}${ver}-test.jar"/>
+      </classpath>
+      <formatter type="plain"/>
+      <test name="com.jaamsim.AllTests" todir="${build.dir}"/>
+    </junit>
   </target>
-  
+
   <target name="jar" depends="compile">
     <jar jarfile="${jars.dir}/${exe_prefix}${ver}-bare.jar" compress="true">
       <manifest>
