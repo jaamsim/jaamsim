@@ -97,7 +97,9 @@ limitations under the License.
       <fileset dir="${testclass.dir}"/>
       <fileset dir="${testsrc.dir}"/>
     </jar>
+  </target>
 
+  <target name="test" depends="compile-test">
     <junit>
       <classpath>
         <pathelement location="jar/junit-platform-console-standalone-6.1.2.jar"/>
