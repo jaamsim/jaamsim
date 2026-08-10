@@ -1442,10 +1442,6 @@ public class JaamSimModel implements EventTimeListener {
 		return recordEdits;
 	}
 
-	public FileEntity getLogFile() {
-		return logFile;
-	}
-
 	public void openLogFile() {
 		String logFileName = getRunName() + ".log";
 		URI logURI = null;
