@@ -1818,7 +1818,7 @@ public class InputAgent {
 		}
 		// 2) Normal file path
 		else {
-			URI pathURI = new URI(null, path, null).normalize();
+			URI pathURI = new URI(null, null, path, null).normalize();
 
 			if (context != null) {
 				if (context.isOpaque()) {
