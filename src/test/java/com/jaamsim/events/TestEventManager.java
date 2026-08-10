@@ -374,7 +374,8 @@ public class TestEventManager {
 				throw new ErrorException("Error Unit Test");
 			}
 		}, null);
-		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
+		TestFrameworkHelpers.TestTimeListener ret = TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
+		assertTrue(ret.finishedError);
 	}
 
 	private static class LogTarget extends ProcessTarget {

@@ -18,13 +18,17 @@ package com.jaamsim.events;
 
 
 public class TestFrameworkHelpers {
-	public static void runEventsToTick(EventManager evt, long tick, long timeoutMS) {
+	public static TestTimeListener runEventsToTick(EventManager evt, long tick, long timeoutMS) {
 		TestTimeListener tl = new TestTimeListener();
 		tl.waitforstop(evt, tick, timeoutMS);
+		return tl;
 	}
 
-	private static class TestTimeListener implements EventTimeListener {
+	static class TestTimeListener implements EventTimeListener {
 		Thread waitThread = null;
+		boolean finishedNormally = false;
+		boolean finishedError = false;
+		boolean finishedTimeout = false;
 
 		@Override
 		public void tickUpdate(long tick) {}
@@ -33,6 +37,7 @@ public class TestFrameworkHelpers {
 			synchronized (this) {
 				if (EventManager.current().isRunning()) return;
 
+				finishedNormally = true;
 				if (waitThread != null)
 					waitThread.interrupt();
 			}
@@ -55,12 +60,12 @@ public class TestFrameworkHelpers {
 
 			evt.pause();
 			evt.setTimeListener(null);
-			throw new RuntimeException("Test not complete before timeout");
+			finishedTimeout = true;
 		}
 
 		@Override
 		public void handleError(Throwable t) {
-			System.out.println("ERROR Handled");
+			finishedError = true;
 			synchronized (this) {
 				if (waitThread != null)
 					waitThread.interrupt();
