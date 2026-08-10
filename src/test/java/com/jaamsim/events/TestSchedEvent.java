@@ -221,12 +221,18 @@ public class TestSchedEvent {
 		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
-		evt.scheduleProcessExternal(0, 0, true, new StartTarget(), null);
+		StartTarget t = new StartTarget();
+		evt.scheduleProcessExternal(0, 0, true, t, null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, Long.MAX_VALUE);
+		outputResults("StartProcess Events", t.nanoStamps,t.endSchedNanos, t.endExecNanos);
 	}
 
 	private static class StartTarget extends ProcessTarget {
+		long endSchedNanos;
+		long[] nanoStamps = new long[11];
+		long endExecNanos;
+
 		@Override
 		public String getDescription() {
 			return "StartProcessLoop";
@@ -234,9 +240,8 @@ public class TestSchedEvent {
 
 		@Override
 		public void process() {
-			long endSchedNanos = System.nanoTime();
+			endSchedNanos = System.nanoTime();
 			EmptyTarget target = new EmptyTarget();
-			long[] nanoStamps = new long[11];
 			for (int i = 0; i <= 1000000; i++) {
 				if (i % 100000 == 0) {
 					int idx = i / 100000;
@@ -245,10 +250,7 @@ public class TestSchedEvent {
 				EventManager.startProcess(target);
 			}
 
-
-			long endExecNanos = System.nanoTime();
-
-			outputResults("StartProcess Events", nanoStamps, endSchedNanos, endExecNanos);
+			endExecNanos = System.nanoTime();
 		}
 	}
 
@@ -268,12 +270,18 @@ public class TestSchedEvent {
 		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
-		evt.scheduleProcessExternal(0, 0, true, new WaitTickTarget(), null);
+		WaitTickTarget t = new WaitTickTarget();
+		evt.scheduleProcessExternal(0, 0, true, t, null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 1000002, Long.MAX_VALUE);
+		outputResults("Wait Ticks Events", t.nanoStamps, t.endSchedNanos, t.endExecNanos);
 	}
 
 	private static class WaitTickTarget extends ProcessTarget {
+		long endSchedNanos;
+		long[] nanoStamps = new long[11];
+		long endExecNanos;
+
 		@Override
 		public String getDescription() {
 			return "WaitTickLoop";
@@ -281,7 +289,7 @@ public class TestSchedEvent {
 
 		@Override
 		public void process() {
-			long[] nanoStamps = new long[11];
+			nanoStamps = new long[11];
 			for (int i = 0; i <= 1000000; i++) {
 				if (i % 100000 == 0) {
 					int idx = i / 100000;
@@ -289,11 +297,9 @@ public class TestSchedEvent {
 				}
 				EventManager.waitTicks(1, 0, true, null);
 			}
-			long endSchedNanos = System.nanoTime();
+			endSchedNanos = System.nanoTime();
 
-			long endExecNanos = System.nanoTime();
-
-			outputResults("Wait Ticks Events", nanoStamps, endSchedNanos, endExecNanos);
+			endExecNanos = System.nanoTime();
 		}
 	}
 
