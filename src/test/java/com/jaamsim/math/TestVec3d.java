@@ -457,4 +457,19 @@ public void testNormDegen() {
 	vec.normalize3(oneNaN);
 	assertEqual(vec, zaxis);
 }
+
+@Test
+public void testClosestPointOnLine() {
+	Vec3d ptA = new Vec3d(1.0d, 0.0d, 0.0d);
+	Vec3d ptB = new Vec3d(0.0d, 1.0d, 0.0d);
+	Vec3d ptP = new Vec3d(0.0d, 0.0d, 0.0d);
+	Vec3d result = MathUtils.getClosestPointOnLine(ptP, ptA, ptB);
+	//System.out.format("result=%s%n", result);
+	assertNear(result, new Vec3d(0.5d, 0.5d, 0.0d));
+
+	ptA = new Vec3d(2.0d, -1.0d, 0.0d);
+	result = MathUtils.getClosestPointOnLine(ptP, ptA, ptB);
+	//System.out.format("result=%s%n", result);
+	assertNear(result, new Vec3d(0.5d, 0.5d, 0.0d));
+}
 }

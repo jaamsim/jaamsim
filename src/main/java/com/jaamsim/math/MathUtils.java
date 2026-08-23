@@ -351,4 +351,38 @@ public static Plane getMidpointPlane(Vec3d p0, Vec3d p1) {
 	return new Plane(normal, dist);
 }
 
+/**
+ * Returns the point on the specified line that is closest to a specified reference point.
+ * @param ptP - reference point
+ * @param ptA - start of the line
+ * @param ptB - end of the line
+ * @return closest point on the line
+ */
+public static Vec3d getClosestPointOnLine(Vec3d ptP, Vec3d ptA, Vec3d ptB) {
+
+	// Calculate the vector from the start to the end of the line
+	Vec3d vecAB = new Vec3d(ptB);
+	vecAB.sub3(ptA);
+
+	// If the two points are identical, return the first point
+	double lenSqAB = vecAB.magSquare3();
+	if (lenSqAB == 0.0d)
+		return new Vec3d(ptA);
+
+	// Calculate the vector from start of the line to the reference point
+	Vec3d vecAP = new Vec3d(ptP);
+	vecAP.sub3(ptA);
+
+	// Calculate the ratio for interpolation between the two end points
+	double ratio = vecAP.dot3(vecAB) / lenSqAB;
+	ratio = Math.min(ratio, 1.0d);
+	ratio = Math.max(ratio, 0.0d);
+	//System.out.format("ratio=%s%n", ratio);
+
+	// Return the interpolated point
+	Vec3d ret = new Vec3d();
+	ret.interpolate3(ptA, ptB, ratio);
+	return ret;
+}
+
 } // class
