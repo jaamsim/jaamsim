@@ -450,10 +450,16 @@ public class JaamSimModel implements EventTimeListener {
 
 		eventManager.setTraceListener(trc);
 		eventManager.setTickLength(getSimulation().getTickLength());
-		eventManager.scheduleProcessExternal(0, Entity.PRI_HIGHEST, Entity.EVT_LIFO, new InitModelTarget(this), null);
+		eventManager.scheduleProcessExternal(0, Entity.PRI_HIGHEST, Entity.EVT_LIFO, initModelTarget, null);
 		resume();
 	}
 
+	// These targets are held in fields rather than being constructed at the point of
+	// scheduling so that a pending event can be traced back to the object that owns it,
+	// which is what allows the event to be written to a checkpoint file
+	private final InitModelTarget initModelTarget = new InitModelTarget(this);
+	private final ClearStatisticsTarget clearStatisticsTarget = new ClearStatisticsTarget(this);
+	private final EndModelTarget endModelTarget = new EndModelTarget(this);
 	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);
 
 	/**
@@ -557,10 +563,10 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Schedule the statistics initialization if one has been set
 		if (initTicks > 0)
-			EventManager.scheduleTicks(startTicks + initTicks, Entity.PRI_NORMAL, Entity.EVT_LIFO, new ClearStatisticsTarget(this), null);
+			EventManager.scheduleTicks(startTicks + initTicks, Entity.PRI_NORMAL, Entity.EVT_LIFO, clearStatisticsTarget, null);
 
 		// Schedule the end of the simulation run
-		EventManager.scheduleTicks(startTicks + initTicks + durationTicks, Entity.PRI_NORMAL, Entity.EVT_LIFO, new EndModelTarget(this), null);
+		EventManager.scheduleTicks(startTicks + initTicks + durationTicks, Entity.PRI_NORMAL, Entity.EVT_LIFO, endModelTarget, null);
 
 		// Start checking the pause condition
 		if (simulation.isPauseConditionSet())

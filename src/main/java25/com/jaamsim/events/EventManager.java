@@ -1088,6 +1088,94 @@ public final class EventManager {
 		}
 	}
 
+	/**
+	 * Appends an EventSnap to the provided list for every pending event, covering both
+	 * the scheduled events held in the event tree and the conditional events.
+	 * <p>
+	 * Unlike getEventDataList, the ProcessTarget and EventHandle references are retained
+	 * so that each event can be matched against the object that owns it. Intended for
+	 * checkpointing.
+	 * @param list - list to append EventSnap objects to
+	 */
+	public final void getEventSnapList(ArrayList<EventSnap> list) {
+		evtLock.lock();
+		try {
+			eventTree.runOnAllNodes(new EventSnapBuilder(list));
+			for (ConditionalEvent cond : condEvents) {
+				list.add(new EventSnap(EventSnap.NO_TICK, EventSnap.NO_PRIORITY,
+						cond.target, cond.handle, true));
+			}
+		}
+		finally {
+			evtLock.unlock();
+		}
+	}
+
+	private static class EventSnapBuilder implements EventNode.Runner {
+		final ArrayList<EventSnap> snapList;
+
+		EventSnapBuilder(ArrayList<EventSnap> list) {
+			snapList = list;
+		}
+
+		@Override
+		public void runOnNode(EventNode node) {
+			Event evt = node.head;
+			while (evt != null) {
+				snapList.add(new EventSnap(node.schedTick, node.priority, evt.target,
+						evt.handle, false));
+				evt = evt.next;
+			}
+		}
+	}
+
+	/**
+	 * Returns the number of Process threads that are presently captured in a wait, i.e.
+	 * parked inside waitTicks, waitSeconds, or waitUntil.
+	 * <p>
+	 * The continuation for a captured process is a live Java call stack which cannot be
+	 * written to a checkpoint file, so a checkpoint must be refused while this returns a
+	 * non-zero value.
+	 * @return number of captured processes
+	 */
+	public final int getCapturedProcessCount() {
+		evtLock.lock();
+		try {
+			CapturedProcessCounter counter = new CapturedProcessCounter();
+			eventTree.runOnAllNodes(counter);
+			for (ConditionalEvent cond : condEvents) {
+				if (cond.target instanceof WaitTarget)
+					counter.count++;
+			}
+			return counter.count;
+		}
+		finally {
+			evtLock.unlock();
+		}
+	}
+
+	/**
+	 * Returns whether any Process threads are presently captured in a wait.
+	 * @return true if a checkpoint cannot presently be taken
+	 */
+	public final boolean hasCapturedProcesses() {
+		return getCapturedProcessCount() > 0;
+	}
+
+	private static class CapturedProcessCounter implements EventNode.Runner {
+		int count = 0;
+
+		@Override
+		public void runOnNode(EventNode node) {
+			Event evt = node.head;
+			while (evt != null) {
+				if (evt.target instanceof WaitTarget)
+					count++;
+				evt = evt.next;
+			}
+		}
+	}
+
 	private void disableSchedule() {
 		disableSchedule = true;
 	}
