@@ -32,6 +32,7 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.Vec3dProviders.Vec3dProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
@@ -51,7 +52,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.RegionInput;
 import com.jaamsim.input.RelativeEntityInput;
 import com.jaamsim.input.ValueListInput;
-import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -77,22 +77,22 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 	@Keyword(description = "The location of the object in {x, y, z} coordinates.",
 	         exampleList = {"-3.922 -1.830 0.000 m"})
-	protected final Vec3dInput positionInput;
+	protected final Vec3dProvInput positionInput;
 
 	@Keyword(description = "The point within the object that is located at the coordinates of "
 	                     + "its Position input. Expressed with respect to a unit box centered "
 	                     + "about { 0 0 0 }.",
 	         exampleList = {"-0.5 -0.5 0.0"})
-	protected final Vec3dInput alignmentInput;
+	protected final Vec3dProvInput alignmentInput;
 
 	@Keyword(description = "The size of the object in {x, y, z} coordinates.",
 	         exampleList = {"15 12 0 m"})
-	protected final Vec3dInput sizeInput;
+	protected final Vec3dProvInput sizeInput;
 
 	@Keyword(description = "Euler angles defining the rotation of the object.",
 	         exampleList = {"0 0 90 deg"})
 
-	protected final Vec3dInput orientationInput;
+	protected final Vec3dProvInput orientationInput;
 
 	@Keyword(description = "A list of points in {x, y, z} coordinates that defines a polyline.",
 	         exampleList = {"{ 1.0 1.0 0.0 m } { 2.0 2.0 0.0 m } { 3.0 3.0 0.0 m }",
@@ -165,25 +165,25 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 	public static final String LIBRARY_NAME = "User-Defined Objects";
 
 	{
-		positionInput = new Vec3dInput("Position", GRAPHICS, new Vec3d());
+		positionInput = new Vec3dProvInput("Position", GRAPHICS, new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
 		positionInput.setCallback(positionCallback);
 		positionInput.setOutput(false);
 		this.addInput(positionInput);
 
-		alignmentInput = new Vec3dInput("Alignment", GRAPHICS, new Vec3d());
+		alignmentInput = new Vec3dProvInput("Alignment", GRAPHICS, new Vec3d());
 		alignmentInput.setCallback(alignmentCallback);
 		alignmentInput.setOutput(false);
 		this.addInput(alignmentInput);
 
-		sizeInput = new Vec3dInput("Size", GRAPHICS, new Vec3d(1.0d, 1.0d, 1.0d));
+		sizeInput = new Vec3dProvInput("Size", GRAPHICS, new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
 		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sizeInput.setCallback(sizeCallback);
 		sizeInput.setOutput(false);
 		this.addInput(sizeInput);
 
-		orientationInput = new Vec3dInput("Orientation", GRAPHICS, new Vec3d());
+		orientationInput = new Vec3dProvInput("Orientation", GRAPHICS, new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
 		orientationInput.setCallback(orientationCallback);
 		orientationInput.setOutput(false);
@@ -289,11 +289,9 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
 			if (de.usePointsInput())
 				return;
-			de.setPosition(v3dinp.getValue());
+			de.setPosition(de.getPositionInput());
 		}
 	};
 
@@ -313,9 +311,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
-			de.setSize(v3dinp.getValue());
+			de.setSize(de.getSizeInput());
 		}
 	};
 
@@ -323,9 +319,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
-			de.setOrientation(v3dinp.getValue());
+			de.setOrientation(de.getOrientationInput());
 		}
 	};
 
@@ -333,9 +327,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			Vec3dInput v3dinp = (Vec3dInput)inp;
-
-			de.setAlignment(v3dinp.getValue());
+			de.setAlignment(de.getAlignmentInput());
 		}
 	};
 
@@ -515,6 +507,22 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		return isRegistered() && !getName().equals("XY-Grid") && !getName().equals("XYZ-Axis");
 	}
 
+	public Vec3d getPositionInput() {
+		return positionInput.getNextVec3d(this, 0.0d);
+	}
+
+	public Vec3d getAlignmentInput() {
+		return alignmentInput.getNextVec3d(this, 0.0d);
+	}
+
+	public Vec3d getSizeInput() {
+		return sizeInput.getNextVec3d(this, 0.0d);
+	}
+
+	public Vec3d getOrientationInput() {
+		return orientationInput.getNextVec3d(this, 0.0d);
+	}
+
 	/**
 	 * Restores the initial appearance of this entity.
 	 */
@@ -522,7 +530,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 		// Normal objects
 		if (!usePointsInput()) {
-			setPosition(positionInput.getValue());
+			setPosition(getPositionInput());
 			pointsInput.reset();
 		}
 
@@ -532,16 +540,16 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 			positionInput.reset();
 		}
 
-		this.setSize(sizeInput.getValue());
-		this.setAlignment(alignmentInput.getValue());
-		this.setOrientation(orientationInput.getValue());
+		this.setSize(getSizeInput());
+		this.setAlignment(getAlignmentInput());
+		this.setOrientation(getOrientationInput());
 		this.setDisplayModelList(displayModelListInput.getValue());
 		this.setRegion(regionInput.getValue());
 		this.setShow(getShowInput());
 	}
 
 	public boolean isPositionNominal() {
-		return position.equals3(positionInput.getValue());
+		return position.equals3(getPositionInput());
 	}
 
 	public boolean isPointsNominal() {
@@ -549,15 +557,15 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 	}
 
 	public boolean isSizeNominal() {
-		return size.equals3(sizeInput.getValue());
+		return size.equals3(getSizeInput());
 	}
 
 	public boolean isAlignmentNominal() {
-		return align.equals3(alignmentInput.getValue());
+		return align.equals3(getAlignmentInput());
 	}
 
 	public boolean isOrientationNominal() {
-		return orient.equals3(orientationInput.getValue());
+		return orient.equals3(getOrientationInput());
 	}
 
 	public boolean isDisplayModelNominal() {
@@ -765,7 +773,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 
 	public void setRelativeOrientation(Quaternion rotQ) {
 		Quaternion q = new Quaternion();
-		q.setEuler3(orientationInput.getValue());
+		q.setEuler3(getOrientationInput());
 		q.mult(rotQ, q);
 		setOrientation(q.getEuler3());
 	}
@@ -781,7 +789,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		Vec3d zdir = new Vec3d(0.0d, 0.0d, ret.z);
 
 		Mat4d mat = new Mat4d();
-		mat.setEuler3(orientationInput.getValue());
+		mat.setEuler3(getOrientationInput());
 		xdir.mult3(mat, xdir);
 		ydir.mult3(mat, ydir);
 		zdir.mult3(mat, zdir);

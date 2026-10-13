@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -295,5 +296,34 @@ public class AABB {
 		}
 
 		return PlaneTestResult.COLLIDES;
+	}
+
+	public void add(AABB box) {
+		this._isEmpty &= box._isEmpty;
+		maxPt.max3(box.maxPt);
+		minPt.min3(box.minPt);
+		updateCenterAndRadius();
+	}
+
+	public void addAll(List<AABB> list) {
+		for (AABB box : list) {
+			this._isEmpty &= box._isEmpty;
+			maxPt.max3(box.maxPt);
+			minPt.min3(box.minPt);
+		}
+		updateCenterAndRadius();
+	}
+
+	/**
+	 * Returns whether any portion of the bounding box overlaps with the specified sphere.
+	 * @param sphereCentre - centre of the sphere
+	 * @param sphereRadius - radius of the sphere
+	 * @return true if the AABB overlaps the sphere
+	 */
+	public boolean intersectsSphere(Vec3d sphereCentre, double sphereRadius) {
+		double dx = Math.max(Math.abs(center.x - sphereCentre.x) - radius.x, 0.0d);
+		double dy = Math.max(Math.abs(center.y - sphereCentre.y) - radius.y, 0.0d);
+		double dz = Math.max(Math.abs(center.z - sphereCentre.z) - radius.z, 0.0d);
+		return (dx*dx + dy*dy + dz*dz) <= sphereRadius*sphereRadius;
 	}
 }
