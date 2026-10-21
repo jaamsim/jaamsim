@@ -58,7 +58,7 @@ limitations under the License.
     <mkdir dir="${class.dir}"/>
 
     <javac srcdir="${src.dir}" destdir="${class.dir}"
-           release="8"
+           release="17"
            debug="true"
            debuglevel="lines,source"
            deprecation="on"
@@ -84,7 +84,7 @@ limitations under the License.
     <mkdir dir="${testclass.dir}"/>
 
     <javac srcdir="${testsrc.dir}" destdir="${testclass.dir}"
-           release="8"
+           release="17"
            debug="true"
            debuglevel="lines,source"
            deprecation="on"
