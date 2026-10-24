@@ -4831,6 +4831,16 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		return true;
 	}
 
+	public void copyAction(ArrayList<DisplayEntity> list) {
+		if (list.isEmpty())
+			return;
+		if (list.size() == 1) {
+			copyAction(list.get(0));
+			return;
+		}
+		copyToClipboard(list);
+	}
+
 	public void copyAction(Entity ent) {
 		if (ent == null)
 			return;
@@ -4873,6 +4883,16 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		catch (ErrorException e) {
 			GUIFrame.showErrorDialog("User Error", e.getMessage());
 		}
+	}
+
+	private void copyToClipboard(ArrayList<DisplayEntity> list) {
+		StringBuilder sb = new StringBuilder();
+		for (DisplayEntity ent : list) {
+			if (!sb.isEmpty())
+				sb.append(" ");
+			sb.append(ent.getName());
+		}
+		copyToClipboard(sb.toString());
 	}
 
 	private void copyToClipboard(Entity ent) {
@@ -5083,11 +5103,11 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		});
 	}
 
-	public void invokeCopy() {
+	public void invokeCopy(ArrayList<DisplayEntity> list) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				copyAction(selectedEntity);
+				copyAction(list);
 			}
 		});
 	}

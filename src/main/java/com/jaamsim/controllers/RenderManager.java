@@ -2273,8 +2273,9 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		}
 		if (control && keyCode == KeyEvent.VK_C) {
-			if (selectedEntity != null) {
-				GUIFrame.getInstance().invokeCopy();
+			ArrayList<DisplayEntity> list = rm.getSelectedEntityList();
+			if (!list.isEmpty()) {
+				GUIFrame.getInstance().invokeCopy(list);
 				return true;
 			}
 		}
