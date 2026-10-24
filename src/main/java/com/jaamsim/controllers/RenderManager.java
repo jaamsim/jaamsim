@@ -886,6 +886,10 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public Vec3d getNearestPick(int windowID) {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
+		if (mouseInfo == null || !mouseInfo.mouseInWindow) {
+			// The mouse is not actually in the window, or the window was closed along the way
+			return null;
+		}
 
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
 		List<Renderer.PickResult> picks = pick(pickRay, windowID, true);
@@ -951,11 +955,8 @@ public class RenderManager implements DragSourceListener {
 	 * @return list of entity numbers and distances
 	 */
 	public List<Renderer.PickResult> pick(Ray pickRay, int windowID, boolean precise) {
-		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
-
 		View view = windowToViewMap.get(windowID);
-		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
-			// The mouse is not actually in the window, or the window was closed along the way
+		if (view == null) {
 			return new ArrayList<>();
 		}
 
