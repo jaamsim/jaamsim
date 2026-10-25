@@ -3693,7 +3693,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		deleteMenuItem.setEnabled(bool);
 
 		bool = ent instanceof EditableText && ((EditableText) ent).isEditMode()
-				|| GUIFrame.getInstance().getEntityFromClipboard() != null;
+				|| !GUIFrame.getInstance().getEntityListFromClipboard().isEmpty();
 		pasteButton.setEnabled(bool);
 		pasteMenuItem.setEnabled(bool);
 	}
@@ -4858,14 +4858,14 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			updateUI();
 			return;
 		}
-		pasteEntityFromClipboard(false);
+		pasteEntityListFromClipboard(false);
 	}
 
 	public void pasteCloneAction(Entity ent) {
 		if (ent instanceof EditableText && ((EditableText) ent).isEditMode()) {
 			return;
 		}
-		pasteEntityFromClipboard(true);
+		pasteEntityListFromClipboard(true);
 	}
 
 	public void deleteAction(Entity ent) {

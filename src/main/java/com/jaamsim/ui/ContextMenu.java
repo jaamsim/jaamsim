@@ -180,7 +180,7 @@ public class ContextMenu {
 			}
 		} );
 		if (!(ent instanceof EditableText && ((EditableText) ent).isEditMode())
-				&& GUIFrame.getInstance().getEntityFromClipboard() == null) {
+				&& GUIFrame.getInstance().getEntityListFromClipboard().isEmpty()) {
 			pasteMenuItem.setEnabled(false);
 		}
 		menu.add( pasteMenuItem );
@@ -196,7 +196,7 @@ public class ContextMenu {
 			}
 		} );
 		if (!(ent instanceof EditableText && ((EditableText) ent).isEditMode())
-				&& GUIFrame.getInstance().getEntityFromClipboard() == null) {
+				&& GUIFrame.getInstance().getEntityListFromClipboard().isEmpty()) {
 			pasteCloneMenuItem.setEnabled(false);
 		}
 		menu.add( pasteCloneMenuItem );
