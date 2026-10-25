@@ -4923,6 +4923,165 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		return getJaamSimModel().getNamedEntity(name);
 	}
 
+	public ArrayList<Entity> getEntityListFromClipboard() {
+		String str = getStringFromClipboard();
+		if (str == null)
+			return new ArrayList<>();
+		JaamSimModel sim = getJaamSimModel();
+		String[] list = str.split(" ");
+		ArrayList<Entity> ret = new ArrayList<>(list.length);
+		for (String name : list) {
+			Entity ent = sim.getNamedEntity(name);
+			if (ent == null || ent == sim.getSimulation())
+				continue;
+			ret.add(ent);
+		}
+		return ret;
+	}
+
+	private void pasteEntityListFromClipboard(boolean isClone) {
+		ArrayList<Entity> list = getEntityListFromClipboard();
+		if (list.isEmpty())
+			return;
+
+		// Identify the region for the new entities
+		Region region = null;
+		if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
+			if (selectedEntity instanceof Region)
+				region = (Region) selectedEntity;
+			else
+				region = ((DisplayEntity) selectedEntity).getCurrentRegion();
+		}
+
+		JaamSimModel sim = getJaamSimModel();
+		Entity firstEnt = null;
+		Entity firstCopiedEnt = null;
+		DisplayEntity firstDEnt = null;
+		DisplayEntity firstCopiedDEnt = null;
+
+		// Loop through the new entities to be created
+		for (Entity ent : list) {
+
+			// If a clone is to be created, then set the prototype to the entity
+			Entity proto = null;
+			if (isClone)
+				proto = ent;
+
+			// Create the new entities
+			String otName = ent.getObjectType().getName();
+			int length = otName.length();
+			String localName = ent.getLocalName();
+			String copyName = localName;
+			String sep = "";
+			if (!isClone) {
+				sep = "_Copy";
+				if (localName.length() >= length && localName.substring(0, length).equals(otName)) {
+					String str = localName.substring(length);
+					if (str.isEmpty() || Input.isInteger(str)) {
+						copyName = otName;
+						sep = "";
+					}
+				}
+			}
+			if (region != null && region.getParent() != null)
+				copyName = region.getParent().getName() + "." + copyName;
+			copyName = InputAgent.getUniqueName(sim, copyName, sep);
+			sim.storeAndExecute(new DefineCommand(sim, ent.getClass(), proto, copyName));
+
+			// Copy the inputs
+			Entity copiedEnt = sim.getNamedEntity(copyName);
+			if (!isClone)
+				copiedEnt.copyInputs(ent);
+
+			// Save the first copied entity
+			if (firstEnt == null) {
+				firstEnt = ent;
+				firstCopiedEnt = copiedEnt;
+				if (ent instanceof DisplayEntity) {
+					firstDEnt = (DisplayEntity) firstEnt;
+					firstCopiedDEnt = (DisplayEntity) firstCopiedEnt;
+				}
+			}
+
+			// Set the region
+			if (region != null && !(copiedEnt instanceof OverlayEntity))
+				InputAgent.applyArgs(copiedEnt, "Region", region.getName());
+
+			// Set the position
+			if (ent instanceof DisplayEntity) {
+				DisplayEntity dEnt = (DisplayEntity) ent;
+				DisplayEntity copiedDEnt = (DisplayEntity) copiedEnt;
+
+				// Is this the first entity to be positioned?
+				if (ent == firstEnt) {
+
+					// If an entity is not selected, paste the new entity at the point of interest
+					if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)
+							|| selectedEntity instanceof Region) {
+						if (RenderManager.isGood())
+							RenderManager.inst().dragEntityToMousePosition(copiedDEnt);
+					}
+
+					// If an entity is selected, paste the new entity next to the selected one
+					else {
+						int x = 0;
+						int y = 0;
+						if (selectedEntity instanceof OverlayEntity) {
+							OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+							x = olEnt.getScreenPosition().get(0) + 10;
+							y = olEnt.getScreenPosition().get(1) + 10;
+						}
+						DisplayEntity selectedDispEnt = (DisplayEntity) selectedEntity;
+						Vec3d pos = selectedDispEnt.getGlobalPosition();
+						pos.x += 0.5d * selectedDispEnt.getSize().x;
+						pos.y -= 0.5d * selectedDispEnt.getSize().y;
+						pos = copiedDEnt.getLocalPosition(pos);
+						if (sim.getSimulation().isSnapToGrid())
+							pos = sim.getSimulation().getSnapGridPosition(pos);
+						try {
+							copiedDEnt.dragged(x, y, pos);
+						}
+						catch (InputErrorException e) {}
+					}
+				}
+
+				// Second entity and subsequent ones are positioned relative to the first one
+				else {
+					int x = 0;
+					int y = 0;
+					Vec3d pos = dEnt.getPosition();
+					if (firstDEnt != null) {
+						pos.sub3(firstDEnt.getPosition());
+						pos.add3(firstCopiedDEnt.getPosition());
+					}
+					if (dEnt instanceof OverlayEntity && firstDEnt instanceof OverlayEntity) {
+						x = ((OverlayEntity) dEnt).getScreenPosition().get(0) - ((OverlayEntity) firstDEnt).getScreenPosition().get(0)
+								+ ((OverlayEntity) firstCopiedDEnt).getScreenPosition().get(0);
+						y = ((OverlayEntity) dEnt).getScreenPosition().get(1) - ((OverlayEntity) firstDEnt).getScreenPosition().get(1)
+								+ ((OverlayEntity) firstCopiedDEnt).getScreenPosition().get(1);
+					}
+					try {
+						copiedDEnt.dragged(x, y, pos);
+					}
+					catch (InputErrorException e) {}
+				}
+			}
+
+			// Copy the children
+			if (!isClone)
+				copyChildren(ent, copiedEnt);
+
+			// If the entity has been copied to a SubModel, update its clones
+			if (copiedEnt.getParent() instanceof SubModel) {
+				SubModel sub = (SubModel) copiedEnt.getParent();
+				sub.updateClones();
+			}
+		}
+
+		// Select the new entity
+		FrameBox.setSelectedEntity(firstCopiedEnt, false);
+	}
+
 	private void pasteEntityFromClipboard(boolean isClone) {
 		Entity ent = getEntityFromClipboard();
 		JaamSimModel sim = getJaamSimModel();
