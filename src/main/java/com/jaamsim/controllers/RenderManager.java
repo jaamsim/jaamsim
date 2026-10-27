@@ -1096,7 +1096,7 @@ public class RenderManager implements DragSourceListener {
 		selectedEntityList.add(ent);
 	}
 
-	private ArrayList<DisplayEntity> getSelectedEntityList() {
+	public ArrayList<DisplayEntity> getSelectedEntityList() {
 		return selectedEntityList;
 	}
 

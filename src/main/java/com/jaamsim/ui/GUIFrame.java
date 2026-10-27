@@ -752,6 +752,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				if (RenderManager.isGood()) {
+					ArrayList<DisplayEntity> list = RenderManager.inst().getSelectedEntityList();
+					if (!list.isEmpty()) {
+						copyAction(list);
+						return;
+					}
+				}
 				copyAction(selectedEntity);
 			}
 		} );

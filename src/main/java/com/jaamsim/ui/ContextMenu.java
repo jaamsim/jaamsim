@@ -158,10 +158,18 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				if (RenderManager.isGood()) {
+					ArrayList<DisplayEntity> list = RenderManager.inst().getSelectedEntityList();
+					if (!list.isEmpty()) {
+						GUIFrame.getInstance().copyAction(list);
+						return;
+					}
+				}
 				GUIFrame.getInstance().copyAction(ent);
 			}
 		} );
-		if (ent == null || ent.isGenerated() || ent == ent.getSimulation()) {
+		if ((ent == null || ent.isGenerated() || ent == ent.getSimulation())
+				&& (!RenderManager.isGood() || RenderManager.inst().getSelectedEntityList().isEmpty())) {
 			copyMenuItem.setEnabled(false);
 		}
 		menu.add( copyMenuItem );
