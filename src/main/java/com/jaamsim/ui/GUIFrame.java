@@ -111,6 +111,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Commands.ListCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
@@ -4960,6 +4961,8 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		DisplayEntity firstCopiedDEnt = null;
 
 		// Loop through the new entities to be created
+		ArrayList<Command> cmdList = new ArrayList<>();
+		ArrayList<String> copyNameList = new ArrayList<>(list.size());
 		for (Entity ent : list) {
 
 			// If a clone is to be created, then set the prototype to the entity
@@ -4986,7 +4989,15 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			if (region != null && region.getParent() != null)
 				copyName = region.getParent().getName() + "." + copyName;
 			copyName = InputAgent.getUniqueName(sim, copyName, sep);
-			sim.storeAndExecute(new DefineCommand(sim, ent.getClass(), proto, copyName));
+			copyNameList.add(copyName);
+			cmdList.add(new DefineCommand(sim, ent.getClass(), proto, copyName));
+		}
+		sim.storeAndExecute(new ListCommand(cmdList));
+
+		// Loop through the copied entities
+		for (int i = 0; i < list.size(); i++) {
+			Entity ent = list.get(i);
+			String copyName = copyNameList.get(i);
 
 			// Copy the inputs
 			Entity copiedEnt = sim.getNamedEntity(copyName);
