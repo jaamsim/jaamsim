@@ -299,6 +299,13 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Replaces any use of the specified entity with another entity.
+	 * @param oldEnt - entity to be replaced
+	 * @param newEnt - new entity to be used
+	 */
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {}
+
+	/**
 	 * Appends the entities referenced by the value for this input.
 	 * @param list - list of entity references
 	 */
