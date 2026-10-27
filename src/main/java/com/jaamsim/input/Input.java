@@ -299,6 +299,16 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Replaces any use of the specified entity with another entity.
+	 * @param oldEnt - entity to be replaced
+	 * @param newEnt - new entity to use
+	 * @return true if a reference was replaced
+	 */
+	public boolean replaceReferences(Entity oldEnt, Entity newEnt) {
+		return false;
+	}
+
+	/**
 	 * Appends the entities referenced by the value for this input.
 	 * @param list - list of entity references
 	 */

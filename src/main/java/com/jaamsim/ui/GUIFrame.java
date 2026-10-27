@@ -4994,13 +4994,20 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 		sim.storeAndExecute(new ListCommand(cmdList));
 
+		// Build a list of copied entities
+		ArrayList<Entity> copiedEntityList = new ArrayList<>(list.size());
+		for (int i = 0; i < list.size(); i++) {
+			String copyName = copyNameList.get(i);
+			Entity copiedEnt = sim.getNamedEntity(copyName);
+			copiedEntityList.add(copiedEnt);
+		}
+
 		// Loop through the copied entities
 		for (int i = 0; i < list.size(); i++) {
 			Entity ent = list.get(i);
-			String copyName = copyNameList.get(i);
+			Entity copiedEnt = copiedEntityList.get(i);
 
 			// Copy the inputs
-			Entity copiedEnt = sim.getNamedEntity(copyName);
 			if (!isClone)
 				copiedEnt.copyInputs(ent);
 
@@ -5086,6 +5093,17 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			if (copiedEnt.getParent() instanceof SubModel) {
 				SubModel sub = (SubModel) copiedEnt.getParent();
 				sub.updateClones();
+			}
+		}
+
+		// Replace any inputs that reference the original entities that were copied
+		for (Entity copiedEnt : copiedEntityList) {
+			for (Input<?> in : copiedEnt.getEditableInputs()) {
+				if (in.isDefault())
+					continue;
+				for (int i = 0; i < list.size(); i++) {
+					in.replaceReferences(list.get(i), copiedEntityList.get(i));
+				}
 			}
 		}
 
