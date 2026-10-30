@@ -264,6 +264,23 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 	}
 
 	@Override
+	public boolean replaceReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return false;
+		boolean ret = false;
+		for (int i = 0; i < value.size(); i++) {
+			if (value.get(i) == oldEnt && newEnt instanceof SampleProvider) {
+				value.set(i, (SampleProvider) newEnt);
+				ret = true;
+			}
+
+			else if (value.get(i) instanceof SampleExpression) {  //FIXME
+			}
+		}
+		return ret;
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;
