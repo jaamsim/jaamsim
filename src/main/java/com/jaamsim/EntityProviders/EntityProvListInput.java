@@ -161,6 +161,28 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean replaceReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return false;
+		boolean ret = false;
+		for (int i = 0; i < value.size(); i++) {
+			EntityListProvider<T> ep = value.get(i);
+			if (ep instanceof EntityProvConstant) {
+				Entity ent = ((EntityProvConstant<T>) ep).getEntity();
+				if (ent == oldEnt) {
+					value.set(i, new EntityProvConstant<T>((T) newEnt));
+					ret = true;
+				}
+			}
+
+			else if (ep instanceof EntityProvExpression) {  //FIXME
+			}
+		}
+		return ret;
+	}
+
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)

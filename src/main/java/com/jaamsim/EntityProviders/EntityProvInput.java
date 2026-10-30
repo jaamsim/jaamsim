@@ -110,6 +110,22 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public boolean replaceReferences(Entity oldEnt, Entity newEnt) {
+		if (value instanceof EntityProvConstant) {
+			EntityProvConstant<T> epc = (EntityProvConstant<T>) value;
+			if (epc.getEntity() == oldEnt) {
+				value = new EntityProvConstant<T>((T) newEnt);
+			}
+			return true;
+		}
+
+		if (value instanceof EntityProvExpression) {  //FIXME
+		}
+		return false;
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;
