@@ -259,6 +259,21 @@ public class EntityListInput<T extends Entity> extends ArrayListInput<T> {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean replaceReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return false;
+		boolean ret = false;
+		for (int i = 0; i < value.size(); i++) {
+			if (value.get(i) == oldEnt) {
+				value.set(i, (T) newEnt);
+				ret = true;
+			}
+		}
+		return ret;
+	}
+
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
