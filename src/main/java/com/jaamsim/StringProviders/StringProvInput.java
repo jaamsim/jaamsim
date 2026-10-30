@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2025 JaamSim Software Inc.
+ * Copyright (C) 2018-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,6 +117,19 @@ public class StringProvInput extends Input<StringProvider> {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value instanceof StringProvSample) {
+			StringProvSample spsamp = (StringProvSample) value;
+			if (spsamp.getSampleProvider() == oldEnt && newEnt instanceof SampleProvider) {
+				value = new StringProvSample((SampleProvider) newEnt);
+			}
+		}
+
+		if (value instanceof StringProvExpression) {  //FIXME
+		}
 	}
 
 	@Override
