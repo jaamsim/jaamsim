@@ -131,6 +131,14 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == oldEnt) {
+			value = (T) newEnt;
+		}
+	}
+
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null || list.contains(value))
