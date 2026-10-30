@@ -4970,22 +4970,26 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			if (isClone)
 				proto = ent;
 
-			// Create the new entities
+			// Select the names for the new entities
 			String otName = ent.getObjectType().getName();
 			int length = otName.length();
 			String localName = ent.getLocalName();
 			String copyName = localName;
 			String sep = "";
-			if (!isClone) {
+			if (!isClone)
 				sep = "_Copy";
-				if (localName.length() >= length && localName.substring(0, length).equals(otName)) {
-					String str = localName.substring(length);
-					if (str.isEmpty() || Input.isInteger(str)) {
-						copyName = otName;
-						sep = "";
-					}
+
+			// If only a single entity is to be copied, use the default name if possible
+			if (!isClone && list.size() == 1
+					&& localName.length() >= length
+					&& localName.substring(0, length).equals(otName)) {
+				String str = localName.substring(length);
+				if (str.isEmpty() || Input.isInteger(str)) {
+					copyName = otName;
+					sep = "";
 				}
 			}
+
 			if (region != null && region.getParent() != null)
 				copyName = region.getParent().getName() + "." + copyName;
 			copyName = InputAgent.getUniqueName(sim, copyName, sep);
