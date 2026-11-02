@@ -25,6 +25,7 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.ModelConstant;
 import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityInput;
@@ -121,6 +122,8 @@ public class View extends Entity {
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
+	public static final ModelConstant<ArrayList<View>> views_key = () -> { return new ArrayList<View>(); };
+
 	static {
 		defPos.fillWithEntriesOf(2, 0);
 		defSize.fillWithEntriesOf(2, 0);
@@ -200,11 +203,10 @@ public class View extends Entity {
 
 	public View() {
 		viewID = viewCounter.incrementAndGet();
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui == null) {
-			return;
+		ArrayList<View> views = getJaamSimModel().getConstant(views_key);
+		synchronized (views) {
+			views.add(this);
 		}
-		gui.addView(this);
 	}
 
 	@Override
@@ -225,20 +227,28 @@ public class View extends Entity {
 	@Override
 	public void kill() {
 		super.kill();
+		ArrayList<View> views = getJaamSimModel().getConstant(views_key);
+		synchronized (views) {
+			views.remove(this);
+		}
+
 		GUIListener gui = getJaamSimModel().getGUIListener();
 		if (gui == null)
 			return;
-		gui.removeView(this);
 		gui.closeWindow(this);
 	}
 
 	@Override
 	public void restore() {
 		super.restore();
+		ArrayList<View> views = getJaamSimModel().getConstant(views_key);
+		synchronized (views) {
+			views.add(this);
+		}
+
 		GUIListener gui = getJaamSimModel().getGUIListener();
 		if (gui == null)
 			return;
-		gui.addView(this);
 		gui.createWindow(this);
 	}
 

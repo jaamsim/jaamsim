@@ -169,8 +169,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	private static final ArrayList<RunManager> runManagerList = new ArrayList<>();
 	private static final AtomicLong modelCount = new AtomicLong(0);  // number of JaamSimModels
 
-	private final ArrayList<View> views = new ArrayList<>();
-
 	private Point windowOffset;
 	private Point initLocation;
 
@@ -455,7 +453,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		RenderManager.clear();
 		EntityPallet.update();
 		ObjectSelector.allowUpdate();
-		gui.resetViews();
 		gui.clearButtons();
 
 		// Set the listeners for the new model
@@ -510,6 +507,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			View activeView = RenderManager.getActiveView();
 
 			// Re-open the view windows
+			ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
 			synchronized (views) {
 				for (int i = 0; i < views.size(); i++) {
 					View v = views.get(i);
@@ -4057,6 +4055,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (!RenderManager.isGood())
 			return;
 		boolean iconified = isIconified();
+		ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
 		synchronized (views) {
 			for (View v : views) {
 				boolean isVisible = RenderManager.inst().isVisible(v);
@@ -4075,6 +4074,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	public void updateViewSizeLocation() {
+		ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
 		synchronized (views) {
 			for (View v : views) {
 				final Frame window = RenderManager.getOpenWindowForView(v);
@@ -4088,22 +4088,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	public ArrayList<View> getViews() {
+		ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
 		synchronized (views) {
 			return new ArrayList<>(views);
-		}
-	}
-
-	@Override
-	public void addView(View v) {
-		synchronized (views) {
-			views.add(v);
-		}
-	}
-
-	@Override
-	public void removeView(View v) {
-		synchronized (views) {
-			views.remove(v);
 		}
 	}
 
@@ -4119,15 +4106,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (!RenderManager.isGood())
 			return;
 		RenderManager.inst().closeWindow(v);
-	}
-
-	private void resetViews() {
-		synchronized (views) {
-			views.clear();
-			for (View v : getJaamSimModel().getClonesOfIterator(View.class)) {
-				views.add(v);
-			}
-		}
 	}
 
 	public IntegerVector getWindowPosSize(View v) {
@@ -4178,6 +4156,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				if (!RenderManager.isGood())
 					return;
 
+				ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
 				synchronized (views) {
 					for (View v : views) {
 						RenderManager.inst().setResizable(v, bool);
@@ -4603,7 +4582,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				}
 
 				simModel.setRecordEdits(true);
-				resetViews();
 				FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 				setCursor(Cursor.getDefaultCursor());
 			}
