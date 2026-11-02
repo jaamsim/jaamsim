@@ -1282,11 +1282,11 @@ public class JaamSimModel implements EventTimeListener {
 		return ret;
 	}
 
-	private final EventHandle thresholdChangedHandle = new EventHandle();
 	private final ThresholdChangedTarget thresholdChangedTarget = new ThresholdChangedTarget();
 
 	private static class ThresholdChangedTarget extends ProcessTarget {
 		public final ArrayList<ThresholdUser> users = new ArrayList<>();
+		private final EventHandle handle = new EventHandle();
 
 		public ThresholdChangedTarget() {}
 
@@ -1302,15 +1302,19 @@ public class JaamSimModel implements EventTimeListener {
 		public String getDescription() {
 			return "UpdateAllThresholdUsers";
 		}
+
+		public void updateUsers(ArrayList<ThresholdUser> userList) {
+			for (ThresholdUser user : userList) {
+				if (!users.contains(user))
+					users.add(user);
+			}
+			if (!users.isEmpty() && !handle.isScheduled())
+				EventManager.scheduleTicks(0, Entity.PRI_HIGH, Entity.EVT_LIFO, this, handle);
+		}
 	}
 
 	public void updateThresholdUsers(ArrayList<ThresholdUser> userList) {
-		for (ThresholdUser user : userList) {
-			if (!thresholdChangedTarget.users.contains(user))
-				thresholdChangedTarget.users.add(user);
-		}
-		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
-			EventManager.scheduleTicks(0, Entity.PRI_HIGH, Entity.EVT_LIFO, thresholdChangedTarget, thresholdChangedHandle);
+		thresholdChangedTarget.updateUsers(userList);
 	}
 
 	/**
