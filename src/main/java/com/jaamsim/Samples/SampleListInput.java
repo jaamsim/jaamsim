@@ -272,7 +272,8 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 				value.set(i, (SampleProvider) newEnt);
 			}
 
-			else if (value.get(i) instanceof SampleExpression) {  //FIXME
+			else if (value.get(i) instanceof SampleExpression) {
+				((SampleExpression) value.get(i)).replaceEntityReferences(oldEnt, newEnt);
 			}
 		}
 	}

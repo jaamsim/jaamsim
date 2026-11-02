@@ -162,7 +162,8 @@ public class SampleInput extends Input<SampleProvider> {
 			value = (SampleProvider) newEnt;
 		}
 
-		if (value instanceof SampleExpression) {  //FIXME
+		else if (value instanceof SampleExpression) {
+			((SampleExpression) value).replaceEntityReferences(oldEnt, newEnt);
 		}
 	}
 
