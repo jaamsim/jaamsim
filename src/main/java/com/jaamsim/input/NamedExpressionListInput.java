@@ -115,6 +115,15 @@ public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return;
+		for (NamedExpression ne : value) {
+			ne.replaceEntityReferences(oldEnt, newEnt);
+		}
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;
