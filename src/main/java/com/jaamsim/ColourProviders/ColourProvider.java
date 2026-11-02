@@ -25,6 +25,8 @@ public interface ColourProvider {
 
 	public Color4d getNextColour(Entity thisEnt, double simTime);
 
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt);
+
 	public void appendEntityReferences(ArrayList<Entity> list);
 
 }
