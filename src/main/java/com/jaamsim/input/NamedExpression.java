@@ -16,6 +16,8 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
@@ -63,6 +65,13 @@ public class NamedExpression {
 		try {
 			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
 			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
+	}
+
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		try {
+			ExpParser.appendEntityReferences(exp, list);
 		}
 		catch (ExpError e) {}
 	}
