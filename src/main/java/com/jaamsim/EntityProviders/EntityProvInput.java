@@ -119,7 +119,8 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			}
 		}
 
-		if (value instanceof EntityProvExpression) {  //FIXME
+		else if (value instanceof EntityProvExpression) {
+			((EntityProvExpression<T>) value).replaceEntityReferences(oldEnt, newEnt);
 		}
 	}
 

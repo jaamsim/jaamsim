@@ -175,7 +175,8 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 				}
 			}
 
-			else if (ep instanceof EntityProvExpression) {  //FIXME
+			else if (ep instanceof EntityProvExpression) {
+				((EntityProvExpression<T>) ep).replaceEntityReferences(oldEnt, newEnt);
 			}
 		}
 	}
