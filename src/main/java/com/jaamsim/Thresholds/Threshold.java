@@ -189,10 +189,6 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		}
 	}
 
-	public void updateThresholdUsers(ArrayList<ThresholdUser> userList) {
-		getJaamSimModel().getConstant(change_key).updateUsers(userList);
-	}
-
 	public final void setOpen(boolean bool) {
 		// If setting to the same value as current, return
 		if (open == bool)
