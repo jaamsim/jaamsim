@@ -25,6 +25,8 @@ public interface Vec3dProvider {
 
 	public Vec3d getNextVec3d(Entity thisEnt, double simTime);
 
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt);
+
 	public void appendEntityReferences(ArrayList<Entity> list);
 
 }
