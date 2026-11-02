@@ -142,7 +142,8 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 				}
 			}
 
-			else if (value.get(i) instanceof StringProvExpression) {  //FIXME
+			else if (value.get(i) instanceof StringProvExpression) {
+				((StringProvExpression) value.get(i)).replaceEntityReferences(oldEnt, newEnt);
 			}
 		}
 	}

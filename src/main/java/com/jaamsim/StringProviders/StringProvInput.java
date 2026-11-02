@@ -128,7 +128,8 @@ public class StringProvInput extends Input<StringProvider> {
 			}
 		}
 
-		if (value instanceof StringProvExpression) {  //FIXME
+		if (value instanceof StringProvExpression) {
+			((StringProvExpression) value).replaceEntityReferences(oldEnt, newEnt);
 		}
 	}
 
