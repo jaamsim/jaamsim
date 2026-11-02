@@ -80,6 +80,13 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value instanceof BooleanProvExpression) {
+			((BooleanProvExpression) value).replaceEntityReferences(oldEnt, newEnt);
+		}
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;
