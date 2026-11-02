@@ -37,13 +37,11 @@ import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.SubModel;
-import com.jaamsim.Thresholds.ThresholdUser;
+import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.EventTraceListener;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityNameInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.Input;
@@ -535,7 +533,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		// Early Initialization
-		this.thresholdChangedTarget.users.clear();
+		Threshold.clearUsers(this);
 		for (Entity each : this.getClonesOfIterator(Entity.class)) {
 			each.earlyInit();
 		}
@@ -1282,40 +1280,6 @@ public class JaamSimModel implements EventTimeListener {
 		return ret;
 	}
 
-	private final ThresholdChangedTarget thresholdChangedTarget = new ThresholdChangedTarget();
-
-	private static class ThresholdChangedTarget extends ProcessTarget {
-		public final ArrayList<ThresholdUser> users = new ArrayList<>();
-		private final EventHandle handle = new EventHandle();
-
-		public ThresholdChangedTarget() {}
-
-		@Override
-		public void process() {
-			for (int i = 0; i < users.size(); i++) {
-				users.get(i).thresholdChanged();
-			}
-			users.clear();
-		}
-
-		@Override
-		public String getDescription() {
-			return "UpdateAllThresholdUsers";
-		}
-
-		public void updateUsers(ArrayList<ThresholdUser> userList) {
-			for (ThresholdUser user : userList) {
-				if (!users.contains(user))
-					users.add(user);
-			}
-			if (!users.isEmpty() && !handle.isScheduled())
-				EventManager.scheduleTicks(0, Entity.PRI_HIGH, Entity.EVT_LIFO, this, handle);
-		}
-	}
-
-	public void updateThresholdUsers(ArrayList<ThresholdUser> userList) {
-		thresholdChangedTarget.updateUsers(userList);
-	}
 
 	/**
 	 * Returns the present configuration file.

@@ -23,10 +23,14 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.ModelConstant;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -150,6 +154,41 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		return open;
 	}
 
+	public static final void clearUsers(JaamSimModel sm) {
+		sm.getConstant(Threshold.change_key).users.clear();
+	}
+
+	private static final ModelConstant<ThresholdChangedTarget> change_key = () -> { return new ThresholdChangedTarget(); };
+
+	private static class ThresholdChangedTarget extends ProcessTarget {
+		public final ArrayList<ThresholdUser> users = new ArrayList<>();
+		private final EventHandle handle = new EventHandle();
+
+		public ThresholdChangedTarget() {}
+
+		@Override
+		public void process() {
+			for (int i = 0; i < users.size(); i++) {
+				users.get(i).thresholdChanged();
+			}
+			users.clear();
+		}
+
+		@Override
+		public String getDescription() {
+			return "UpdateAllThresholdUsers";
+		}
+
+		public void updateUsers(ArrayList<ThresholdUser> userList) {
+			for (ThresholdUser user : userList) {
+				if (!users.contains(user))
+					users.add(user);
+			}
+			if (!users.isEmpty() && !handle.isScheduled())
+				EventManager.scheduleTicks(0, Entity.PRI_HIGH, Entity.EVT_LIFO, this, handle);
+		}
+	}
+
 	public final void setOpen(boolean bool) {
 		// If setting to the same value as current, return
 		if (open == bool)
@@ -168,7 +207,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 			closedCount++;
 		}
 
-		getJaamSimModel().updateThresholdUsers(userList);
+		getJaamSimModel().getConstant(change_key).updateUsers(userList);
 
 		// Notify any observers
 		notifyObservers();
