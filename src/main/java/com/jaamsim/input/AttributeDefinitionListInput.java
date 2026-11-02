@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2025 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,6 +115,15 @@ public class AttributeDefinitionListInput extends ArrayListInput<NamedExpression
 			toks.add(ne.getName());
 			toks.add(ne.getParseContext().getUpdatedSource());
 			toks.add("}");
+		}
+	}
+
+	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return;
+		for (NamedExpression ne : value) {
+			ne.replaceEntityReferences(oldEnt, newEnt);
 		}
 	}
 
