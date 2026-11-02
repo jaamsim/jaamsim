@@ -73,6 +73,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 	private final HashMap<Class<? extends Unit>, Unit> preferredUnit = new HashMap<>();
+	private final HashMap<ModelConstant<?>, Object> constants = new HashMap<>();
 
 	// Note, entityList is an empty list node used to identify the end of the list
 	// The first real entity is at entityList.next.ent
@@ -1264,6 +1265,21 @@ public class JaamSimModel implements EventTimeListener {
 		synchronized (objectTypes) {
 			return objectTypeMap.get(klass);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getConstant(ModelConstant<T> key) {
+		if (key == null) throw new ErrorException("Null key not allowed for model constants");
+
+		T ret;
+		synchronized (constants) {
+			ret = (T)constants.get(key);
+			if (ret == null) {
+				ret = key.generate();
+				constants.put(key, ret);
+			}
+		}
+		return ret;
 	}
 
 	private final EventHandle thresholdChangedHandle = new EventHandle();
