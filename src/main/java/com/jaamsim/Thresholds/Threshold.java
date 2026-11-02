@@ -52,6 +52,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is closed.")
 	private final BooleanProvInput showWhenClosed;
 
+	private final ThresholdChangedTarget change_target;
 	private final ArrayList<ThresholdUser> userList;
 	private boolean open;
 	private long openCount;
@@ -81,6 +82,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	}
 
 	public Threshold() {
+		change_target = getJaamSimModel().getConstant(change_key);
 		userList = new ArrayList<>();
 		open = true;
 	}
@@ -207,7 +209,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 			closedCount++;
 		}
 
-		getJaamSimModel().getConstant(change_key).updateUsers(userList);
+		change_target.updateUsers(userList);
 
 		// Notify any observers
 		notifyObservers();
