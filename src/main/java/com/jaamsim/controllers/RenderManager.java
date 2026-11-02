@@ -669,17 +669,21 @@ public class RenderManager implements DragSourceListener {
 
 		// If no movable entity is found, set the selected entity to null
 		if (ent == null || !ent.isMovable()) {
+			if (controlDown)
+				return;
 			FrameBox.setSelectedEntity(null, false);
 			GUIFrame.updateUI();
 			return;
 		}
 
-		// Select the entity
+		// If Control is pressed and another entity is already selected, then add the entity to the list
 		if (controlDown && isEntitySelected()) {
 			addSelectedEntity(ent);
 			GUIFrame.updateUI();
 			return;
 		}
+
+		// Select the entity
 		FrameBox.setSelectedEntity(ent, true);
 
 		// Handle the mouse click for an Overlay entity
