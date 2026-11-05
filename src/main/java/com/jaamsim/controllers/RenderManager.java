@@ -1356,7 +1356,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d globalOffset = selectedEntity.getGlobalPosition(localPos);
 		globalOffset.sub3(selectedEntity.getGlobalPosition());
 		for (DisplayEntity ent : getSelectedEntityList()) {
-			if (ent == selectedEntity)
+			if (ent == selectedEntity || getSelectedEntityList().contains(ent.getRelativeEntity()))
 				continue;
 			pos = ent.getGlobalPosition();
 			pos.add3(globalOffset);
@@ -1553,7 +1553,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d globalOffset = globalPts.get(0);
 		globalOffset.sub3(selectedEntity.getGlobalPosition(selectedEntity.getPoints().get(0)));
 		for (DisplayEntity ent : getSelectedEntityList()) {
-			if (ent == selectedEntity)
+			if (ent == selectedEntity || getSelectedEntityList().contains(ent.getRelativeEntity()))
 				continue;
 			if (!ent.usePointsInput()) {
 				Vec3d pos = ent.getGlobalPosition();
