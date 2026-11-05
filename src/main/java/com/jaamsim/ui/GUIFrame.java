@@ -5007,6 +5007,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 
 		// Loop through the copied entities
+		Vec3d offset = new Vec3d();
 		for (int i = 0; i < list.size(); i++) {
 			Entity ent = list.get(i);
 			Entity copiedEnt = copiedEntityList.get(i);
@@ -5065,6 +5066,10 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 						}
 						catch (InputErrorException e) {}
 					}
+
+					// Save the vector from the original entity to the copied entity
+					offset = firstCopiedDEnt.getGlobalPosition();
+					offset.sub3(firstDEnt.getGlobalPosition());
 				}
 
 				// Second entity and subsequent ones are positioned relative to the first one
@@ -5072,10 +5077,9 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					int x = 0;
 					int y = 0;
 					Vec3d pos = dEnt.getPosition();
-					if (firstDEnt != null) {
-						pos.sub3(firstDEnt.getPosition());
-						pos.add3(firstCopiedDEnt.getPosition());
-					}
+					if (!list.contains(dEnt.getRelativeEntity()))
+						pos.add3(offset);
+
 					if (dEnt instanceof OverlayEntity && firstDEnt instanceof OverlayEntity) {
 						x = ((OverlayEntity) dEnt).getScreenPosition().get(0) - ((OverlayEntity) firstDEnt).getScreenPosition().get(0)
 								+ ((OverlayEntity) firstCopiedDEnt).getScreenPosition().get(0);
