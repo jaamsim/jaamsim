@@ -63,6 +63,7 @@ public class BooleanProvExpression implements BooleanProvider {
 		return ret;
 	}
 
+	@Override
 	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
 		try {
 			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
@@ -71,6 +72,7 @@ public class BooleanProvExpression implements BooleanProvider {
 		catch (ExpError e) {}
 	}
 
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		try {
 			ExpParser.appendEntityReferences(exp, list);

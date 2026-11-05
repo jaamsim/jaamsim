@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2022-2023 JaamSim Software Inc.
+ * Copyright (C) 2022-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.BooleanProviders;
+
+import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
@@ -31,6 +33,12 @@ public class BooleanProvConstant implements BooleanProvider {
 	public boolean getNextBoolean(Entity thisEnt, double simTime) {
 		return val;
 	}
+
+	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {}
+
+	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {}
 
 	@Override
 	public String toString() {
