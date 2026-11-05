@@ -1098,7 +1098,19 @@ public class RenderManager implements DragSourceListener {
 		if (!isSelectionValid(ent))
 			return;
 		selectedEntityList.add(ent);
+		Collections.sort(selectedEntityList, relativeEntityComparator);
 	}
+
+	public static final Comparator<DisplayEntity> relativeEntityComparator = new Comparator<DisplayEntity>() {
+		@Override
+		public int compare(DisplayEntity ent1, DisplayEntity ent2) {
+			if (ent1.getRelativeEntity() == ent2)
+				return 1;
+			if (ent2.getRelativeEntity() == ent1)
+				return -1;
+			return 0;
+		}
+	};
 
 	public ArrayList<DisplayEntity> getSelectedEntityList() {
 		return selectedEntityList;
