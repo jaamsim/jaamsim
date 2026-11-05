@@ -4955,8 +4955,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 
 		JaamSimModel sim = getJaamSimModel();
-		Entity firstEnt = null;
-		Entity firstCopiedEnt = null;
 		DisplayEntity firstDEnt = null;
 		DisplayEntity firstCopiedDEnt = null;
 
@@ -5016,16 +5014,6 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			if (!isClone)
 				copiedEnt.copyInputs(ent);
 
-			// Save the first copied entity
-			if (firstEnt == null) {
-				firstEnt = ent;
-				firstCopiedEnt = copiedEnt;
-				if (ent instanceof DisplayEntity) {
-					firstDEnt = (DisplayEntity) firstEnt;
-					firstCopiedDEnt = (DisplayEntity) firstCopiedEnt;
-				}
-			}
-
 			// Set the region
 			if (region != null && !(copiedEnt instanceof OverlayEntity))
 				InputAgent.applyArgs(copiedEnt, "Region", region.getName());
@@ -5035,8 +5023,10 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				DisplayEntity dEnt = (DisplayEntity) ent;
 				DisplayEntity copiedDEnt = (DisplayEntity) copiedEnt;
 
-				// Is this the first entity to be positioned?
-				if (ent == firstEnt) {
+				// Is this the first DisplayEntity to be positioned?
+				if (firstDEnt == null) {
+					firstDEnt = dEnt;
+					firstCopiedDEnt = copiedDEnt;
 
 					// If an entity is not selected, paste the new entity at the point of interest
 					if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)
@@ -5116,7 +5106,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 
 		// Select the new entity
-		FrameBox.setSelectedEntity(firstCopiedEnt, false);
+		FrameBox.setSelectedEntity(copiedEntityList.get(0), false);
 	}
 
 	public void copyChildren(Entity parent0, Entity parent1) {
