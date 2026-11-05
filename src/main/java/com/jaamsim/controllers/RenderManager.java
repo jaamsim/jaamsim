@@ -1123,35 +1123,20 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		DisplayEntity selectedEntity = getSelectedEntity();
 
+		// Selected entities must be either all OverlayEntities or all not OverlayEntities
 		if (ent instanceof OverlayEntity && !(selectedEntity instanceof OverlayEntity))
 			return false;
 
 		if (!(ent instanceof OverlayEntity) && selectedEntity instanceof OverlayEntity)
 			return false;
 
+		// All selected entities must be located in the same region
 		if (ent.getCurrentRegion() != selectedEntity.getCurrentRegion())
 			return false;
 
+		// All selected entities must have the same parent entity
 		if (ent.getParent() != selectedEntity.getParent())
 			return false;
-
-		// Is the new entity or any entities in its chain of relative entities already selected?
-		DisplayEntity e = ent;
-		while (e != null) {
-			if (selectedEntityList.contains(e))
-				return false;
-			e = e.getRelativeEntity();
-		}
-
-		// Is the new entity a relative entity of any entities that are already selected?
-		for (DisplayEntity de : selectedEntityList) {
-			e = de.getRelativeEntity();
-			while (e != null) {
-				if (e == ent)
-					return false;
-				e = e.getRelativeEntity();
-			}
-		}
 
 		return true;
 	}
