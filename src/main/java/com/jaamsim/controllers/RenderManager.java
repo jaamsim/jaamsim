@@ -2289,6 +2289,8 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity != null) {
 			boolean bool = false;
 			for (DisplayEntity ent : rm.getSelectedEntityList()) {
+				if (rm.getSelectedEntityList().contains(ent.getRelativeEntity()))
+					continue;
 				boolean b = ent.handleKeyPressed(keyCode, keyChar, shift, control, alt);
 				bool = bool || b;
 			}
