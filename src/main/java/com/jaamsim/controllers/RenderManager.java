@@ -173,7 +173,8 @@ public class RenderManager implements DragSourceListener {
 	private JPopupMenu lastPopup;
 
 	private final ArrayList<DisplayEntity> selectedEntityList = new ArrayList<>();
-	private Vec3d mousePosition = new Vec3d();
+	private Vec3d mousePosition = new Vec3d();  // present location of the mouse on the xy-plane
+	private final Vec3d clickPosition = new Vec3d();  // location on the xy-plane for last mouse click
 	private int mouseWindowID = -1;  // window containing the present mouse position
 
 	private long simTick = 0;
@@ -1713,10 +1714,19 @@ public class RenderManager implements DragSourceListener {
 		return (id < 0); // For now all negative IDs are mouse handles, this may change
 	}
 
+	public void setClickPosition(Vec3d pos) {
+		clickPosition.set3(pos);
+	}
+
 	public boolean handleMouseButton(int windowID, int x, int y, int button, boolean isDown, int modifiers) {
 		DisplayEntity selectedEntity = getSelectedEntity();
 
+		// Save the location where the mouse button was released
+		if (!isDown)
+			setClickPosition(mousePosition);
+
 		if (button != 1) { return false; }
+
 		if (!isDown) {
 			// Click released
 			dragHandleID = 0;
@@ -2329,10 +2339,7 @@ public class RenderManager implements DragSourceListener {
 	 * @param ent - entity to be positioned
 	 */
 	public void dragEntityToMousePosition(DisplayEntity ent) {
-		View view = _getActiveView();
-		if (view == null)
-			return;
-		Vec3d pos = view.getPointOfInterest();
+		Vec3d pos = new Vec3d(clickPosition);
 		pos = ent.getLocalPosition(pos);
 		Simulation simulation = ent.getSimulation();
 		if (simulation.isSnapToGrid()) {
