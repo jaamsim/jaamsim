@@ -26,13 +26,13 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityListInput;
@@ -187,21 +187,14 @@ public class VideoRecorderEntity extends DisplayEntity {
 			EventManager.scheduleTicks(0, PRI_LOW, EVT_LIFO, new CaptureNetworkTarget(this), null);
 	}
 
-	private static class CaptureNetworkTarget extends ProcessTarget {
-		final VideoRecorderEntity rec;
-
+	private static class CaptureNetworkTarget extends EntityTarget<VideoRecorderEntity> {
 		CaptureNetworkTarget(VideoRecorderEntity rec) {
-			this.rec = rec;
-		}
-
-		@Override
-		public String getDescription() {
-			return rec.getName() + ".doCaptureNetwork";
+			super(rec, "doCaptureNetwork");
 		}
 
 		@Override
 		public void process() {
-			rec.doCaptureNetwork();
+			ent.doCaptureNetwork();
 		}
 	}
 	/**
