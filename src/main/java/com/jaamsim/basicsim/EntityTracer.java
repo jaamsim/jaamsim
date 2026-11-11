@@ -58,8 +58,23 @@ public void startUp() {
 	if (event_time <= 0.0d)
 		return;
 
-	EventManager.waitSeconds(event_time, PRI_HIGHEST, EVT_LIFO, null);
-	for (Entity each : entities.getValue())
-		each.setTraceFlag();
+	EventManager.scheduleSeconds(event_time, PRI_HIGHEST, EVT_LIFO, new SetTraceFlagTarget(this), null);
+}
+
+void setEntityTraceFlags() {
+	for (Entity each : entities.getValue()) {
+ 		each.setTraceFlag();
+ 	}
+}
+
+private static class SetTraceFlagTarget extends EntityTarget<EntityTracer> {
+	SetTraceFlagTarget(EntityTracer ent) {
+		super(ent, "setEntityTraceFlags");
 	}
+
+	@Override
+	public void process() {
+		ent.setEntityTraceFlags();
+	}
+}
 }
