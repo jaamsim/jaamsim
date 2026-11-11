@@ -50,10 +50,15 @@ public EntityTracer() {}
 public void startUp() {
 	super.startUp();
 
-	if (entities.getValue().isEmpty() || startTime.getNextSample(this, 0.0d) == 0.0d)
+	if (entities.getValue().isEmpty())
 		return;
 
-	EventManager.waitSeconds(startTime.getNextSample(this, 0.0d), PRI_HIGHEST, EVT_LIFO, null);
+	double event_time = startTime.getNextSample(this, EventManager.simSeconds());
+	event_time -= EventManager.simSeconds();
+	if (event_time <= 0.0d)
+		return;
+
+	EventManager.waitSeconds(event_time, PRI_HIGHEST, EVT_LIFO, null);
 	for (Entity each : entities.getValue())
 		each.setTraceFlag();
 	}
