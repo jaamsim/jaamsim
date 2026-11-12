@@ -166,8 +166,10 @@ public class VideoRecorderEntity extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 
-		if (saveVideo.getValue() || saveImages.getValue())
-			EventManager.startProcess(new CaptureNetworkTarget(this));
+		if (saveVideo.getValue() || saveImages.getValue()) {
+			EventManager.killEvent(captureHandle);
+			EventManager.scheduleTicks(0, PRI_LOW, EVT_LIFO, new StartCaptureNetworkTarget(this), captureHandle);
+		}
 
 		this.hasRunStartup = true;
 	}
@@ -183,8 +185,10 @@ public class VideoRecorderEntity extends DisplayEntity {
 		if (!EventManager.hasCurrent())
 			return;
 		// Start the capture if we are already running and we set the input to true
-		if (hasRunStartup && saveVideo.getValue())
-			EventManager.scheduleTicks(0, PRI_LOW, EVT_LIFO, new CaptureNetworkTarget(this), null);
+		if (hasRunStartup && saveVideo.getValue()) {
+			EventManager.killEvent(captureHandle);
+			EventManager.scheduleTicks(0, PRI_LOW, EVT_LIFO, new StartCaptureNetworkTarget(this), captureHandle);
+		}
 	}
 
 	private static class CaptureNetworkTarget extends EntityTarget<VideoRecorderEntity> {
@@ -197,18 +201,27 @@ public class VideoRecorderEntity extends DisplayEntity {
 			ent.doCaptureNetwork();
 		}
 	}
+
+	private static class StartCaptureNetworkTarget extends EntityTarget<VideoRecorderEntity> {
+		StartCaptureNetworkTarget(VideoRecorderEntity rec) {
+			super(rec, "StartCaptureNetwork");
+		}
+
+		@Override
+		public void process() {
+			double simTime = EventManager.simSeconds();
+			double startTime = ent.captureStartTime.getNextSample(ent, simTime);
+
+			// If the capture network is already in progress, then stop the previous network
+			EventManager.killEvent(ent.captureHandle);
+			EventManager.scheduleSeconds(startTime, PRI_LOW, EVT_LIFO, new CaptureNetworkTarget(ent), ent.captureHandle);
+		}
+	}
+
 	/**
 	 * Capture JPEG images of the screen at regular simulated intervals
 	 */
 	public void doCaptureNetwork() {
-		JaamSimModel simModel = getJaamSimModel();
-		double simTime = EventManager.simSeconds();
-		double startTime = captureStartTime.getNextSample(this, simTime);
-
-		// If the capture network is already in progress, then stop the previous network
-		EventManager.killEvent(captureHandle);
-		EventManager.waitSeconds(startTime, PRI_LOW, EVT_LIFO, captureHandle);
-
 		if (!RenderManager.isGood()) {
 			RenderManager.initialize(false);
 		}
@@ -223,6 +236,8 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		ArrayList<View> views = captureViews.getValue();
 
+		JaamSimModel simModel = getJaamSimModel();
+		double simTime = EventManager.simSeconds();
 		String fileName = simModel.getReportFileName("_" + videoName.getValue());
 		if (fileName == null)
 			JOptionPane.showMessageDialog(null, "Cannot create the file for the Video Recording.");
