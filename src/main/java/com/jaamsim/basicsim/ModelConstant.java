@@ -18,4 +18,5 @@ package com.jaamsim.basicsim;
 
 public interface ModelConstant<T> {
 	T generate();
+	void early_init(JaamSimModel sm);
 }

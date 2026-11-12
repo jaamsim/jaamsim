@@ -37,7 +37,6 @@ import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.SubModel;
-import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
@@ -533,7 +532,12 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		// Early Initialization
-		Threshold.clearUsers(this);
+		synchronized (constants) {
+			for (ModelConstant<?> each : constants.keySet()) {
+				each.early_init(this);
+			}
+		}
+
 		for (Entity each : this.getClonesOfIterator(Entity.class)) {
 			each.earlyInit();
 		}

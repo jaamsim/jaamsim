@@ -156,11 +156,17 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		return open;
 	}
 
-	public static final void clearUsers(JaamSimModel sm) {
-		sm.getConstant(Threshold.change_key).users.clear();
-	}
+	private static final ModelConstant<ThresholdChangedTarget> change_key = new ModelConstant<>() {
+		@Override
+		public ThresholdChangedTarget generate() {
+			return new ThresholdChangedTarget();
+		}
 
-	private static final ModelConstant<ThresholdChangedTarget> change_key = () -> { return new ThresholdChangedTarget(); };
+		@Override
+		public void early_init(JaamSimModel sm) {
+			sm.getConstant(this).users.clear();
+		}
+	};
 
 	private static class ThresholdChangedTarget extends ProcessTarget {
 		public final ArrayList<ThresholdUser> users = new ArrayList<>();

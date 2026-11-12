@@ -25,6 +25,7 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ModelConstant;
 import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.datatypes.IntegerVector;
@@ -122,7 +123,15 @@ public class View extends Entity {
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
-	public static final ModelConstant<ArrayList<View>> views_key = () -> { return new ArrayList<View>(); };
+	public static final ModelConstant<ArrayList<View>> views_key = new ModelConstant<> () {
+		@Override
+		public ArrayList<View> generate() {
+			return new ArrayList<View>();
+		}
+
+		@Override
+		public void early_init(JaamSimModel sm) {}
+	};
 
 	static {
 		defPos.fillWithEntriesOf(2, 0);
