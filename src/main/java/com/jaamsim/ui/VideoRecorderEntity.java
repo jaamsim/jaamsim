@@ -246,22 +246,36 @@ public class VideoRecorderEntity extends DisplayEntity {
 		VideoRecorder recorder = new VideoRecorder(views, fileName, width, height, numFrames,
 		                             saveImages.getValue(), saveVideo.getValue(), backgroundCol);
 
-		// Otherwise, start capturing
-		while (saveVideo.getValue() || saveImages.getValue()) {
+		EventManager.scheduleSeconds(0.0d, PRI_LOW, EVT_LIFO, new CaptureFramesTarget(this, recorder), captureHandle);
+	}
 
-			RenderManager.inst().blockOnScreenShot(recorder);
-			++numFramesWritten;
-
-			if (numFramesWritten == numFrames) {
-				break;
-			}
-
-			// Wait until the next time to capture a frame
-			// (priority 10 is used to allow higher priority events to complete first)
-			double interval = captureInterval.getNextSample(this, simTime);
-			EventManager.waitSeconds(interval, PRI_LOW, EVT_LIFO, captureHandle);
+	private static class CaptureFramesTarget extends EntityTarget<VideoRecorderEntity> {
+		private final VideoRecorder recorder;
+		CaptureFramesTarget(VideoRecorderEntity rec, VideoRecorder vid_rec) {
+			super(rec, "CaptureFramesNetwork");
+			recorder = vid_rec;
 		}
 
-		recorder.freeResources();
+		@Override
+		public void process() {
+			if (ent.saveVideo.getValue() || ent.saveImages.getValue()) {
+				RenderManager.inst().blockOnScreenShot(recorder);
+				ent.numFramesWritten++;
+			}
+			else {
+				recorder.freeResources();
+				return;
+			}
+
+			int numFrames = (int)ent.captureFrames.getNextSample(ent, EventManager.simSeconds());
+			if (ent.numFramesWritten == numFrames) {
+				recorder.freeResources();
+				return;
+			}
+
+			// Schedule next frame capture
+			double interval = ent.captureInterval.getNextSample(ent, EventManager.simSeconds());
+			EventManager.scheduleSeconds(interval, PRI_LOW, EVT_LIFO, this, ent.captureHandle);
+		}
 	}
 }
