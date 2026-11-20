@@ -567,9 +567,11 @@ public class ObjectSelector extends FrameBox {
 			}
 			else if (control && keyCode == KeyEvent.VK_Z) {
 				GUIFrame.getJaamSimModel().undo();
+				GUIFrame.updateUI();
 			}
 			else if (control && keyCode == KeyEvent.VK_Y) {
 				GUIFrame.getJaamSimModel().redoOrRepeat(currentEntity);
+				GUIFrame.updateUI();
 			}
 			else if (keyCode == KeyEvent.VK_F1) {
 				String topic = "";
@@ -579,6 +581,7 @@ public class ObjectSelector extends FrameBox {
 			}
 			else if (keyCode == KeyEvent.VK_F4) {
 				GUIFrame.getJaamSimModel().repeat(currentEntity);
+				GUIFrame.updateUI();
 			}
 		}
 

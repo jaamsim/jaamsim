@@ -701,6 +701,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				getJaamSimModel().undo();
+				GUIFrame.updateUI();
 			}
 		} );
 		editMenu.add( undoMenuItem );
@@ -718,6 +719,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			public void actionPerformed( ActionEvent event ) {
 				// Allow Ctrl+Y to perform both the 'redo' and 'repeat' actions
 				getJaamSimModel().redoOrRepeat(selectedEntity);
+				GUIFrame.updateUI();
 			}
 		} );
 		editMenu.add( redoMenuItem );
@@ -734,6 +736,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				getJaamSimModel().repeat(selectedEntity);
+				GUIFrame.updateUI();
 			}
 		} );
 		editMenu.add( repeatMenuItem );
@@ -1557,6 +1560,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				getJaamSimModel().undo();
+				GUIFrame.updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -1585,6 +1589,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 							@Override
 							public void actionPerformed( ActionEvent event ) {
 								getJaamSimModel().undo(num);
+								GUIFrame.updateUI();
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -1610,6 +1615,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				getJaamSimModel().redoOrRepeat(selectedEntity);
+				GUIFrame.updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -1639,6 +1645,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 							@Override
 							public void actionPerformed( ActionEvent event ) {
 								getJaamSimModel().redo(num);
+								GUIFrame.updateUI();
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -3535,6 +3542,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void run() {
 				getJaamSimModel().undo();
+				GUIFrame.updateUI();
 			}
 		});
 	}
@@ -3544,6 +3552,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void run() {
 				getJaamSimModel().redo();
+				GUIFrame.updateUI();
 			}
 		});
 	}
@@ -3553,6 +3562,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void run() {
 				getJaamSimModel().repeat(selectedEntity);
+				GUIFrame.updateUI();
 			}
 		});
 	}
@@ -3562,6 +3572,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void run() {
 				getJaamSimModel().redoOrRepeat(selectedEntity);
+				GUIFrame.updateUI();
 			}
 		});
 	}

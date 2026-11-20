@@ -1864,9 +1864,6 @@ public class JaamSimModel implements EventTimeListener {
 				cmd.undo();
 			}
 		}
-		GUIListener gui = getGUIListener();
-		if (gui != null)
-			gui.updateAll();
 	}
 
 	public boolean canRedo() {
@@ -1893,9 +1890,6 @@ public class JaamSimModel implements EventTimeListener {
 				cmd.execute();
 			}
 		}
-		GUIListener gui = getGUIListener();
-		if (gui != null)
-			gui.updateAll();
 	}
 
 	private Command getRepeatCommand(Entity ent) {
