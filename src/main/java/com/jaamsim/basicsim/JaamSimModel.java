@@ -1269,6 +1269,11 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
+	/**
+	 * Returns the data object for the given key or generates a new object for the key if none currently exists.
+	 * Cannot return null, a valid object must be generated for each key.
+	 * @return the data object associated with the given key
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getData(ModelDataKey<T> key) {
 		if (key == null) throw new ErrorException("Null key not allowed for model constants");
@@ -1278,6 +1283,8 @@ public class JaamSimModel implements EventTimeListener {
 			ret = (T)constants.get(key);
 			if (ret == null) {
 				ret = key.generateData();
+				if (ret == null)
+					throw new ErrorException("Cannot generate a null model data object");
 				constants.put(key, ret);
 			}
 		}

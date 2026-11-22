@@ -17,6 +17,15 @@
 package com.jaamsim.basicsim;
 
 public interface ModelDataKey<T> {
+	/**
+	 * Generate a new data object when none has been previously defined for a model.
+	 * @return a new model data object to associate with this key
+	 */
 	T generateData();
+
+	/**
+	 * Initialize the data object to default, called in early model initialization.
+	 * @param sm the JaamSimModel to initialize data for
+	 */
 	void early_init(JaamSimModel sm);
 }
