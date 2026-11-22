@@ -507,7 +507,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			View activeView = RenderManager.getActiveView();
 
 			// Re-open the view windows
-			ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
+			ArrayList<View> views = getJaamSimModel().getData(View.views_key);
 			synchronized (views) {
 				for (int i = 0; i < views.size(); i++) {
 					View v = views.get(i);
@@ -4066,7 +4066,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		if (!RenderManager.isGood())
 			return;
 		boolean iconified = isIconified();
-		ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
+		ArrayList<View> views = getJaamSimModel().getData(View.views_key);
 		synchronized (views) {
 			for (View v : views) {
 				boolean isVisible = RenderManager.inst().isVisible(v);
@@ -4085,7 +4085,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	public void updateViewSizeLocation() {
-		ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
+		ArrayList<View> views = getJaamSimModel().getData(View.views_key);
 		synchronized (views) {
 			for (View v : views) {
 				final Frame window = RenderManager.getOpenWindowForView(v);
@@ -4099,7 +4099,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 	}
 
 	public ArrayList<View> getViews() {
-		ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
+		ArrayList<View> views = getJaamSimModel().getData(View.views_key);
 		synchronized (views) {
 			return new ArrayList<>(views);
 		}
@@ -4167,7 +4167,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				if (!RenderManager.isGood())
 					return;
 
-				ArrayList<View> views = getJaamSimModel().getConstant(View.views_key);
+				ArrayList<View> views = getJaamSimModel().getData(View.views_key);
 				synchronized (views) {
 					for (View v : views) {
 						RenderManager.inst().setResizable(v, bool);

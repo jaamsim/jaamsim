@@ -16,7 +16,7 @@
  */
 package com.jaamsim.basicsim;
 
-public interface ModelConstant<T> {
-	T generate();
+public interface ModelDataKey<T> {
+	T generateData();
 	void early_init(JaamSimModel sm);
 }

@@ -70,7 +70,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 	private final HashMap<Class<? extends Unit>, Unit> preferredUnit = new HashMap<>();
-	private final HashMap<ModelConstant<?>, Object> constants = new HashMap<>();
+	private final HashMap<ModelDataKey<?>, Object> constants = new HashMap<>();
 
 	// Note, entityList is an empty list node used to identify the end of the list
 	// The first real entity is at entityList.next.ent
@@ -533,7 +533,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Early Initialization
 		synchronized (constants) {
-			for (ModelConstant<?> each : constants.keySet()) {
+			for (ModelDataKey<?> each : constants.keySet()) {
 				each.early_init(this);
 			}
 		}
@@ -1270,14 +1270,14 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getConstant(ModelConstant<T> key) {
+	public <T> T getData(ModelDataKey<T> key) {
 		if (key == null) throw new ErrorException("Null key not allowed for model constants");
 
 		T ret;
 		synchronized (constants) {
 			ret = (T)constants.get(key);
 			if (ret == null) {
-				ret = key.generate();
+				ret = key.generateData();
 				constants.put(key, ret);
 			}
 		}

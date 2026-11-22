@@ -26,7 +26,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.basicsim.ModelConstant;
+import com.jaamsim.basicsim.ModelDataKey;
 import com.jaamsim.basicsim.WindowDefaults;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityInput;
@@ -123,9 +123,9 @@ public class View extends Entity {
 	private static final IntegerVector defPos = new IntegerVector(2);
 	private static final IntegerVector defSize = new IntegerVector(2);
 
-	public static final ModelConstant<ArrayList<View>> views_key = new ModelConstant<> () {
+	public static final ModelDataKey<ArrayList<View>> views_key = new ModelDataKey<>() {
 		@Override
-		public ArrayList<View> generate() {
+		public ArrayList<View> generateData() {
 			return new ArrayList<View>();
 		}
 
@@ -212,7 +212,7 @@ public class View extends Entity {
 
 	public View() {
 		viewID = viewCounter.incrementAndGet();
-		ArrayList<View> views = getJaamSimModel().getConstant(views_key);
+		ArrayList<View> views = getJaamSimModel().getData(views_key);
 		synchronized (views) {
 			views.add(this);
 		}
@@ -236,7 +236,7 @@ public class View extends Entity {
 	@Override
 	public void kill() {
 		super.kill();
-		ArrayList<View> views = getJaamSimModel().getConstant(views_key);
+		ArrayList<View> views = getJaamSimModel().getData(views_key);
 		synchronized (views) {
 			views.remove(this);
 		}
@@ -250,7 +250,7 @@ public class View extends Entity {
 	@Override
 	public void restore() {
 		super.restore();
-		ArrayList<View> views = getJaamSimModel().getConstant(views_key);
+		ArrayList<View> views = getJaamSimModel().getData(views_key);
 		synchronized (views) {
 			views.add(this);
 		}

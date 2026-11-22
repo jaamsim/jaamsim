@@ -24,7 +24,7 @@ import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.basicsim.ModelConstant;
+import com.jaamsim.basicsim.ModelDataKey;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
@@ -82,7 +82,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	}
 
 	public Threshold() {
-		change_target = getJaamSimModel().getConstant(change_key);
+		change_target = getJaamSimModel().getData(change_key);
 		userList = new ArrayList<>();
 		open = true;
 	}
@@ -156,15 +156,15 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		return open;
 	}
 
-	private static final ModelConstant<ThresholdChangedTarget> change_key = new ModelConstant<>() {
+	private static final ModelDataKey<ThresholdChangedTarget> change_key = new ModelDataKey<>() {
 		@Override
-		public ThresholdChangedTarget generate() {
+		public ThresholdChangedTarget generateData() {
 			return new ThresholdChangedTarget();
 		}
 
 		@Override
 		public void early_init(JaamSimModel sm) {
-			sm.getConstant(this).users.clear();
+			sm.getData(this).users.clear();
 		}
 	};
 
