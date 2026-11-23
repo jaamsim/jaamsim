@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
@@ -56,6 +59,21 @@ public class NamedExpression {
 		}
 		return String.format("{ %s  0[%s]  %s }",
 				getName(), Unit.getSIUnit(unitType), unitType.getSimpleName());
+	}
+
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		try {
+			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
+			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
+	}
+
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		try {
+			ExpParser.appendEntityReferences(exp, list);
+		}
+		catch (ExpError e) {}
 	}
 
 }

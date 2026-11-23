@@ -92,6 +92,11 @@ public class ColourProvInput extends Input<ColourProvider> {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		value.replaceEntityReferences(oldEnt, newEnt);
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		value.appendEntityReferences(list);
 	}

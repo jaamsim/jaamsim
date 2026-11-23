@@ -35,6 +35,9 @@ public class Vec3dProvConstant implements Vec3dProvider {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {}
 
 }

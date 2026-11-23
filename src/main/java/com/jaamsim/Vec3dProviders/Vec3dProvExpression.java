@@ -88,6 +88,14 @@ public class Vec3dProvExpression implements Vec3dProvider {
 		}
 	}
 
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		try {
+			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
+			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
+	}
+
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		try {

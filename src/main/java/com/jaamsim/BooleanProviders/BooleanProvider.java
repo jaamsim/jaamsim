@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2022-2023 JaamSim Software Inc.
+ * Copyright (C) 2022-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,16 @@
  */
 package com.jaamsim.BooleanProviders;
 
+import java.util.ArrayList;
+
 import com.jaamsim.basicsim.Entity;
 
 public interface BooleanProvider {
+
 	public boolean getNextBoolean(Entity thisEnt, double simTime);
+
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt);
+
+	public void appendEntityReferences(ArrayList<Entity> list);
+
 }

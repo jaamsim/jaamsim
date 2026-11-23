@@ -146,6 +146,18 @@ public class InterfaceEntityListInput<T> extends ArrayListInput<T> {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return;
+		for (int i = 0; i < value.size(); i++) {
+			if (value.get(i) == oldEnt) {
+				value.set(i, (T) newEnt);
+			}
+		}
+	}
+
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)

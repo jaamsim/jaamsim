@@ -131,6 +131,24 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return;
+		for (int i = 0; i < value.size(); i++) {
+			if (value.get(i) instanceof StringProvSample) {
+				StringProvSample spsamp = (StringProvSample) value.get(i);
+				if (spsamp.getSampleProvider() == oldEnt && newEnt instanceof SampleProvider) {
+					value.set(i, new StringProvSample((SampleProvider) newEnt));
+				}
+			}
+
+			else if (value.get(i) instanceof StringProvExpression) {
+				((StringProvExpression) value.get(i)).replaceEntityReferences(oldEnt, newEnt);
+			}
+		}
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;

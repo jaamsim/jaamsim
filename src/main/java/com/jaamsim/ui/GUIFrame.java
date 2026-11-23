@@ -111,6 +111,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Commands.ListCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
@@ -753,6 +754,13 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				if (RenderManager.isGood()) {
+					ArrayList<DisplayEntity> list = RenderManager.inst().getSelectedEntityList();
+					if (!list.isEmpty()) {
+						copyAction(list);
+						return;
+					}
+				}
 				copyAction(selectedEntity);
 			}
 		} );
@@ -3702,7 +3710,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		deleteMenuItem.setEnabled(bool);
 
 		bool = ent instanceof EditableText && ((EditableText) ent).isEditMode()
-				|| GUIFrame.getInstance().getEntityFromClipboard() != null;
+				|| !GUIFrame.getInstance().getEntityListFromClipboard().isEmpty();
 		pasteButton.setEnabled(bool);
 		pasteMenuItem.setEnabled(bool);
 	}
@@ -4820,6 +4828,16 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		return true;
 	}
 
+	public void copyAction(ArrayList<DisplayEntity> list) {
+		if (list.isEmpty())
+			return;
+		if (list.size() == 1) {
+			copyAction(list.get(0));
+			return;
+		}
+		copyToClipboard(list);
+	}
+
 	public void copyAction(Entity ent) {
 		if (ent == null)
 			return;
@@ -4837,14 +4855,14 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			updateUI();
 			return;
 		}
-		pasteEntityFromClipboard(false);
+		pasteEntityListFromClipboard(false);
 	}
 
 	public void pasteCloneAction(Entity ent) {
 		if (ent instanceof EditableText && ((EditableText) ent).isEditMode()) {
 			return;
 		}
-		pasteEntityFromClipboard(true);
+		pasteEntityListFromClipboard(true);
 	}
 
 	public void deleteAction(Entity ent) {
@@ -4862,6 +4880,16 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		catch (ErrorException e) {
 			GUIFrame.showErrorDialog("User Error", e.getMessage());
 		}
+	}
+
+	private void copyToClipboard(ArrayList<DisplayEntity> list) {
+		StringBuilder sb = new StringBuilder();
+		for (DisplayEntity ent : list) {
+			if (!sb.isEmpty())
+				sb.append(" ");
+			sb.append(ent.getName());
+		}
+		copyToClipboard(sb.toString());
 	}
 
 	private void copyToClipboard(Entity ent) {
@@ -4885,109 +4913,189 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		}
 	}
 
-	public Entity getEntityFromClipboard() {
-		String name = getStringFromClipboard();
-		if (name == null)
-			return null;
-		return getJaamSimModel().getNamedEntity(name);
+	public ArrayList<Entity> getEntityListFromClipboard() {
+		String str = getStringFromClipboard();
+		if (str == null)
+			return new ArrayList<>();
+		JaamSimModel sim = getJaamSimModel();
+		String[] list = str.split(" ");
+		ArrayList<Entity> ret = new ArrayList<>(list.length);
+		for (String name : list) {
+			Entity ent = sim.getNamedEntity(name);
+			if (ent == null || ent == sim.getSimulation())
+				continue;
+			ret.add(ent);
+		}
+		return ret;
 	}
 
-	private void pasteEntityFromClipboard(boolean isClone) {
-		Entity ent = getEntityFromClipboard();
-		JaamSimModel sim = getJaamSimModel();
-		if (ent == null || ent == sim.getSimulation())
+	private void pasteEntityListFromClipboard(boolean isClone) {
+		ArrayList<Entity> list = getEntityListFromClipboard();
+		if (list.isEmpty())
 			return;
 
-		Entity proto = null;
-		if (isClone)
-			proto = ent;
-
-		// Identify the region for the new entity
+		// Identify the region for the new entities
 		Region region = null;
-		if (selectedEntity != null && selectedEntity instanceof DisplayEntity
-				&& !(ent instanceof OverlayEntity)) {
+		if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
 			if (selectedEntity instanceof Region)
 				region = (Region) selectedEntity;
 			else
 				region = ((DisplayEntity) selectedEntity).getCurrentRegion();
 		}
 
-		// Create the new entity
-		String otName = ent.getObjectType().getName();
-		int length = otName.length();
-		String localName = ent.getLocalName();
-		String copyName = localName;
-		String sep = "";
-		if (!isClone) {
-			sep = "_Copy";
-			if (localName.length() >= length && localName.substring(0, length).equals(otName)) {
+		JaamSimModel sim = getJaamSimModel();
+		DisplayEntity firstDEnt = null;
+		DisplayEntity firstCopiedDEnt = null;
+
+		// Loop through the new entities to be created
+		ArrayList<Command> cmdList = new ArrayList<>();
+		ArrayList<String> copyNameList = new ArrayList<>(list.size());
+		for (Entity ent : list) {
+
+			// If a clone is to be created, then set the prototype to the entity
+			Entity proto = null;
+			if (isClone)
+				proto = ent;
+
+			// Select the names for the new entities
+			String otName = ent.getObjectType().getName();
+			int length = otName.length();
+			String localName = ent.getLocalName();
+			String copyName = localName;
+			String sep = "";
+			if (!isClone)
+				sep = "_Copy";
+
+			// If only a single entity is to be copied, use the default name if possible
+			if (!isClone && list.size() == 1
+					&& localName.length() >= length
+					&& localName.substring(0, length).equals(otName)) {
 				String str = localName.substring(length);
 				if (str.isEmpty() || Input.isInteger(str)) {
 					copyName = otName;
 					sep = "";
 				}
 			}
+
+			if (region != null && region.getParent() != null)
+				copyName = region.getParent().getName() + "." + copyName;
+			copyName = InputAgent.getUniqueName(sim, copyName, sep);
+			copyNameList.add(copyName);
+			cmdList.add(new DefineCommand(sim, ent.getClass(), proto, copyName));
 		}
-		if (region != null && region.getParent() != null)
-			copyName = region.getParent().getName() + "." + copyName;
-		copyName = InputAgent.getUniqueName(sim, copyName, sep);
-		sim.storeAndExecute(new DefineCommand(sim, ent.getClass(), proto, copyName));
+		sim.storeAndExecute(new ListCommand(cmdList));
 
-		// Copy the inputs
-		Entity copiedEnt = sim.getNamedEntity(copyName);
-		if (!isClone)
-			copiedEnt.copyInputs(ent);
-
-		// Set the region
-		if (region != null)
-			InputAgent.applyArgs(copiedEnt, "Region", region.getName());
-
-		// Set the position
-		if (ent instanceof DisplayEntity) {
-			DisplayEntity dEnt = (DisplayEntity) copiedEnt;
-
-			// If an entity is not selected, paste the new entity at the point of interest
-			if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)
-					|| selectedEntity instanceof Region) {
-				if (RenderManager.isGood())
-					RenderManager.inst().dragEntityToMousePosition(dEnt);
-			}
-
-			// If an entity is selected, paste the new entity next to the selected one
-			else {
-				int x = 0;
-				int y = 0;
-				if (selectedEntity instanceof OverlayEntity) {
-					OverlayEntity olEnt = (OverlayEntity) selectedEntity;
-					x = olEnt.getScreenPosition().get(0) + 10;
-					y = olEnt.getScreenPosition().get(1) + 10;
-				}
-				DisplayEntity selectedDispEnt = (DisplayEntity) selectedEntity;
-				Vec3d pos = selectedDispEnt.getGlobalPosition();
-				pos.x += 0.5d * selectedDispEnt.getSize().x;
-				pos.y -= 0.5d * selectedDispEnt.getSize().y;
-				pos = dEnt.getLocalPosition(pos);
-				if (sim.getSimulation().isSnapToGrid())
-					pos = sim.getSimulation().getSnapGridPosition(pos);
-				try {
-					dEnt.dragged(x, y, pos);
-				}
-				catch (InputErrorException e) {}
-			}
+		// Build a list of copied entities
+		ArrayList<Entity> copiedEntityList = new ArrayList<>(list.size());
+		for (int i = 0; i < list.size(); i++) {
+			String copyName = copyNameList.get(i);
+			Entity copiedEnt = sim.getNamedEntity(copyName);
+			copiedEntityList.add(copiedEnt);
 		}
 
-		// Copy the children
-		if (!isClone)
-			copyChildren(ent, copiedEnt);
+		// Loop through the copied entities
+		Vec3d offset = new Vec3d();
+		for (int i = 0; i < list.size(); i++) {
+			Entity ent = list.get(i);
+			Entity copiedEnt = copiedEntityList.get(i);
 
-		// If the entity has been copied to a SubModel, update its clones
-		if (copiedEnt.getParent() instanceof SubModel) {
-			SubModel sub = (SubModel) copiedEnt.getParent();
-			sub.updateClones();
+			// Copy the inputs
+			if (!isClone)
+				copiedEnt.copyInputs(ent);
+
+			// Set the region
+			if (region != null && !(copiedEnt instanceof OverlayEntity))
+				InputAgent.applyArgs(copiedEnt, "Region", region.getName());
+
+			// Set the position
+			if (ent instanceof DisplayEntity) {
+				DisplayEntity dEnt = (DisplayEntity) ent;
+				DisplayEntity copiedDEnt = (DisplayEntity) copiedEnt;
+
+				// Is this the first DisplayEntity to be positioned?
+				if (firstDEnt == null) {
+					firstDEnt = dEnt;
+					firstCopiedDEnt = copiedDEnt;
+
+					// If an entity is not selected, paste the new entity at the point of interest
+					if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)
+							|| selectedEntity instanceof Region) {
+						if (RenderManager.isGood())
+							RenderManager.inst().dragEntityToMousePosition(copiedDEnt);
+					}
+
+					// If an entity is selected, paste the new entity next to the selected one
+					else {
+						int x = 0;
+						int y = 0;
+						if (selectedEntity instanceof OverlayEntity) {
+							OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+							x = olEnt.getScreenPosition().get(0) + 10;
+							y = olEnt.getScreenPosition().get(1) + 10;
+						}
+						DisplayEntity selectedDispEnt = (DisplayEntity) selectedEntity;
+						Vec3d pos = selectedDispEnt.getGlobalPosition();
+						pos.x += 0.5d * selectedDispEnt.getSize().x;
+						pos.y -= 0.5d * selectedDispEnt.getSize().y;
+						pos = copiedDEnt.getLocalPosition(pos);
+						if (sim.getSimulation().isSnapToGrid())
+							pos = sim.getSimulation().getSnapGridPosition(pos);
+						try {
+							copiedDEnt.dragged(x, y, pos);
+						}
+						catch (InputErrorException e) {}
+					}
+
+					// Save the vector from the original entity to the copied entity
+					offset = firstCopiedDEnt.getGlobalPosition();
+					offset.sub3(firstDEnt.getGlobalPosition());
+				}
+
+				// Second entity and subsequent ones are positioned relative to the first one
+				else {
+					int x = 0;
+					int y = 0;
+					Vec3d pos = dEnt.getPosition();
+					if (!list.contains(dEnt.getRelativeEntity()))
+						pos.add3(offset);
+
+					if (dEnt instanceof OverlayEntity && firstDEnt instanceof OverlayEntity) {
+						x = ((OverlayEntity) dEnt).getScreenPosition().get(0) - ((OverlayEntity) firstDEnt).getScreenPosition().get(0)
+								+ ((OverlayEntity) firstCopiedDEnt).getScreenPosition().get(0);
+						y = ((OverlayEntity) dEnt).getScreenPosition().get(1) - ((OverlayEntity) firstDEnt).getScreenPosition().get(1)
+								+ ((OverlayEntity) firstCopiedDEnt).getScreenPosition().get(1);
+					}
+					try {
+						copiedDEnt.dragged(x, y, pos);
+					}
+					catch (InputErrorException e) {}
+				}
+			}
+
+			// Copy the children
+			if (!isClone)
+				copyChildren(ent, copiedEnt);
+
+			// If the entity has been copied to a SubModel, update its clones
+			if (copiedEnt.getParent() instanceof SubModel) {
+				SubModel sub = (SubModel) copiedEnt.getParent();
+				sub.updateClones();
+			}
+		}
+
+		// Replace any inputs that reference the original entities that were copied
+		for (Entity copiedEnt : copiedEntityList) {
+			for (Input<?> in : copiedEnt.getEditableInputs()) {
+				if (in.isDefault())
+					continue;
+				for (int i = 0; i < list.size(); i++) {
+					in.replaceEntityReferences(list.get(i), copiedEntityList.get(i));
+				}
+			}
 		}
 
 		// Select the new entity
-		FrameBox.setSelectedEntity(copiedEnt, false);
+		FrameBox.setSelectedEntity(copiedEntityList.get(0), false);
 	}
 
 	public void copyChildren(Entity parent0, Entity parent1) {
@@ -5072,11 +5180,11 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		});
 	}
 
-	public void invokeCopy() {
+	public void invokeCopy(ArrayList<DisplayEntity> list) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				copyAction(selectedEntity);
+				copyAction(list);
 			}
 		});
 	}

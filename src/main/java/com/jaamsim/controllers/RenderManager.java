@@ -173,7 +173,8 @@ public class RenderManager implements DragSourceListener {
 	private JPopupMenu lastPopup;
 
 	private final ArrayList<DisplayEntity> selectedEntityList = new ArrayList<>();
-	private Vec3d mousePosition = new Vec3d();
+	private Vec3d mousePosition = new Vec3d();  // present location of the mouse on the xy-plane
+	private final Vec3d clickPosition = new Vec3d();  // location on the xy-plane for last mouse click
 	private int mouseWindowID = -1;  // window containing the present mouse position
 
 	private long simTick = 0;
@@ -669,17 +670,21 @@ public class RenderManager implements DragSourceListener {
 
 		// If no movable entity is found, set the selected entity to null
 		if (ent == null || !ent.isMovable()) {
+			if (controlDown)
+				return;
 			FrameBox.setSelectedEntity(null, false);
 			GUIFrame.updateUI();
 			return;
 		}
 
-		// Select the entity
+		// If Control is pressed and another entity is already selected, then add the entity to the list
 		if (controlDown && isEntitySelected()) {
 			addSelectedEntity(ent);
 			GUIFrame.updateUI();
 			return;
 		}
+
+		// Select the entity
 		FrameBox.setSelectedEntity(ent, true);
 
 		// Handle the mouse click for an Overlay entity
@@ -1094,9 +1099,21 @@ public class RenderManager implements DragSourceListener {
 		if (!isSelectionValid(ent))
 			return;
 		selectedEntityList.add(ent);
+		Collections.sort(selectedEntityList, relativeEntityComparator);
 	}
 
-	private ArrayList<DisplayEntity> getSelectedEntityList() {
+	public static final Comparator<DisplayEntity> relativeEntityComparator = new Comparator<DisplayEntity>() {
+		@Override
+		public int compare(DisplayEntity ent1, DisplayEntity ent2) {
+			if (ent1.getRelativeEntity() == ent2)
+				return 1;
+			if (ent2.getRelativeEntity() == ent1)
+				return -1;
+			return 0;
+		}
+	};
+
+	public ArrayList<DisplayEntity> getSelectedEntityList() {
 		return selectedEntityList;
 	}
 
@@ -1119,35 +1136,20 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		DisplayEntity selectedEntity = getSelectedEntity();
 
+		// Selected entities must be either all OverlayEntities or all not OverlayEntities
 		if (ent instanceof OverlayEntity && !(selectedEntity instanceof OverlayEntity))
 			return false;
 
 		if (!(ent instanceof OverlayEntity) && selectedEntity instanceof OverlayEntity)
 			return false;
 
+		// All selected entities must be located in the same region
 		if (ent.getCurrentRegion() != selectedEntity.getCurrentRegion())
 			return false;
 
+		// All selected entities must have the same parent entity
 		if (ent.getParent() != selectedEntity.getParent())
 			return false;
-
-		// Is the new entity or any entities in its chain of relative entities already selected?
-		DisplayEntity e = ent;
-		while (e != null) {
-			if (selectedEntityList.contains(e))
-				return false;
-			e = e.getRelativeEntity();
-		}
-
-		// Is the new entity a relative entity of any entities that are already selected?
-		for (DisplayEntity de : selectedEntityList) {
-			e = de.getRelativeEntity();
-			while (e != null) {
-				if (e == ent)
-					return false;
-				e = e.getRelativeEntity();
-			}
-		}
 
 		return true;
 	}
@@ -1355,7 +1357,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d globalOffset = selectedEntity.getGlobalPosition(localPos);
 		globalOffset.sub3(selectedEntity.getGlobalPosition());
 		for (DisplayEntity ent : getSelectedEntityList()) {
-			if (ent == selectedEntity)
+			if (ent == selectedEntity || getSelectedEntityList().contains(ent.getRelativeEntity()))
 				continue;
 			pos = ent.getGlobalPosition();
 			pos.add3(globalOffset);
@@ -1552,7 +1554,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d globalOffset = globalPts.get(0);
 		globalOffset.sub3(selectedEntity.getGlobalPosition(selectedEntity.getPoints().get(0)));
 		for (DisplayEntity ent : getSelectedEntityList()) {
-			if (ent == selectedEntity)
+			if (ent == selectedEntity || getSelectedEntityList().contains(ent.getRelativeEntity()))
 				continue;
 			if (!ent.usePointsInput()) {
 				Vec3d pos = ent.getGlobalPosition();
@@ -1712,10 +1714,19 @@ public class RenderManager implements DragSourceListener {
 		return (id < 0); // For now all negative IDs are mouse handles, this may change
 	}
 
+	public void setClickPosition(Vec3d pos) {
+		clickPosition.set3(pos);
+	}
+
 	public boolean handleMouseButton(int windowID, int x, int y, int button, boolean isDown, int modifiers) {
 		DisplayEntity selectedEntity = getSelectedEntity();
 
+		// Save the location where the mouse button was released
+		if (!isDown)
+			setClickPosition(mousePosition);
+
 		if (button != 1) { return false; }
+
 		if (!isDown) {
 			// Click released
 			dragHandleID = 0;
@@ -2273,8 +2284,9 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		}
 		if (control && keyCode == KeyEvent.VK_C) {
-			if (selectedEntity != null) {
-				GUIFrame.getInstance().invokeCopy();
+			ArrayList<DisplayEntity> list = rm.getSelectedEntityList();
+			if (!list.isEmpty()) {
+				GUIFrame.getInstance().invokeCopy(list);
 				return true;
 			}
 		}
@@ -2287,6 +2299,8 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity != null) {
 			boolean bool = false;
 			for (DisplayEntity ent : rm.getSelectedEntityList()) {
+				if (rm.getSelectedEntityList().contains(ent.getRelativeEntity()))
+					continue;
 				boolean b = ent.handleKeyPressed(keyCode, keyChar, shift, control, alt);
 				bool = bool || b;
 			}
@@ -2325,10 +2339,7 @@ public class RenderManager implements DragSourceListener {
 	 * @param ent - entity to be positioned
 	 */
 	public void dragEntityToMousePosition(DisplayEntity ent) {
-		View view = _getActiveView();
-		if (view == null)
-			return;
-		Vec3d pos = view.getPointOfInterest();
+		Vec3d pos = new Vec3d(clickPosition);
 		pos = ent.getLocalPosition(pos);
 		Simulation simulation = ent.getSimulation();
 		if (simulation.isSnapToGrid()) {

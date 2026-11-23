@@ -93,6 +93,14 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 		}
 	}
 
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		try {
+			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
+			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
+	}
+
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		try {
 			ExpParser.appendEntityReferences(exp, list);

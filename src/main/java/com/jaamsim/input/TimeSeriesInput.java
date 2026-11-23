@@ -116,6 +116,13 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == oldEnt && newEnt instanceof TimeSeriesProvider) {
+			value = (TimeSeriesProvider) newEnt;
+		}
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value instanceof Entity) {
 			final Entity entref = (Entity)value;

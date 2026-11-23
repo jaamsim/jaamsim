@@ -35,6 +35,9 @@ public class ColourProvConstant implements ColourProvider {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {}
 
 	@Override

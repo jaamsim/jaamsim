@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2022-2023 JaamSim Software Inc.
+ * Copyright (C) 2022-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,16 @@ public class BooleanProvExpression implements BooleanProvider {
 		return ret;
 	}
 
+	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		try {
+			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
+			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		try {
 			ExpParser.appendEntityReferences(exp, list);

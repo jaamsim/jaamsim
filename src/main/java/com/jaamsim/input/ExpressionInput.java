@@ -111,6 +111,17 @@ public class ExpressionInput extends Input<Expression> {
 	}
 
 	@Override
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		if (value == null)
+			return;
+		try {
+			ExpParser.replaceEntityReferences(value, oldEnt, newEnt);
+			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;

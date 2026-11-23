@@ -1163,7 +1163,7 @@ public class DisplayEntity extends Entity implements DragAndDropable {
 		// Polyline objects
 		Vec3d dist = new Vec3d(newPos);
 		ArrayList<Vec3d> pts = pointsInput.getValue();
-		dist.sub3(pts.get(0));
+		dist.sub3(getPosition());
 		KeywordIndex kw = KeywordIndex.formatPointsInputs(this, pointsInput.getKeyword(), pts, dist);
 		InputAgent.apply(this, kw);
 	}

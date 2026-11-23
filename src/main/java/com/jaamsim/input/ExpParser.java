@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1331,6 +1331,59 @@ public class ExpParser {
 	public static void appendEntityReferences(ExpNode node, ArrayList<Entity> list) throws ExpError {
 		EntityListBuilder elb = new EntityListBuilder(list);
 		node.walk(elb);
+	}
+
+	private static class EntityReferenceReplacer implements ExpressionWalker {
+
+		private Entity oldEnt;
+		private Entity newEnt;
+
+		private EntityReferenceReplacer(Entity oldEnt, Entity newEnt) {
+			this.oldEnt = oldEnt;
+			this.newEnt = newEnt;
+		}
+
+		@Override
+		public void visit(ExpNode exp) throws ExpError {
+			if (exp instanceof Constant) {
+				Constant cExp = (Constant) exp;
+				if (cExp.val.entVal == oldEnt) {
+					cExp.val = ExpResult.makeEntityResult(newEnt);
+				}
+			}
+		}
+
+		@Override
+		public ExpNode updateRef(ExpNode exp) throws ExpError {
+			return exp;
+		}
+	}
+
+	public static void replaceEntityReferences(Assignment assign, Entity oldEnt, Entity newEnt) throws ExpError {
+
+		// Entity whose attribute is to be assigned (left hand side)
+		if (assign.entExp != null)
+			ExpParser.replaceEntityReferences(assign.entExp, oldEnt, newEnt);
+
+		// Value to be assigned to the attribute (right hand side)
+		if (assign.valueExp != null)
+			ExpParser.replaceEntityReferences(assign.valueExp, oldEnt, newEnt);
+
+		// Any indices associated with the entity's attribute
+		if (assign.attribIndices != null) {
+			for (ExpNode node : assign.attribIndices) {
+				ExpParser.replaceEntityReferences(node, oldEnt, newEnt);
+			}
+		}
+	}
+
+	public static void replaceEntityReferences(Expression exp, Entity oldEnt, Entity newEnt) throws ExpError {
+		ExpParser.replaceEntityReferences(exp.rootNode, oldEnt, newEnt);
+	}
+
+	public static void replaceEntityReferences(ExpNode node, Entity oldEnt, Entity newEnt) throws ExpError {
+		EntityReferenceReplacer replacer = new EntityReferenceReplacer(oldEnt, newEnt);
+		node.walk(replacer);
 	}
 
 	public static void assertUnitType(Expression exp, Class<? extends Unit> unitType) {

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2023 JaamSim Software Inc.
+ * Copyright (C) 2023-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +86,14 @@ public class ColourProvExpression implements ColourProvider {
 		catch (ExpError e) {
 			throw new ErrorException(thisEnt, e);
 		}
+	}
+
+	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
+		try {
+			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
+			parseContext.replaceEntityReferences(oldEnt, newEnt);
+		}
+		catch (ExpError e) {}
 	}
 
 	@Override
