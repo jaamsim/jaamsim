@@ -1588,12 +1588,14 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param date - calendar date corresponding to zero simulation time
 	 */
 	public void setCalendar(boolean bool, SimDate date) {
-		if (calendarUsed)
-			reloadReqd = true;
+		synchronized (calendar) {
+			if (calendarUsed)
+				reloadReqd = true;
 
-		calendar.setGregorian(bool);
-		startMillis = calendar.getTimeInMillis(date.year, date.month - 1, date.dayOfMonth,
-				date.hourOfDay, date.minute, date.second, date.millisecond);
+			calendar.setGregorian(bool);
+			startMillis = calendar.getTimeInMillis(date.year, date.month - 1, date.dayOfMonth,
+					date.hourOfDay, date.minute, date.second, date.millisecond);
+		}
 	}
 
 	/**
@@ -1604,7 +1606,9 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return true if the model must be saved and reloaded
 	 */
 	public boolean isReloadReqd() {
-		return reloadReqd;
+		synchronized (calendar) {
+			return reloadReqd;
+		}
 	}
 
 	/**
@@ -1619,9 +1623,11 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return simulation time in seconds
 	 */
 	public double getCalendarSimTime(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
-		calendarUsed = true;
-		long millis = calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
-		return (millis - startMillis) / 1000.0d;
+		synchronized (calendar) {
+			calendarUsed = true;
+			long millis = calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
+			return (millis - startMillis) / 1000.0d;
+		}
 	}
 
 	/**
@@ -1639,9 +1645,9 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param simTime - simulation time in seconds
 	 * @return date for the specified time
 	 */
-	public synchronized Date getCalendarDate(double simTime) {
-		long millis = simTimeToCalendarMillis(simTime);
+	public Date getCalendarDate(double simTime) {
 		synchronized (calendar) {
+			long millis = simTimeToCalendarMillis(simTime);
 			calendar.setTimeInMillis(millis);
 			return calendar.getTime();
 		}
@@ -1653,8 +1659,8 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return SimDate for the specified time
 	 */
 	public SimDate getSimDate(double simTime) {
-		long millis = simTimeToCalendarMillis(simTime);
 		synchronized (calendar) {
+			long millis = simTimeToCalendarMillis(simTime);
 			calendar.setTimeInMillis(millis);
 			return calendar.getSimDate();
 		}
@@ -1666,8 +1672,8 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return day of week (Sunday = 1, Monday = 2, ..., Saturday = 7)
 	 */
 	public int getDayOfWeek(double simTime) {
-		long millis = simTimeToCalendarMillis(simTime);
 		synchronized (calendar) {
+			long millis = simTimeToCalendarMillis(simTime);
 			if (calendar.isGregorian()) {
 				calendar.setTimeInMillis(millis);
 				return calendar.get(Calendar.DAY_OF_WEEK);
