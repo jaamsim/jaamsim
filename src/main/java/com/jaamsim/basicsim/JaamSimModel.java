@@ -1799,13 +1799,7 @@ public class JaamSimModel implements EventTimeListener {
 		Command cmd = getRepeatCommand(ent);
 		if (cmd == null)
 			return;
-		try {
-			storeAndExecute(cmd);
-		}
-		catch (Exception e) {
-			if (gui != null)
-				gui.invokeErrorDialogBox("Input Error", e.getMessage());
-		}
+		storeAndExecute(cmd);
 	}
 
 	public boolean canRedoOrRepeat(Entity ent) {

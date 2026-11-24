@@ -570,7 +570,12 @@ public class ObjectSelector extends FrameBox {
 				GUIFrame.updateUI();
 			}
 			else if (control && keyCode == KeyEvent.VK_Y) {
-				GUIFrame.getJaamSimModel().redoOrRepeat(currentEntity);
+				try {
+					GUIFrame.getJaamSimModel().redoOrRepeat(currentEntity);
+				}
+				catch (Exception ex) {
+					GUIFrame.getInstance().invokeErrorDialogBox("Input Error", ex.getMessage());
+				}
 				GUIFrame.updateUI();
 			}
 			else if (keyCode == KeyEvent.VK_F1) {
@@ -580,7 +585,12 @@ public class ObjectSelector extends FrameBox {
 				HelpBox.getInstance().showDialog(topic);
 			}
 			else if (keyCode == KeyEvent.VK_F4) {
-				GUIFrame.getJaamSimModel().repeat(currentEntity);
+				try {
+					GUIFrame.getJaamSimModel().repeat(currentEntity);
+				}
+				catch (Exception ex) {
+					GUIFrame.getInstance().invokeErrorDialogBox("Input Error", ex.getMessage());
+				}
 				GUIFrame.updateUI();
 			}
 		}

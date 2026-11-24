@@ -719,7 +719,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				// Allow Ctrl+Y to perform both the 'redo' and 'repeat' actions
-				getJaamSimModel().redoOrRepeat(selectedEntity);
+				try {
+					GUIFrame.getJaamSimModel().redoOrRepeat(selectedEntity);
+				}
+				catch (Exception ex) {
+					GUIFrame.getInstance().invokeErrorDialogBox("Input Error", ex.getMessage());
+				}
 				GUIFrame.updateUI();
 			}
 		} );
@@ -736,7 +741,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				getJaamSimModel().repeat(selectedEntity);
+				try {
+					GUIFrame.getJaamSimModel().repeat(selectedEntity);
+				}
+				catch (Exception ex) {
+					GUIFrame.getInstance().invokeErrorDialogBox("Input Error", ex.getMessage());
+				}
 				GUIFrame.updateUI();
 			}
 		} );
@@ -3569,7 +3579,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getJaamSimModel().repeat(selectedEntity);
+				try {
+					GUIFrame.getJaamSimModel().repeat(selectedEntity);
+				}
+				catch (Exception ex) {
+					GUIFrame.getInstance().invokeErrorDialogBox("Input Error", ex.getMessage());
+				}
 				GUIFrame.updateUI();
 			}
 		});
@@ -3579,7 +3594,12 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getJaamSimModel().redoOrRepeat(selectedEntity);
+				try {
+					GUIFrame.getJaamSimModel().redoOrRepeat(selectedEntity);
+				}
+				catch (Exception ex) {
+					GUIFrame.getInstance().invokeErrorDialogBox("Input Error", ex.getMessage());
+				}
 				GUIFrame.updateUI();
 			}
 		});
