@@ -88,6 +88,7 @@ public class ColourProvExpression implements ColourProvider {
 		}
 	}
 
+	@Override
 	public void replaceEntityReferences(Entity oldEnt, Entity newEnt) {
 		try {
 			ExpParser.replaceEntityReferences(exp, oldEnt, newEnt);
