@@ -3048,7 +3048,7 @@ public class ExpOperators {
 					return null;
 				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
 				JaamSimModel simModel = thisEnt.getJaamSimModel();
-				int[] date = simModel.getSimDate(args[0].value).toArray();
+				int[] date = simModel.getSimulation().getSimDate(args[0].value);
 				ArrayList<ExpResult> list = new ArrayList<>(date.length);
 				for (int val : date) {
 					list.add( ExpResult.makeNumResult(val, DimensionlessUnit.class) );
@@ -3096,7 +3096,7 @@ public class ExpOperators {
 				int minute = (args.length > 4) ? (int) args[4].value : 0;
 				int second = (args.length > 5) ? (int) args[5].value : 0;
 				int ms = (args.length > 6) ? (int) args[6].value : 0;
-				double simTime = simModel.getCalendarSimTime(year, month - 1, dayOfMonth, hourOfDay, minute, second, ms);
+				double simTime = simModel.getSimulation().getCalendarSimTime(year, month - 1, dayOfMonth, hourOfDay, minute, second, ms);
 				return ExpResult.makeNumResult(simTime, TimeUnit.class);
 			}
 			@Override

@@ -1239,7 +1239,7 @@ public abstract class Input<T> {
 	public static double parseRFC8601DateTime(JaamSimModel simModel, String input) {
 		if (isRFC8601Date(input)) {
 			int[] date = parseRFC8601Date(input);
-			return simModel.getCalendarSimTime(date[0], date[1] - 1, date[2], date[3], date[4], date[5], date[6]);
+			return simModel.getSimulation().getCalendarSimTime(date[0], date[1] - 1, date[2], date[3], date[4], date[5], date[6]);
 		}
 
 		// hh:mm format

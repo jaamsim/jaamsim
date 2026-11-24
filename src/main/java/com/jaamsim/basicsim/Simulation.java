@@ -20,6 +20,7 @@ package com.jaamsim.basicsim;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Samples.SampleInput;
@@ -77,6 +78,11 @@ public class Simulation extends Entity {
 	@Keyword(description = "The calendar date and time that corresponds to zero simulation time.",
 	         exampleList = {"2000-09-01", "'2000-09-01 00:08:00'"} )
 	private final DateInput startDate;
+
+	private final SimCalendar calendar = new SimCalendar();
+	private long startMillis;  // start time in milliseonds from the epoch
+	private boolean calendarUsed;  // records whether the calendar has been used
+	private boolean reloadReqd;  // indicates that the simulation must be saved and reloaded
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
 	         exampleList = {"'[Queue1].QueueLength > 20'"})
@@ -789,7 +795,7 @@ public class Simulation extends Entity {
 		public void callback(Entity ent, Input<?> inp) {
 			Simulation sim = (Simulation)ent;
 
-			sim.getJaamSimModel().setCalendar(sim.isGregorianCalendar(), sim.getStartDate());
+			sim.setCalendar();
 		}
 	};
 
@@ -859,7 +865,7 @@ public class Simulation extends Entity {
 	public void validate() {
 		super.validate();
 
-		if (getJaamSimModel().isReloadReqd())
+		if (isReloadReqd())
 			throw new InputErrorException("Inputs to GregorianCalendar or StartDate have changed "
 					+ "AFTER the simulation calendar has been used to process another input.%n"
 					+ "Re-open the model to process these inputs in the correct order.");
@@ -937,14 +943,6 @@ public class Simulation extends Entity {
 	 */
 	public double getInitializationTime() {
 		return initializationTime.getNextSample(this, 0.0d);
-	}
-
-	/**
-	 * Returns whether a Gregorian calendar with leap years and leap seconds is used.
-	 * @return true if the calendar is Gregorian
-	 */
-	public boolean isGregorianCalendar() {
-		return gregorianCalendar.getValue();
 	}
 
 	/**
@@ -1441,6 +1439,110 @@ public class Simulation extends Entity {
 		return simTime;
 	}
 
+	/**
+	 * Sets the inputs for the calendar. The simulation can use the usual Gregorian calendar with
+	 * leap years or it can use a simplified calendar with a fixed 365 days per year.
+	 * @param bool - true for the Gregorian calendar, false for the simple calendar
+	 * @param date - calendar date corresponding to zero simulation time
+	 */
+	void setCalendar() {
+		synchronized (calendar) {
+			SimDate date = getStartDate();
+			if (calendarUsed)
+				reloadReqd = true;
+
+			calendar.setGregorian(gregorianCalendar.getValue());
+			startMillis = calendar.getTimeInMillis(date.year, date.month - 1, date.dayOfMonth,
+					date.hourOfDay, date.minute, date.second, date.millisecond);
+		}
+	}
+
+	/**
+	 * Returns whether the model must be saved and reloaded before it can be executed.
+	 * This can occur when the calendar type (simple vs. Gregorian) or start date has
+	 * been changed AFTER one or more calendar date inputs has been converted to simulation
+	 * time using the previous calendar inputs.
+	 * @return true if the model must be saved and reloaded
+	 */
+	private boolean isReloadReqd() {
+		synchronized (calendar) {
+			return reloadReqd;
+		}
+	}
+
+	/**
+	 * Returns the simulation time corresponding to the specified date.
+	 * @param year - year
+	 * @param month - month (0 - 11)
+	 * @param dayOfMonth - day of the month (1 - 31)
+	 * @param hourOfDay - hour of the day (0 - 23)
+	 * @param minute - minutes (0 - 59)
+	 * @param second - seconds (0 - 59)
+	 * @param ms - millisecond (0 - 999)
+	 * @return simulation time in seconds
+	 */
+	public double getCalendarSimTime(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
+		synchronized (calendar) {
+			calendarUsed = true;
+			long millis = calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
+			return (millis - startMillis) / 1000.0d;
+		}
+	}
+
+	/**
+	 * Returns the time in milliseconds from the epoch that corresponds to the specified
+	 * simulation time.
+	 * @param simTime - simulation time in seconds
+	 * @return milliseconds from the epoch
+	 */
+	private long simTimeToCalendarMillis(double simTime) {
+		return Math.round(simTime * 1000.0d) + startMillis;
+	}
+
+	/**
+	 * Returns the date corresponding to the specified time in milliseconds from the epoch.
+	 * @param simTime - simulation time in seconds
+	 * @return date for the specified time
+	 */
+	public Date getCalendarDate(double simTime) {
+		synchronized (calendar) {
+			long millis = simTimeToCalendarMillis(simTime);
+			calendar.setTimeInMillis(millis);
+			return calendar.getTime();
+		}
+	}
+
+	/**
+	 * Returns the calendar date and time for the specified time in milliseconds from the epoch.
+	 * @param simTime - simulation time in seconds
+	 * @return SimDate for the specified time
+	 */
+	private SimDate getSimDateSimTime(double simTime) {
+		synchronized (calendar) {
+			long millis = simTimeToCalendarMillis(simTime);
+			calendar.setTimeInMillis(millis);
+			return calendar.getSimDate();
+		}
+	}
+
+	/**
+	 * Returns the day of week for the specified time in milliseconds from the epoch.
+	 * @param simTime - simulation time in seconds
+	 * @return day of week (Sunday = 1, Monday = 2, ..., Saturday = 7)
+	 */
+	public int getDayOfWeek(double simTime) {
+		synchronized (calendar) {
+			long millis = simTimeToCalendarMillis(simTime);
+			if (calendar.isGregorian()) {
+				calendar.setTimeInMillis(millis);
+				return calendar.get(Calendar.DAY_OF_WEEK);
+			}
+			calendar.setTimeInMillis(startMillis);
+			long simDay = (millis - startMillis)/(1000*60*60*24);
+			return (int) ((calendar.get(Calendar.DAY_OF_WEEK) - 1 + simDay) % 7L) + 1;
+		}
+	}
+
 	@Output(name = "SimDate",
 	 description = "The calendar date and time of day for the present simulation time expressed "
 	             + "as an array of integer values in the format "
@@ -1448,7 +1550,7 @@ public class Simulation extends Entity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 10)
 	public int[] getSimDate(double simTime) {
-		return getJaamSimModel().getSimDate(simTime).toArray();
+		return getSimDateSimTime(simTime).toArray();
 	}
 
 	@Output(name = "SimDayOfWeek",
@@ -1457,7 +1559,7 @@ public class Simulation extends Entity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 11)
 	public int getSimDayOfWeek(double simTime) {
-		return getJaamSimModel().getDayOfWeek(simTime);
+		return getDayOfWeek(simTime);
 	}
 
 	@Output(name = "PresentDate",

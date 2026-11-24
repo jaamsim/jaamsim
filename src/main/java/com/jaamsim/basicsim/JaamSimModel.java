@@ -21,9 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -95,11 +93,6 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
-
-	private final SimCalendar calendar = new SimCalendar();
-	private long startMillis;  // start time in milliseonds from the epoch
-	private boolean calendarUsed;  // records whether the calendar has been used
-	private boolean reloadReqd;  // indicates that the simulation must be saved and reloaded
 
 	private final HashMap<String, MRG1999a[]> rngMap = new HashMap<>();
 
@@ -327,12 +320,6 @@ public class JaamSimModel implements EventTimeListener {
 			}
 			listNode = listNode.next;
 		}
-
-		// Reset calendar
-		calendar.setGregorian(false);
-		startMillis = 0L;
-		calendarUsed = false;
-		reloadReqd = false;
 
 		// Clear the 'simulation' property
 		simulation = null;
@@ -1581,108 +1568,7 @@ public class JaamSimModel implements EventTimeListener {
 		return ent.getEntityNumber() <= preDefinedEntityCount;
 	}
 
-	/**
-	 * Sets the inputs for the calendar. The simulation can use the usual Gregorian calendar with
-	 * leap years or it can use a simplified calendar with a fixed 365 days per year.
-	 * @param bool - true for the Gregorian calendar, false for the simple calendar
-	 * @param date - calendar date corresponding to zero simulation time
-	 */
-	public void setCalendar(boolean bool, SimDate date) {
-		synchronized (calendar) {
-			if (calendarUsed)
-				reloadReqd = true;
 
-			calendar.setGregorian(bool);
-			startMillis = calendar.getTimeInMillis(date.year, date.month - 1, date.dayOfMonth,
-					date.hourOfDay, date.minute, date.second, date.millisecond);
-		}
-	}
-
-	/**
-	 * Returns whether the model must be saved and reloaded before it can be executed.
-	 * This can occur when the calendar type (simple vs. Gregorian) or start date has
-	 * been changed AFTER one or more calendar date inputs has been converted to simulation
-	 * time using the previous calendar inputs.
-	 * @return true if the model must be saved and reloaded
-	 */
-	public boolean isReloadReqd() {
-		synchronized (calendar) {
-			return reloadReqd;
-		}
-	}
-
-	/**
-	 * Returns the simulation time corresponding to the specified date.
-	 * @param year - year
-	 * @param month - month (0 - 11)
-	 * @param dayOfMonth - day of the month (1 - 31)
-	 * @param hourOfDay - hour of the day (0 - 23)
-	 * @param minute - minutes (0 - 59)
-	 * @param second - seconds (0 - 59)
-	 * @param ms - millisecond (0 - 999)
-	 * @return simulation time in seconds
-	 */
-	public double getCalendarSimTime(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
-		synchronized (calendar) {
-			calendarUsed = true;
-			long millis = calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
-			return (millis - startMillis) / 1000.0d;
-		}
-	}
-
-	/**
-	 * Returns the time in milliseconds from the epoch that corresponds to the specified
-	 * simulation time.
-	 * @param simTime - simulation time in seconds
-	 * @return milliseconds from the epoch
-	 */
-	private long simTimeToCalendarMillis(double simTime) {
-		return Math.round(simTime * 1000.0d) + startMillis;
-	}
-
-	/**
-	 * Returns the date corresponding to the specified time in milliseconds from the epoch.
-	 * @param simTime - simulation time in seconds
-	 * @return date for the specified time
-	 */
-	public Date getCalendarDate(double simTime) {
-		synchronized (calendar) {
-			long millis = simTimeToCalendarMillis(simTime);
-			calendar.setTimeInMillis(millis);
-			return calendar.getTime();
-		}
-	}
-
-	/**
-	 * Returns the calendar date and time for the specified time in milliseconds from the epoch.
-	 * @param simTime - simulation time in seconds
-	 * @return SimDate for the specified time
-	 */
-	public SimDate getSimDate(double simTime) {
-		synchronized (calendar) {
-			long millis = simTimeToCalendarMillis(simTime);
-			calendar.setTimeInMillis(millis);
-			return calendar.getSimDate();
-		}
-	}
-
-	/**
-	 * Returns the day of week for the specified time in milliseconds from the epoch.
-	 * @param simTime - simulation time in seconds
-	 * @return day of week (Sunday = 1, Monday = 2, ..., Saturday = 7)
-	 */
-	public int getDayOfWeek(double simTime) {
-		synchronized (calendar) {
-			long millis = simTimeToCalendarMillis(simTime);
-			if (calendar.isGregorian()) {
-				calendar.setTimeInMillis(millis);
-				return calendar.get(Calendar.DAY_OF_WEEK);
-			}
-			calendar.setTimeInMillis(startMillis);
-			long simDay = (millis - startMillis)/(1000*60*60*24);
-			return (int) ((calendar.get(Calendar.DAY_OF_WEEK) - 1 + simDay) % 7L) + 1;
-		}
-	}
 
 	public final void setPreferredUnitList(ArrayList<? extends Unit> list) {
 		ArrayList<String> utList = Unit.getUnitTypeList(this);
