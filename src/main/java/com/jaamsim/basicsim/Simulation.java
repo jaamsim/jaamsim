@@ -1448,8 +1448,7 @@ public class Simulation extends Entity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 10)
 	public int[] getSimDate(double simTime) {
-		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
-		return getJaamSimModel().getSimDate(millis).toArray();
+		return getJaamSimModel().getSimDate(simTime).toArray();
 	}
 
 	@Output(name = "SimDayOfWeek",
@@ -1458,8 +1457,7 @@ public class Simulation extends Entity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 11)
 	public int getSimDayOfWeek(double simTime) {
-		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
-		return getJaamSimModel().getDayOfWeek(millis);
+		return getJaamSimModel().getDayOfWeek(simTime);
 	}
 
 	@Output(name = "PresentDate",

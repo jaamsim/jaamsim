@@ -1616,20 +1616,11 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param minute - minutes (0 - 59)
 	 * @param second - seconds (0 - 59)
 	 * @param ms - millisecond (0 - 999)
-	 * @return time in milliseconds from the epoch
-	 */
-	public long getCalendarMillis(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
-		calendarUsed = true;
-		return calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
-	}
-
-	/**
-	 * Returns the simulation time in seconds that corresponds to the specified time in
-	 * milliseconds from the epoch.
-	 * @param millis - milliseconds from the epoch
 	 * @return simulation time in seconds
 	 */
-	public double calendarMillisToSimTime(long millis) {
+	public double getCalendarSimTime(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
+		calendarUsed = true;
+		long millis = calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
 		return (millis - startMillis) / 1000.0d;
 	}
 
@@ -1639,16 +1630,17 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param simTime - simulation time in seconds
 	 * @return milliseconds from the epoch
 	 */
-	public long simTimeToCalendarMillis(double simTime) {
+	private long simTimeToCalendarMillis(double simTime) {
 		return Math.round(simTime * 1000.0d) + startMillis;
 	}
 
 	/**
 	 * Returns the date corresponding to the specified time in milliseconds from the epoch.
-	 * @param millis - time in milliseconds from the epoch
+	 * @param simTime - simulation time in seconds
 	 * @return date for the specified time
 	 */
-	public synchronized Date getCalendarDate(long millis) {
+	public synchronized Date getCalendarDate(double simTime) {
+		long millis = simTimeToCalendarMillis(simTime);
 		synchronized (calendar) {
 			calendar.setTimeInMillis(millis);
 			return calendar.getTime();
@@ -1657,10 +1649,11 @@ public class JaamSimModel implements EventTimeListener {
 
 	/**
 	 * Returns the calendar date and time for the specified time in milliseconds from the epoch.
-	 * @param millis - time in milliseconds from the epoch
+	 * @param simTime - simulation time in seconds
 	 * @return SimDate for the specified time
 	 */
-	public SimDate getSimDate(long millis) {
+	public SimDate getSimDate(double simTime) {
+		long millis = simTimeToCalendarMillis(simTime);
 		synchronized (calendar) {
 			calendar.setTimeInMillis(millis);
 			return calendar.getSimDate();
@@ -1669,10 +1662,11 @@ public class JaamSimModel implements EventTimeListener {
 
 	/**
 	 * Returns the day of week for the specified time in milliseconds from the epoch.
-	 * @param millis - time in milliseconds from the epoch
+	 * @param simTime - simulation time in seconds
 	 * @return day of week (Sunday = 1, Monday = 2, ..., Saturday = 7)
 	 */
-	public int getDayOfWeek(long millis) {
+	public int getDayOfWeek(double simTime) {
+		long millis = simTimeToCalendarMillis(simTime);
 		synchronized (calendar) {
 			if (calendar.isGregorian()) {
 				calendar.setTimeInMillis(millis);

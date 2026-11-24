@@ -88,8 +88,7 @@ public class OverlayClock extends OverlayText {
 
 	@Override
 	public String getRenderText(double simTime) {
-		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
-		Date date = getJaamSimModel().getCalendarDate(millis);
+		Date date = getJaamSimModel().getCalendarDate(simTime);
 		return dateFormat.format(date);
 	}
 
