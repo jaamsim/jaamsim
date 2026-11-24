@@ -41,7 +41,6 @@ import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
@@ -62,9 +61,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	                     + "Each entity's state is included automatically in the log file.",
 	         exampleList = { "Server1 ExpressionThreshold1" })
 	private final EntityListInput<StateEntity> stateTraceList;
-
-	@Keyword(description = "Not Used")
-	private final UnitTypeListInput valueUnitTypeList;
 
 	@Keyword(description = "One or more sources of data whose values will be traced. "
 	                     + "An entry in the log file is made every time one of the data sources "
@@ -132,10 +128,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 				new ArrayList<StateEntity>());
 		this.addInput(stateTraceList);
 
-		valueUnitTypeList = new UnitTypeListInput("ValueUnitTypeList", KEY_INPUTS,	null);
-		valueUnitTypeList.setHidden(true);
-		this.addInput(valueUnitTypeList);
-
 		valueTraceList = new StringProvListInput("ValueTraceList", KEY_INPUTS,
 				new ArrayList<StringProvider>());
 		valueTraceList.setCallback(unitLastValueListCallback);
@@ -179,7 +171,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		valueUnitTypeList.reset();
 		valuePrecisionList.reset();
 	}
 

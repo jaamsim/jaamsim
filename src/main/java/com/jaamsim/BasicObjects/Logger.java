@@ -32,14 +32,9 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.units.TimeUnit;
 
 public abstract class Logger extends DisplayEntity {
-
-	@Keyword(description = "Not Used")
-	private final UnitTypeListInput unitTypeListInput;
-
 	@Keyword(description = "One or more selected outputs to be logged. Each output is specified "
 	                     + "by an expression.\n\n"
 	                     + "It is best to include only dimensionless quantities and non-numeric "
@@ -82,10 +77,6 @@ public abstract class Logger extends DisplayEntity {
 	{
 		active.setHidden(false);
 
-		unitTypeListInput = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
-		unitTypeListInput.setHidden(true);
-		this.addInput(unitTypeListInput);
-
 		dataSource = new StringProvListInput("DataSource", KEY_INPUTS,
 				new ArrayList<StringProvider>());
 		this.addInput(dataSource);
@@ -112,8 +103,6 @@ public abstract class Logger extends DisplayEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
-		unitTypeListInput.reset();  // Delete an unnecessary input
 
 		logTime = 0.0d;
 		logEntity = null;

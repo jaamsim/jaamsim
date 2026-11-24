@@ -41,7 +41,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RunNumberInput;
-import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
@@ -121,9 +120,6 @@ public class Simulation extends Entity {
 	                     + "directory containing the configuration file for the run.",
 	         exampleList = {"'c:/reports/'"})
 	private final DirInput reportDirectory;
-
-	@Keyword(description = "Not Used")
-	private final UnitTypeListInput unitTypeList;
 
 	@Keyword(description = "One or more selected outputs to be printed in tabular form to a "
 	                     + "custom output report. "
@@ -475,10 +471,6 @@ public class Simulation extends Entity {
 		reportDirectory.setDefaultText("Configuration File Directory");
 		reportDirectory.setCallback(reportDirectoryCallback);
 		this.addInput(reportDirectory);
-
-		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
-		unitTypeList.setHidden(true);
-		this.addInput(unitTypeList);
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
 		this.addInput(runOutputList);
@@ -888,8 +880,6 @@ public class Simulation extends Entity {
 
 		if (isShowLabels())
 			showTemporaryLabels();
-
-		unitTypeList.reset();  // Delete an unnecessary input
 	}
 
 	@Override
