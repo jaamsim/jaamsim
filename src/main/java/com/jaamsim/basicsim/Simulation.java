@@ -883,6 +883,10 @@ public class Simulation extends Entity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+
+		if (isShowLabels())
+			getJaamSimModel().showTemporaryLabels();
+
 		unitTypeList.reset();  // Delete an unnecessary input
 	}
 

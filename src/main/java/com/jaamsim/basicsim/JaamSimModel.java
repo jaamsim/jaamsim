@@ -472,10 +472,6 @@ public class JaamSimModel implements EventTimeListener {
 		killGeneratedEntities();
 		rngMap.clear();
 
-		// Keep the labels and sub-models consistent with the gui
-		if (getSimulation().isShowLabels())
-			showTemporaryLabels();
-
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some earlyInit methods use simTime which is only
