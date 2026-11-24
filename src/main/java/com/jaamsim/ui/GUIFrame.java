@@ -1056,7 +1056,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 					try {
 						simModel.loadFile(file);
 						if (simModel.getSimulation().isShowLabels())
-							simModel.showTemporaryLabels();
+							simModel.getSimulation().showTemporaryLabels();
 						if (simModel.getNumErrors() > numErrors) {
 							throw new InputErrorException("%d input errors and %d warnings found",
 									simModel.getNumErrors() - numErrors,
@@ -1762,7 +1762,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 				KeywordIndex kw = KeywordIndex.formatBoolean("ShowLabels", bool);
 				sim.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				if (bool)
-					sim.showTemporaryLabels();
+					sim.getSimulation().showTemporaryLabels();
 				updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
@@ -3942,7 +3942,7 @@ public class GUIFrame extends OSFixJFrame implements GUIListener {
 			return;
 		showLabels.setSelected(bool);
 		if (bool)
-			getJaamSimModel().showTemporaryLabels();
+			getJaamSimModel().getSimulation().showTemporaryLabels();
 		updateUI();
 	}
 

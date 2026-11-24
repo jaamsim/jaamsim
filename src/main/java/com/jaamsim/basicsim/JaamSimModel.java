@@ -29,8 +29,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.prefs.Preferences;
 
 import com.jaamsim.Commands.Command;
-import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
@@ -1819,14 +1817,6 @@ public class JaamSimModel implements EventTimeListener {
 			redo();
 		else if (canRepeat(ent))
 			repeat(ent);
-	}
-
-	public void showTemporaryLabels() {
-		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
-			if (!ent.canLabel())
-				continue;
-			EntityLabel.showTemporaryLabel(ent);
-		}
 	}
 
 	@Override

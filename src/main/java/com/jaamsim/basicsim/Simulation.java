@@ -23,6 +23,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
@@ -885,7 +887,7 @@ public class Simulation extends Entity {
 		super.earlyInit();
 
 		if (isShowLabels())
-			getJaamSimModel().showTemporaryLabels();
+			showTemporaryLabels();
 
 		unitTypeList.reset();  // Delete an unnecessary input
 	}
@@ -1021,6 +1023,14 @@ public class Simulation extends Entity {
 
 	public boolean isShowLabels() {
 		return showLabels.getValue();
+	}
+
+	public void showTemporaryLabels() {
+		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			if (!ent.canLabel())
+				continue;
+			EntityLabel.showTemporaryLabel(ent);
+		}
 	}
 
 	public boolean isShowSubModels() {

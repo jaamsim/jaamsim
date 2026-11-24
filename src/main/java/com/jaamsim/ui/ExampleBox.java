@@ -501,7 +501,7 @@ public class ExampleBox extends JDialog {
 			// Add labels and sub-models
 			Simulation simulation = simModel.getSimulation();
 			if (simulation.isShowLabels())
-				simModel.showTemporaryLabels();
+				simulation.showTemporaryLabels();
 
 			// Get the View to render
 			View view = null;
@@ -553,7 +553,7 @@ public class ExampleBox extends JDialog {
 		// Add labels and sub-models
 		Simulation simulation = simModel.getSimulation();
 		if (simulation.isShowLabels())
-			simModel.showTemporaryLabels();
+			simulation.showTemporaryLabels();
 
 		// Display the new model
 		FrameBox.setSelectedEntity(simulation, false);
